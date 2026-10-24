@@ -1,10 +1,13 @@
 <!doctype html>
 <html lang='en'><head>
 <meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>Consultation · MediHeal</title>
-<link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@700&display=swap' rel='stylesheet'>
-<link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/base.css'>
+<title>Doctor Consultation · MediHeal</title>
+<link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@600;700&display=swap' rel='stylesheet'>
+<link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/base.css'><link rel='stylesheet' href='assets/css/treatment.css'>
 </head><body data-page='consultation'>
-<div class='stage'><section class='stub'><h1>Consultation</h1><p>Not converted yet. There is no Figma screen for this module (listed as missing in docs/HANDOFF.md).</p></section></div>
-<script src='assets/js/data.js'></script><script src='assets/js/icons.js'></script><script src='assets/js/shell.js'></script>
+<!-- Figma Doctor Consultation 2030:3609 (Module 2; origin 1600,42700; 1440x1262) + state frames as JS states of this ONE template:
+     Record diagnosis 2030:3877 (+3 outcome variants), Outcome list 2047:17647, Diagnosis saved 2030:4174, Department filter 4001:3818.
+     Same layout system as Nursing Care, so it reuses assets/css/treatment.css (classes tp-*). Data: assets/js/data-consultation.js, layout + states: assets/js/consultation.js. -->
+<div class='stage tp' id='stage'></div>
+<script src='assets/js/data.js'></script><script src='assets/js/data-records.js'></script><script src='assets/js/data-profiles.js'></script><script src='assets/js/data-treatment.js'></script><script src='assets/js/data-consultation.js'></script><script src='assets/js/icons.js'></script><script src='assets/js/shell.js'></script><script src='assets/js/consultation.js'></script>
 </body></html>
