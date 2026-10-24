@@ -5,7 +5,7 @@
 <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@700&display=swap' rel='stylesheet'>
 <link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/base.css'><link rel='stylesheet' href='assets/css/components.css'><link rel='stylesheet' href='assets/css/pages.css'>
 </head><body data-page='registration'>
-<!-- Figma: Registration 23:2285 (frame origin 3200,34000). New Registration now opens registration-form.html (Inpatient form 420:1147, session 3). Outpatient form 420:1434 is still a stub (outpatient-form.html). -->
+<!-- Figma: Registration 23:2285 (frame origin 3200,34000). New Registration opens registration-form.html (Inpatient form 420:1147); the Inpatient/Outpatient type cards link the two forms (outpatient-form.html, 420:1434). The row arrow opens profile.html?id=<patient id> (Figma profile frames 459:680, 488:1955, 488:2105, 488:2255, 488:2405; session 6). -->
 <div class='stage'>
   <div id='kpis'></div>
   <h1 class='page-h'>Patient Registration</h1>
@@ -56,11 +56,13 @@ function render() {
     "<div><span class='badge " + HIS.statusClass[p.type] + "'>" + p.type + '</span></div>' +
     "<div class='tx'>" + p.dept + '</div><div class=\'dc\'>' + p.doctor + '</div><div class=\'tx\'>' + p.registered + '</div>' +
     "<div><span class='badge " + HIS.statusClass[p.status] + "'>" + p.status + '</span></div>' +
-    "<div><button class='go-btn' aria-label='Open profile for " + p.name + "' title='Profile page coming next'>" + svg('arrow', 16) + '</button></div></div>').join('')
+    "<div><button class='go-btn' data-id='" + p.id + "' aria-label='Open profile for " + p.name + "' title='Open patient profile'>" + svg('arrow', 16) + '</button></div></div>').join('')
     : "<div class='empty'>No patients match these filters.</div>";
 }
 $('tabs').onclick = e => { if (e.target.dataset.t) { state.tab = e.target.dataset.t; render(); } };
 $('q').oninput = e => { state.q = e.target.value; render(); };
+// Row arrow -> patient profile (session 6; profile.html reads ?id= and uses HIS.profiles)
+$('rows').onclick = e => { const b = e.target.closest('.go-btn'); if (b) location.href = 'profile.html?id=' + encodeURIComponent(b.dataset.id); };
 
 // Figma: New Registration -> Inpatient form 420:1147 (the previous temporary modal was removed in session 3)
 $('new').onclick = () => { location.href = 'registration-form.html'; };

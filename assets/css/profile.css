@@ -1,0 +1,34 @@
+/* Patient profile screens. Figma 459:680 (Geliz, 1440x1332) and clones 488:1955, 488:2105, 488:2255, 488:2405.
+   All coordinates are frame-local (Figma absolute minus frame origin 0,36700), measured in session 6 with get_nodes_info.
+   ESTIMATED (not readable from Figma): card shadow, 1px stroke weight, emoji rendering, frame height of the four clones (985). */
+.pf{height:985px;min-height:0}
+.pf.has-th{height:1332px}
+.pf>*{position:absolute}
+.pf-back{left:129px;top:94px;font:400 13.569px/18.318px var(--font-inter);color:#6b7280;white-space:nowrap}
+.pf-back:hover{color:#1f2937}
+.pf-card{background:#fff;border-radius:14.6125px;box-shadow:inset 0 0 0 1px #e6e9ee,0 4px 4px rgba(0,0,0,.25)}
+
+/* patient header card (Figma 459:699) */
+.pf-head>*{position:absolute}
+.pf-av{left:25.885px;top:22.129px;width:50.1px;height:50.1px;border-radius:50%;background:#0f766e;color:#fff;display:grid;place-items:center;font:700 16.7px/22.545px var(--font-inter)}
+.pf-name{left:90.598px;top:21.711px;margin:0;font:700 17.744px/23.422px var(--font-inter);color:#1f2937;white-space:nowrap}
+.pf-tags{left:90.598px;top:51.351px;height:21.293px;display:flex;gap:8.35px;align-items:flex-start}
+.pf-tag{display:block;height:21.293px;padding:0 9.394px;border-radius:6.2625px;font:700 11.481px/21.293px var(--font-inter);white-space:nowrap}
+.pf-meta{flex:none;width:151.931px;margin-top:2.297px;font:400 12.525px/16.658px var(--font-inter);color:#6b7280}
+.pf-btn{position:absolute;top:30.7px;height:32.98px;border:0;border-radius:8.35px;background:#fff;box-shadow:inset 0 0 0 1px #e6e9ee;padding:0 0 0 14.4px;text-align:left;font:500 12.525px/32.98px var(--font-inter);color:#1f2937;white-space:nowrap}
+.pf-btn:hover{background:#f6fafd}
+
+/* info cards */
+.pf-ch{position:absolute;left:21.71px;top:19.62px;height:29.225px;width:300px}
+.pf-ic{position:absolute;left:0;top:0;width:29.225px;height:29.225px;border-radius:7.306px;background:#e6f5f2;font-style:normal}
+.pf-ic span{position:absolute;left:5.295px;top:5.427px;font:400 13.569px/18.318px var(--font-inter);color:#0f766e;white-space:nowrap}
+.pf-h3{position:absolute;left:38.62px;top:5.426px;margin:0;font:700 13.569px/18.318px var(--font-inter);color:#1f2937;white-space:nowrap}
+.pf-row{position:absolute;left:21.71px;width:346.238px;border-bottom:1px solid #f2f4f7}
+.pf-w .pf-row{width:549.43px}
+.pf-th .pf-row{width:1158.7px}
+.pf-row.last{border-bottom:0}
+.pf-l{position:absolute;left:0;top:8.35px;font:400 13.047px/17.483px var(--font-inter);color:#6b7280;white-space:nowrap}
+/* value boxes overhang the row's right edge by 8.35px in Figma (narrow and wide cards); the Treatment History card has no overhang */
+.pf-v{position:absolute;right:-8.35px;top:8.35px;width:194.568px;text-align:right;font:500 13.047px/17.483px var(--font-inter);color:#1f2937}
+.pf-w .pf-v{width:400px}
+.pf-th .pf-v{right:0;width:460px}
