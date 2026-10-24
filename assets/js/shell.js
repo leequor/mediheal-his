@@ -1,9 +1,9 @@
 // Shared header + slide-in sidebar. Edit NAV once, every page updates.
-// Figma: header-bar 239:2978, Sidebar 211:1949 (430x1024).
+// Figma: header-bar 239:2978, Sidebar 211:1949 (430x1024). Staff (211:1953) links to Attendance (2002:369).
 const NAV = [
   ['dashboard', 'Dashboard', 'grid'], ['registration', 'Registration', 'users'], ['appointments', 'Appointments', 'calendar-check'],
   ['consultation', 'Consultation', 'clipboard-plus'], ['treatment', 'Treatment', 'bag'], ['nursing', 'Nursing', 'heart'],
-  ['pharmacy', 'Pharmacy', 'pill'], ['staff', 'Staff', 'users'], ['personnel', 'Personnel', 'id'],
+  ['pharmacy', 'Pharmacy', 'pill'], ['attendance', 'Staff', 'users'], ['personnel', 'Personnel', 'id'],
   ['payroll', 'Payroll', 'peso'], ['departments', 'Departments', 'branches'], ['billing', 'Billing', 'receipt']
 ];
 
