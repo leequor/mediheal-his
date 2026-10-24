@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard · MediHeal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lexend:wght@500;600&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css"><link rel="stylesheet" href="assets/css/base.css">
+</head><body data-page="dashboard">
+<!-- Figma: Dashboard 211:59 -->
+<main id="app">
+  <h1 id="welcome"></h1>
+  <section class="grid kpis" id="kpis"></section>
+  <section class="grid two" style="margin-top:28px">
+    <div class="card">
+      <h3>Recent Registrations</h3>
+      <p class="desc" style="margin:6px 0 0">Latest patients registered at the front desk</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Patient</th><th>Type</th><th>Department</th><th>Doctor</th><th>Time</th><th>Status</th></tr></thead>
+        <tbody id="regs"></tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <h3>Today's Schedule</h3>
+      <p class="desc" style="margin:6px 0 0">Upcoming appointments</p>
+      <ul class="timeline" id="sched"></ul>
+    </div>
+  </section>
+</main>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/shell.js"></script>
+<script>
+const pill = s => `<span class="pill ${HIS.statusClass[s]}">${s}</span>`;
+document.getElementById('welcome').textContent = `Welcome back, Dr. ${HIS.user.first}!`;
+document.getElementById('kpis').innerHTML = HIS.stats.map(s => `
+  <div class="card kpi"><div class="ic">${s.icon}</div>
+  <div><div class="lbl">${s.label}</div><div class="val">${s.value}</div><div class="delta">${s.delta}</div></div></div>`).join('');
+document.getElementById('regs').innerHTML = HIS.registrations.map(r => `
+  <tr><td><b>${r.name}</b><span class="pid">${r.id} · ${r.age} yrs</span></td><td>${pill(r.type)}</td>
+  <td>${r.dept}</td><td>${r.doctor}</td><td>${r.time}</td><td>${pill(r.status)}</td></tr>`).join('');
+document.getElementById('sched').innerHTML = HIS.schedule.map(s => `
+  <li><div><span class="t">${s.time}</span><div class="who">${s.name}</div><small>${s.what}</small><small>${s.doctor}</small></div>${pill(s.status)}</li>`).join('');
+</script>
+</body></html>
