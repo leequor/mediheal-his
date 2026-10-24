@@ -1,5 +1,6 @@
 // Treatment Plans: ONE template (Figma 2047:17739) + state frames as JS states: Department filter open (4011:4115), Prescribe (2047:18007), Order lab/imaging (2047:19218),
-// Schedule procedure (2047:20125), Assign ward and bed (2047:23469), Update status (2047:24075), Dispense medication (2047:25913, modal 2047:26162), Medication dispensed (2047:26213, modal 2047:26462).
+// Schedule procedure (2047:20125), Assign ward and bed (2047:23469), Update status (2047:24075), Dispense medication (2047:25913, modal 2047:26162), Medication dispensed (2047:26213, modal 2047:26462),
+// Discharge summary (2047:25314, modal 2047:25563; session 19, moved here from the profile page, ?modal=summary).
 // Prototype links read: Prescribe 2047:17783 -> 2047:18007; Status 2047:25308 and 2047:24672 -> 2047:24075; Order tests 2047:17885 -> 2047:19218; Schedule procedure 2047:20722 -> 2047:20125;
 // Nursing care 2047:22236 -> Nursing Care page 2047:20735 (nursing.html); Assign bed 2047:23456 -> 2047:23469; Department filter 2047:17798 -> 4011:4115; patient rows have NO reaction.
 // Pharmacy (session 18): pharmacy.html redirects to treatment.html?modal=pharmacy (no Pharmacy page frame exists in Figma). Dispense -> Medication dispensed (680x368, 4 visible fields, buttons y300; Figma clips Input 5/6).
@@ -10,7 +11,7 @@
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var ALL = 'All departments', NA = '\u2014';
   var qs = new URLSearchParams(location.search), qid = qs.get('id');
-  var st = { sel: T.plans.some(function (p) { return p.id === qid; }) ? qid : 'PT-99213', q: '', dept: ALL, menu: false, modal: qs.get('modal') === 'pharmacy' ? 'pharmacy' : '', stock: 240, disp: null };
+  var st = { sel: T.plans.some(function (p) { return p.id === qid; }) ? qid : 'PT-99213', q: '', dept: ALL, menu: false, modal: qs.get('modal') === 'pharmacy' ? 'pharmacy' : qs.get('modal') === 'summary' ? 'summary' : '', stock: 240, disp: null };
   HIS.tpState = st;
   var IC = {
     group: "<path d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8'/>",
@@ -143,6 +144,11 @@
           G ? 'Counsel the patient: take at night, report muscle pain. Stock is updated after dispensing.' : ''],
         bt: sb.bt, bx: sb.bx };
     }
+    if (kind === 'summary') return { title: 'Discharge summary', ok: 'Discharge', req: [0, 2],
+      sub: G ? 'Isabel Geliz V. Ramos \u00b7 Cardiology \u00b7 Ward 3, Bed 12' : p.name + ' \u00b7 ' + f.department + ' \u00b7 ' + String(f.care).replace(' \u00b7 ', ' '),
+      l: ['Final diagnosis', 'Condition at discharge', 'Discharge date', 'Discharged by', 'Medications to continue', 'Follow-up instructions'],
+      v: G ? ['Acute coronary syndrome (I24.9)', 'Stable', 'Sep 7, 2026', 'Dr. Laurice Laureta', 'Atorvastatin 40 mg once daily at night', 'Cardiology clinic visit in 2 weeks. Return to the ER for chest pain.'] : [f.pdx || '', 'Stable', '', f.attending || '', f.meds || '', ''],
+      bt: 'Ready to discharge', bx: 'Follow-up instructions are given to the patient and saved in the treatment history.' };
     if (kind === 'dispensed') { var d = st.disp; return { title: 'Medication dispensed', sub: d.sub, l: ['Medication', 'Quantity', 'Dispensed by', 'Stock remaining'], v: [d.med, d.qty, d.by, d.left + ' tablets'] }; }
     if (kind === 'rx') return { title: 'Prescribe medication', sub: sub1, ok: 'Send to pharmacy', green: G, req: [0, 1, 3],
       l: ['Medication', 'Dose', 'Route', 'Frequency', 'Duration', 'Instructions for pharmacy and patient'],
@@ -193,7 +199,7 @@
     if (keepFocus) { var q = document.getElementById('tpq'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
   }
   render();
-  if (st.modal === 'pharmacy') { var f0 = document.querySelector('#tpmodal .tp-m-i:not([readonly])'); if (f0) f0.focus({ preventScroll: true }); }
+  if (st.modal) { var f0 = document.querySelector('#tpmodal .tp-m-i:not([readonly])'); if (f0) f0.focus({ preventScroll: true }); }
 
   function vals() { var o = []; [].forEach.call(document.querySelectorAll('#tpmodal [data-i]'), function (n) { o[+n.dataset.i] = n.value.trim(); }); return o; }
   function qtyOf(v) { return parseInt(String(v || '').replace(/[^0-9]/g, ' ').trim().split(' ')[0], 10) || 0; }
@@ -209,6 +215,10 @@
       if (n < 1 || n > st.stock) { document.querySelector('#tpmodal [data-i="2"]').classList.add('bad'); tip(n > st.stock ? 'Only ' + st.stock + ' tablets in stock' : 'Enter a quantity to dispense'); return; }
       st.stock -= n; st.disp = { sub: s.sub, med: v[0], qty: v[2], by: v[3] || 'Pharmacist on duty', left: st.stock };
       f.next = 'Medication dispensed'; st.modal = 'dispensed'; render(); return;
+    }
+    if (kind === 'summary') {
+      // ESTIMATED behaviour (Figma has no discharged state): the plan is marked completed and the next step reads Discharged
+      p.pstat = 'done'; f.next = 'Discharged on ' + v[2]; st.modal = ''; render(); tip('Discharge summary saved for ' + p.name + ' (in memory only)'); return;
     }
     if (kind === 'rx') {
       var nm = v[0].replace(/\s+tablets?$/i, '');

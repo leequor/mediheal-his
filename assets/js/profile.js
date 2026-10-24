@@ -73,19 +73,23 @@
   h += card('pf-w', 118.344, 767.336, 592.85, 187.4575, '\u{1F6E1}\uFE0F', 'Registration Record', rows(P.registration));
   h += card('pf-w', 727.893, 510.574, 592.85, 444.22, '\u{1F6CF}\uFE0F', 'Admission Details', rows(P.admission));
   if (hasTh) {
-    const tb = [['Pharmacy', 760, 90, 'pharmacy'], ['Discharge summary', 860, 150, 'summary'], ['View treatment plan', 1030, 150, 'plan']];
-    const btns = tb.map(b => "<button class='pf-btn' data-act='" + b[3] + "' style='top:14px;left:" + b[1] + 'px;width:' + b[2] + "px'" + (b[3] === 'plan' ? '' : " title='" + tip + "'") + '>' + b[0] + '</button>').join('');
+    // Pharmacy and Discharge summary live on the Treatment Plan page in Figma (2047:25913 / 2047:25314): these buttons navigate there (session 19). data-act names end in -go so profile-modal.js (Edit/Transfer/Discharge) ignores them.
+    const tb = [['Pharmacy', 760, 90, 'pharmacy-go'], ['Discharge summary', 860, 150, 'summary-go'], ['View treatment plan', 1030, 150, 'plan']];
+    const btns = tb.map(b => "<button class='pf-btn' data-act='" + b[3] + "' style='top:14px;left:" + b[1] + 'px;width:' + b[2] + "px'>" + b[0] + '</button>').join('');
     h += card('pf-th', 118.345, 971.586, 1202.4, 300, '\u{1F4CB}', 'Treatment History', rows(P.treatment) + btns);
   }
   stage.innerHTML = h;
 
-  // Prototype links read in session 6: back link 459:697 -> Registration 23:2285; View treatment plan 2047:24708 -> Treatment Plan 2047:17739 (treatment.html is still a stub).
-  // Edit 2027:2439 -> 2027:2458, Transfer 2027:2441 -> 2027:2643, Discharge 2027:2443 -> 2027:2828, Pharmacy 2047:26511 -> 2047:25913, Discharge summary 2047:25312 -> 2047:25314 are modal/state frames NOT built yet.
+  // Prototype links read in session 6: back link 459:697 -> Registration 23:2285; View treatment plan 2047:24708 -> Treatment Plan 2047:17739; Pharmacy 2047:26511 -> 2047:25913; Discharge summary 2047:25312 -> 2047:25314 (both drawn on the Treatment Plan page).
+  // Edit 2027:2439 -> 2027:2458, Transfer 2027:2441 -> 2027:2643, Discharge 2027:2443 -> 2027:2828 are built in profile-modal.js.
   // Print has no Figma link read; window.print() is an addition.
   stage.addEventListener('click', e => {
     const b = e.target.closest('[data-act]');
     if (!b) return;
-    if (b.dataset.act === 'print') window.print();
-    else if (b.dataset.act === 'plan') location.href = 'treatment.html';
+    const a = b.dataset.act;
+    if (a === 'print') window.print();
+    else if (a === 'plan' || a === 'pharmacy-go' || a === 'summary-go') {
+      location.href = 'treatment.html?id=' + encodeURIComponent(id) + (a === 'pharmacy-go' ? '&modal=pharmacy' : a === 'summary-go' ? '&modal=summary' : '');
+    }
   });
 })();
