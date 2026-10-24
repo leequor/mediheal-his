@@ -100,8 +100,9 @@
     } else if (k === 'transfer') {
       bad = [0, 1, 2, 3].map(function (i) { return flag(i, !val(i)); });
       if (bad.indexOf(true) > -1) { toast('Fill in the department, doctor, ward and bed'); return; }
-      setV('Admission Details', 0, val(0)); setV('Admission Details', 1, val(1)); setV('Admission Details', 2, val(2)); setV('Admission Details', 3, val(3));
-      close(); toast('Patient transferred to ' + val.call ? 'Patient transferred (in memory only)' : '');
+      var dep = val(0);
+      setV('Admission Details', 0, dep); setV('Admission Details', 1, val(1)); setV('Admission Details', 2, val(2)); setV('Admission Details', 3, val(3));
+      close(); toast('Patient transferred to ' + dep + ' (in memory only)');
     } else if (k === 'discharge') {
       bad = [flag(0, !val(0)), flag(1, !val(1))];
       if (bad[0] || bad[1]) { toast('Discharge date and condition are required'); return; }
