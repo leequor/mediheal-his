@@ -1,0 +1,72 @@
+/* Departments list (Figma 351:501, 1440x1420, origin 0,35400) and detail states (351:733, 4001:5402 ... 4030:9397, 1440x1024).
+   All coordinates frame-local, from get_nodes_info / scan_text_nodes (session 7 detail frames) and handoff v169 (list).
+   ESTIMATED: card shadows, progress fill gradient (image fill in Figma), OB-GYN badge colour, beds mini-stat format, dropdown/search state. */
+.dp{height:1420px;min-height:0}
+.dp.dt{height:1024px}
+.dp>*{position:absolute}
+.dp [hidden]{display:none!important}
+.dp-card,.dp-stat,.dp-occ,.dp-duty{background:#fff;box-shadow:0 4px 16px rgba(27,78,107,.08)}
+
+/* header row */
+.dp-title{left:32px;top:120px;margin:0;font:700 28px/33.6px var(--font-inter);color:#152d47;white-space:nowrap}
+.dp-sub{left:32px;top:158.6px;font:400 13px/16px var(--font-inter);color:#8a97a6;white-space:nowrap}
+.dt .dp-title{left:84px;font-size:24px;line-height:28.8px}
+.dt .dp-sub{left:84px;top:152.8px;width:320px}
+.dp-back{left:32px;top:126.4px;width:36px;height:36px;border:0;padding:0;border-radius:10px;background:#fff;box-shadow:inset 0 0 0 1px #e6ecf1;display:grid;place-items:center;cursor:pointer}
+.dp-back:hover{background:#f6fafd}
+.dp-search{left:1086px;top:125.6px;width:270px;height:37.6px;border-radius:10px;background:#fff;box-shadow:inset 0 0 0 1px #e6ecf1}
+.dp-search svg{position:absolute;left:16.8px;top:11.3px}
+.dp-search input{position:absolute;left:40.8px;top:10.8px;width:220px;height:16px;border:0;outline:0;background:transparent;padding:0;font:400 13px/16px var(--font-inter);color:#152d47}
+.dp-search input::placeholder{color:#9aa6b3}
+
+/* list: stats */
+.dp-stat{top:196.6px;width:330.5px;height:115.2px;border-radius:14px}
+.dp-stat>*{position:absolute;left:22px;white-space:nowrap}
+.dp-stat .l{top:19px;font:500 13px/16px var(--font-inter);color:#8a97a6}
+.dp-stat .n{top:46px;font:700 25px/30px var(--font-inter);color:#152d47}
+.dp-stat .s{top:83.4px;font:400 11px/13px var(--font-inter);color:#aab4bf}
+
+/* list: department cards */
+.dp-card{width:678px;height:235.8px;border-radius:16px;cursor:pointer}
+.dp-card:hover{box-shadow:0 6px 20px rgba(27,78,107,.14)}
+.dp-card>*{position:absolute}
+.dp-ic{left:24px;top:22px;width:38px;height:38px;border-radius:10px;background:#dce9f2;display:grid;place-items:center}
+.dp-name{left:74px;top:22px;font:700 17px/21px var(--font-inter);color:#152d47;white-space:nowrap}
+.dp-doc{left:74px;top:44.8px;font:400 12.5px/15px var(--font-inter);color:#8a97a6;white-space:nowrap}
+.dp-rev{right:24px;top:22px;text-align:right;font:700 16px/20px var(--font-inter);color:#1a5379}
+.dp-revl{right:24px;top:43.2px;text-align:right;font:400 11px/13px var(--font-inter);color:#aab4bf;white-space:nowrap}
+.dp-mini{top:76px;width:150px;height:55px;border-radius:10px;background:#f1f6f9}
+.dp-mini b{position:absolute;left:0;right:0;top:10px;text-align:center;font:700 16px/20px var(--font-inter);color:#152d47}
+.dp-mini i{position:absolute;left:0;right:0;top:32.2px;text-align:center;font:400 11px/13px var(--font-inter);color:#8a97a6;font-style:normal}
+.dp-ol{left:24px;top:147px;font:500 12.5px/15px var(--font-inter);color:#8a97a6}
+.dp-op{right:24px;top:147px;font:700 12.5px/15px var(--font-inter);color:#152d47}
+.dp-track{left:24px;top:169.2px;width:630px;height:7px;border-radius:10px;background:#e6ecf1;overflow:hidden}
+.dp-fill{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,#1b4e6b,#3a8bb8)}
+.dp-tags{left:24px;top:190.2px;display:flex;gap:8px}
+.dp-tag{display:block;height:23.6px;padding:0 11px;border-radius:8px;background:#e9f1f7;font:600 11.5px/23.6px var(--font-inter);color:#386e96;white-space:nowrap}
+.dp-empty{left:32px;top:335.8px;width:1376px;text-align:center;font:500 14px/20px var(--font-inter);color:#8a97a6}
+
+/* detail */
+.dd-stat{top:190.8px;width:330.5px;height:88.2px;border-radius:14px}
+.dd-stat>*{position:absolute}
+.dd-stat .n{left:20px;top:20px;font:700 23px/28px var(--font-inter);color:#152d47}
+.dd-stat .l{left:20px;top:55px;font:400 12.5px/15px var(--font-inter);color:#8a97a6}
+.dd-stat .p{left:292.5px;top:14px;width:24px;height:24px;border-radius:7px;background:#e9f1f7;display:grid;place-items:center}
+.dp-occ{left:32px;top:301px;width:1376px;height:112.6px;border-radius:16px}
+.dp-occ>*{position:absolute}
+.dp-occ .ol{left:24px;top:20px;font:500 13px/16px var(--font-inter);color:#8a97a6}
+.dp-occ .op{right:24px;top:20px;font:700 13px/16px var(--font-inter);color:#152d47}
+.dp-occ .tr{left:24px;top:45px;width:1328px;height:8px;border-radius:10px;background:#e6ecf1;overflow:hidden}
+.dp-occ .tg{left:24px;top:69px;display:flex;gap:8px}
+.dp-duty{left:32px;top:435.6px;width:1376px;border-radius:16px}
+.dp-duty>*{position:absolute}
+.dp-dl{left:24px;top:31.8px;font:700 11.5px/14px var(--font-inter);letter-spacing:.8px;color:#8a97a6;white-space:nowrap}
+.dp-add{right:24px;top:20px;height:37.2px;padding:0 20px;border:0;border-radius:10px;background:#1c6d9c;color:#fff;font:700 13px/37.2px var(--font-inter);white-space:nowrap;cursor:pointer}
+.dp-add:hover{background:#1b4e6b}
+.dp-row{left:24px;width:1328px;height:54px}
+.dp-row>*{position:absolute}
+.dp-av{left:0;top:6px;width:42px;height:42px;border-radius:50%;background:#123a5c}
+.dp-av span{position:absolute;left:11.85px;top:13px;font:700 13px/16px var(--font-inter);color:#fff;white-space:nowrap}
+.dp-dn{left:56px;top:9.1px;font:700 14.5px/18px var(--font-inter);color:#152d47;white-space:nowrap}
+.dp-dm{left:56px;top:29.7px;font:400 12px/15px var(--font-inter);color:#8a97a6;white-space:nowrap}
+.dp-badge{right:0;top:14.4px;height:25.2px;padding:0 14px;border-radius:20px;background:#e2eefc;font:700 12px/25.2px var(--font-inter);color:#3a7cdb;white-space:nowrap}
