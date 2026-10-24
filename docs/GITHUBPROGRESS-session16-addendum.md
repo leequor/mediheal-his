@@ -1,0 +1,5 @@
+# Session 16 addendum (2026-10-24) - READ AFTER docs/GITHUBPROGRESS.md and the session 12 to 15 addenda
+
+## Log
+- Session 16 (owner uploaded the v169 handoff: "Connect to Figma, channel l4zneptm continue interrupted work goto github"): joined `l4zneptm` (OK); GitHub connected; opened `docs/GITHUBPROGRESS.md` (stale at session 11; sessions 12 to 15 live in the addenda), the session 14 and 15 addenda and `AGENTS.md` (still says "read docs/HANDOFF.md first": outdated, same trap as before). `list_commits` latest `63ead29` = "Background: show marble background.jpg at full strength and scrolling with the page" (`assets/css/base.css`, +2 -1) made AFTER the session 15 log `c4e696d`: an UNLOGGED small change, not verified by me yet. Start log committed first (this file).
+- Plan for this turn: NEXT BUILD per the session 15 addendum = Nursing Care page `2047:20735` (`nursing.html`, stub today; the Treatment Plan "Nursing care" button links there). Read Figma first (export, `get_node_info` depth 2, `get_reactions`).
