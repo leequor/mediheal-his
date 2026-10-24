@@ -1,43 +1,47 @@
 <!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang='en'><head>
+<meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
 <title>Dashboard · MediHeal</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lexend:wght@500;600&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/tokens.css"><link rel="stylesheet" href="assets/css/base.css">
-</head><body data-page="dashboard">
-<!-- Figma: Dashboard 211:59 -->
-<main id="app">
-  <h1 id="welcome"></h1>
-  <section class="grid kpis" id="kpis"></section>
-  <section class="grid two" style="margin-top:28px">
-    <div class="card">
-      <h3>Recent Registrations</h3>
-      <p class="desc" style="margin:6px 0 0">Latest patients registered at the front desk</p>
-      <div class="table-wrap"><table>
-        <thead><tr><th>Patient</th><th>Type</th><th>Department</th><th>Doctor</th><th>Time</th><th>Status</th></tr></thead>
-        <tbody id="regs"></tbody>
-      </table></div>
+<link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@700&display=swap' rel='stylesheet'>
+<link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/base.css'><link rel='stylesheet' href='assets/css/components.css'><link rel='stylesheet' href='assets/css/pages.css'>
+</head><body data-page='dashboard'>
+<!-- Figma: Dashboard 211:59 (frame origin 1600,34000). Positions below = Figma abs coords minus origin. -->
+<div class='stage'>
+  <h1 class='dash-title' id='welcome'></h1>
+  <div id='kpis'></div>
+  <section class='card-lg' style='left:38px;top:405px;width:873px;min-height:627px;padding-top:163px;padding-bottom:20px'>
+    <h2 class='card-h' style='left:23px;top:20px'>Recent Registrations</h2>
+    <p class='card-sub' style='left:23px;top:62px'>Latest patients registered at the front desk</p>
+    <div class='dhead'>
+      <span style='left:20px;width:85px'>PATIENT</span><span style='left:151px;width:85px'>TYPE</span><span style='left:283px;width:125px'>DEPARTMENT</span>
+      <span style='left:440px;width:85px'>DOCTOR</span><span style='left:591px;width:85px'>TIME</span><span style='left:712px;width:85px'>STATUS</span>
     </div>
-    <div class="card">
-      <h3>Today's Schedule</h3>
-      <p class="desc" style="margin:6px 0 0">Upcoming appointments</p>
-      <ul class="timeline" id="sched"></ul>
-    </div>
+    <div id='regs'></div>
   </section>
-</main>
-<script src="assets/js/data.js"></script>
-<script src="assets/js/shell.js"></script>
+  <section class='card-lg' style='left:991px;top:405px;width:424px;min-height:562px'>
+    <h2 class='card-h' style='left:22px;top:25px'>Today’s Schedule</h2>
+    <p class='card-sub' style='left:22px;top:65px'>Upcoming appointments</p>
+    <div class='sched-ic'><span id='sic'></span></div>
+    <div id='sched'></div>
+  </section>
+</div>
+<script src='assets/js/data.js'></script><script src='assets/js/icons.js'></script><script src='assets/js/shell.js'></script>
 <script>
-const pill = s => `<span class="pill ${HIS.statusClass[s]}">${s}</span>`;
-document.getElementById('welcome').textContent = `Welcome back, Dr. ${HIS.user.first}!`;
-document.getElementById('kpis').innerHTML = HIS.stats.map(s => `
-  <div class="card kpi"><div class="ic">${s.icon}</div>
-  <div><div class="lbl">${s.label}</div><div class="val">${s.value}</div><div class="delta">${s.delta}</div></div></div>`).join('');
-document.getElementById('regs').innerHTML = HIS.registrations.map(r => `
-  <tr><td><b>${r.name}</b><span class="pid">${r.id} · ${r.age} yrs</span></td><td>${pill(r.type)}</td>
-  <td>${r.dept}</td><td>${r.doctor}</td><td>${r.time}</td><td>${pill(r.status)}</td></tr>`).join('');
-document.getElementById('sched').innerHTML = HIS.schedule.map(s => `
-  <li><div><span class="t">${s.time}</span><div class="who">${s.name}</div><small>${s.what}</small><small>${s.doctor}</small></div>${pill(s.status)}</li>`).join('');
+const $ = id => document.getElementById(id);
+$('welcome').textContent = 'Welcome back, Dr. ' + HIS.user.first + '!';
+$('sic').innerHTML = svg('calendar-check', 24);
+$('kpis').innerHTML = HIS.stats.map((s, i) =>
+  "<div class='kpi' style='left:" + (24 + 355 * i) + "px;top:195px'><div class='ic'>" + svg(s.icon, 36) + "</div><div class='tx'><div class='l'>" + s.label + "</div><div class='v'>" + s.value + "</div><div class='d'>" + s.delta + '</div></div></div>').join('');
+$('regs').innerHTML = HIS.registrations.map(r =>
+  "<div class='dr'><div class='who'><b>" + r.name + '</b><small>' + r.id + ' \u00b7 ' + r.age + ' yrs</small></div>' +
+  "<span class='badge " + HIS.statusClass[r.type] + "' style='left:151px'>" + r.type + '</span>' +
+  "<span class='c' style='left:284px'>" + r.dept + '</span>' +
+  "<span class='c' style='left:424px'>" + r.doctor + '</span>' +
+  "<span class='c' style='left:611px'>" + r.time + '</span>' +
+  "<span class='badge " + HIS.statusClass[r.status] + "' style='left:720px'>" + r.status + '</span></div>').join('');
+const tops = [129, 237, 337, 441], btops = [138, 250, 362, 466];
+$('sched').innerHTML = "<i class='tl'></i>" + HIS.schedule.map((s, i) =>
+  "<i class='dot' style='top:" + (tops[i] + 4) + "px'></i><div class='si' style='top:" + tops[i] + "px'><div class='t'>" + s.time + '</div><b>' + s.name + '</b><small>' + s.what + '</small><small>' + s.doctor + '</small></div>' +
+  "<span class='badge sched-badge " + HIS.statusClass[s.status] + "' style='left:" + (s.status === 'In Progress' ? 276 : 283) + 'px;top:' + btops[i] + "px'>" + s.status + '</span>').join('');
 </script>
 </body></html>

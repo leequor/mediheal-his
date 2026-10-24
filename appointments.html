@@ -1,70 +1,82 @@
 <!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang='en'><head>
+<meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
 <title>Appointments · MediHeal</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lexend:wght@500;600&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/tokens.css"><link rel="stylesheet" href="assets/css/base.css"><link rel="stylesheet" href="assets/css/components.css">
-</head><body data-page="appointments">
-<!-- Figma: Appointments 23:2289, Appointment Form 248:821, confirmed 304:502 -->
-<main id="app">
-  <section class="grid kpis" id="kpis"></section>
-  <div class="head" style="margin-top:28px">
-    <h1 style="font-size:26px;margin:0">Appointments</h1>
-    <div class="toolbar" style="margin:0">
-      <input id="q" type="search" placeholder="Search patients, doctors..." style="width:220px">
-      <select id="stat"></select><select id="doc"></select>
-      <button class="btn" id="new">+ New Appointment / Walk-In</button>
+<link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@700&display=swap' rel='stylesheet'>
+<link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/base.css'><link rel='stylesheet' href='assets/css/components.css'><link rel='stylesheet' href='assets/css/pages.css'>
+</head><body data-page='appointments'>
+<!-- Figma: Appointments 23:2289 (frame origin 4800,34000). Appointment Form 248:821 and Appointment confirmed 304:502 are still to convert; the modal is temporary. -->
+<div class='stage'>
+  <div id='kpis'></div>
+  <h1 class='a-title'>Appointments</h1>
+  <div class='a-controls'>
+    <div class='a-search'><span id='sicon'></span><input id='q' type='search' placeholder='Search patients, doctors...' aria-label='Search appointments'></div>
+    <div class='a-dd' id='dd-stat' style='width:114px'></div>
+    <div class='a-dd' id='dd-doc' style='width:147px'></div>
+    <button class='a-new' id='new'><span id='picon'></span>New Appointment / Walk-In</button>
+  </div>
+  <section class='a-table'>
+    <div class='a-grid a-th'><span>PATIENT NAME</span><span>DATE &amp; TIME</span><span>APPOINTMENT TYPE</span><span>DOCTOR</span><span>STATUS</span><span>ACTIONS</span></div>
+    <div id='rows'></div>
+    <div class='a-foot'><span id='count'></span>
+      <div class='a-pages'><button disabled aria-label='Previous page'>\u2039</button><button class='on'>1</button><button disabled title='Demo data fits on one page'>2</button><button disabled>3</button><button disabled aria-label='Next page'>\u203a</button></div>
     </div>
-  </div>
-  <div class="card">
-    <div class="table-wrap"><table>
-      <thead><tr><th>Patient name</th><th>Date &amp; time</th><th>Appointment type</th><th>Doctor</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="rows"></tbody>
-    </table></div>
-    <div class="pager"><span id="count"></span>
-      <div class="pages"><button class="icon-btn" disabled>&lsaquo;</button><button class="icon-btn on">1</button><button class="icon-btn" disabled title="Demo data fits on one page">2</button><button class="icon-btn" disabled>3</button><button class="icon-btn" disabled>&rsaquo;</button></div></div>
-  </div>
-</main>
-<script src="assets/js/data.js"></script><script src="assets/js/data-records.js"></script><script src="assets/js/shell.js"></script><script src="assets/js/ui.js"></script>
+  </section>
+</div>
+<script src='assets/js/data.js'></script><script src='assets/js/data-records.js'></script><script src='assets/js/icons.js'></script><script src='assets/js/ui.js'></script><script src='assets/js/shell.js'></script>
 <script>
 const $ = id => document.getElementById(id);
 const T = HIS.apptTotals;
-$('kpis').innerHTML = [['Total Appointments', T.total, '\u{1F4C5}'], ['Confirmed', T.confirmed, '\u2705'], ['Pending Approval', T.pending, '\u{1F552}'], ['Cancelled', T.cancelled, '\u274C'], ['Walk-In', T.walkin, '\u{1F6B6}']]
-  .map(([l, v, i]) => `<div class="card kpi compact"><div><div class="lbl">${l} ${i}</div><div class="val">${v}</div></div></div>`).join('');
-$('stat').innerHTML = opts(['Status: All', ...HIS.apptStatuses]);
-$('doc').innerHTML = opts(['Doctor: All Drs.', ...HIS.doctors]);
+$('sicon').innerHTML = svg('search', 16);
+$('picon').innerHTML = svg('plus', 16);
+// [label, value, icon, icon bg, icon color, width, height, left]
+const K = [
+  ['Total Appointments', T.total, 'calendar-check', '#dbeafe', '#2563eb', 224, 126, 148],
+  ['Confirmed', T.confirmed, 'check-circle', '#d1fae5', '#10b981', 197, 126, 392],
+  ['Pending Approval', T.pending, 'clock', '#fef3c7', '#f59e0b', 232, 126, 609],
+  ['Cancelled', T.cancelled, 'x-circle', '#fee2e2', '#ef4444', 194, 136, 861],
+  ['Walk-In', T.walkin, 'person-circle', '#1e293b', '#ffffff', 183, 136, 1075]
+];
+$('kpis').innerHTML = K.map(k => "<div class='akpi' style='left:" + k[7] + 'px;width:' + k[5] + 'px;height:' + k[6] + "px'><div class='at'><span>" + k[0] + "</span><i style='background:" + k[3] + ';color:' + k[4] + "'>" + svg(k[2], 20) + "</i></div><div class='aval'>" + k[1] + '</div></div>').join('');
 
 const state = { q: '', stat: 'Status: All', doc: 'Doctor: All Drs.' };
-const cls = { Confirmed: 'ok', Completed: 'blue', Cancelled: 'red', Pending: 'yellow' };
+makeDropdown($('dd-stat'), { options: ['Status: All', ...HIS.apptStatuses], onChange: v => { state.stat = v; render(); } });
+makeDropdown($('dd-doc'), { options: ['Doctor: All Drs.', ...HIS.doctors], onChange: v => { state.doc = v; render(); } });
+document.querySelectorAll('.a-dd').forEach(d => d.classList.add('light'));
 
 function render() {
   const q = state.q.trim().toLowerCase();
-  const list = HIS.appointments.map((a, i) => ({ ...a, i })).filter(a =>
+  const list = HIS.appointments.map((a, i) => Object.assign({}, a, { i })).filter(a =>
     (state.stat === 'Status: All' || a.status === state.stat) &&
     (state.doc === 'Doctor: All Drs.' || a.doctor === state.doc) &&
-    (!q || (a.patient + a.doctor + a.kind).toLowerCase().includes(q)));
-  $('rows').innerHTML = list.length ? list.map(a => `<tr>
-    <td><b>${a.patient}</b></td><td>${a.when}</td><td>${a.kind}</td><td>${a.doctor}</td>
-    <td><span class="pill ${cls[a.status]}">${a.status}</span></td>
-    <td><button class="icon-btn" data-edit="${a.i}" title="Edit" aria-label="Edit appointment for ${a.patient}">\u270E</button></td></tr>`).join('')
-    : `<tr><td colspan="6" class="empty">No appointments match these filters.</td></tr>`;
-  $('count').textContent = `Showing ${list.length} of ${HIS.appointments.length} loaded (${T.total} total)`;
+    (!q || (a.patient + ' ' + a.doctor + ' ' + a.kind).toLowerCase().includes(q)));
+  $('rows').innerHTML = list.length ? list.map(a =>
+    "<div class='a-grid a-row'><span class='nm'>" + a.patient + '</span><span>' + a.when + "</span><span class='ty'>" + a.kind + '</span><span>' + a.doctor + '</span>' +
+    "<span><span class='a-pill " + a.status + "'>" + a.status + '</span></span>' +
+    "<span class='a-act'><button class='a-ib' data-edit='" + a.i + "' aria-label='Edit appointment for " + a.patient + "'>" + svg('edit', 16) + "</button><button class='a-ib' data-more='" + a.i + "' aria-label='More actions'>" + svg('more', 16) + '</button></span></div>').join('')
+    : "<div class='empty'>No appointments match these filters.</div>";
+  $('count').textContent = 'Showing ' + (list.length ? '1-' + list.length : '0') + ' of ' + T.total + ' appointments';
 }
 
-function form(a = {}) {
+function toInputs(when) {
+  const parts = when.split(' \u2022 ');
+  const dt = new Date(parts[0] + ' ' + parts[1]);
+  const p = n => String(n).padStart(2, '0');
+  return { date: dt.getFullYear() + '-' + p(dt.getMonth() + 1) + '-' + p(dt.getDate()), time: p(dt.getHours()) + ':' + p(dt.getMinutes()) };
+}
+function form(a) {
+  a = a || {};
   openModal({
-    title: a.patient ? 'Edit Appointment' : 'New Appointment / Walk-In', sub: 'Schedule or update a visit',
+    title: a.patient ? 'Edit Appointment' : 'New Appointment / Walk-In', sub: 'Temporary form. The real Appointment Form screen comes from Figma next.',
     saveLabel: a.patient ? 'Save changes' : 'Create',
-    body: `<label>Patient</label><input name="patient" required value="${a.patient || ''}">
-      <div class="row"><div><label>Date</label><input name="date" type="date" required value="${a.date || '2026-08-31'}"></div>
-      <div><label>Time</label><input name="time" type="time" required value="${a.time || '09:00'}"></div></div>
-      <label>Type</label><select name="kind">${opts(HIS.apptKinds, a.kind)}</select>
-      <div class="row"><div><label>Doctor</label><select name="doctor">${opts(HIS.doctors, a.doctor)}</select></div>
-      <div><label>Status</label><select name="status">${opts(HIS.apptStatuses, a.status || 'Pending')}</select></div></div>`,
+    body: "<label>Patient</label><input name='patient' required value='" + (a.patient || '') + "'>" +
+      "<div class='row'><div><label>Date</label><input name='date' type='date' required value='" + (a.date || '2026-08-31') + "'></div><div><label>Time</label><input name='time' type='time' required value='" + (a.time || '09:00') + "'></div></div>" +
+      "<label>Type</label><select name='kind'>" + opts(HIS.apptKinds, a.kind) + '</select>' +
+      "<div class='row'><div><label>Doctor</label><select name='doctor'>" + opts(HIS.doctors, a.doctor) + "</select></div><div><label>Status</label><select name='status'>" + opts(HIS.apptStatuses, a.status || 'Pending') + '</select></div></div>',
     onSave: d => {
       const dt = new Date(d.date + 'T' + d.time);
-      const rec = { patient: d.patient, kind: d.kind, doctor: d.doctor, status: d.status,
-        when: HIS.fmtShort(dt) + ' \u2022 ' + dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }), date: d.date, time: d.time };
+      const rec = { patient: d.patient, kind: d.kind, doctor: d.doctor, status: d.status, date: d.date, time: d.time,
+        when: HIS.fmtShort(dt) + ' \u2022 ' + dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) };
       if (a.i != null) HIS.appointments[a.i] = rec; else HIS.appointments.push(rec);
       render();
     }
@@ -72,22 +84,23 @@ function form(a = {}) {
 }
 
 $('q').oninput = e => { state.q = e.target.value; render(); };
-$('stat').onchange = e => { state.stat = e.target.value; render(); };
-$('doc').onchange = e => { state.doc = e.target.value; render(); };
 $('new').onclick = () => form();
 $('rows').onclick = e => {
-  const b = e.target.closest('[data-edit]');
-  if (!b) return;
-  const a = HIS.appointments[+b.dataset.edit];
-  form({ ...a, i: +b.dataset.edit, ...(a.date ? {} : toInputs(a.when)) });
+  const ed = e.target.closest('[data-edit]');
+  const mo = e.target.closest('[data-more]');
+  document.querySelectorAll('.a-menu').forEach(m => m.remove());
+  if (ed) { const i = +ed.dataset.edit; const a = HIS.appointments[i]; form(Object.assign({ i }, a, a.date ? {} : toInputs(a.when))); }
+  if (mo) {
+    e.stopPropagation();
+    const i = +mo.dataset.more;
+    const menu = document.createElement('div');
+    menu.className = 'a-menu';
+    menu.innerHTML = "<button data-s='Completed'>Mark completed</button><button data-s='Cancelled'>Cancel appointment</button>";
+    menu.onclick = ev => { const b = ev.target.closest('button'); if (b) { HIS.appointments[i].status = b.dataset.s; render(); } };
+    mo.closest('.a-act').appendChild(menu);
+  }
 };
-// turn "Aug 31, 2026 • 09:30 AM" into input values for the edit form
-function toInputs(when) {
-  const [d, t] = when.split(' \u2022 ');
-  const dt = new Date(d + ' ' + t);
-  const p = n => String(n).padStart(2, '0');
-  return { date: `${dt.getFullYear()}-${p(dt.getMonth() + 1)}-${p(dt.getDate())}`, time: `${p(dt.getHours())}:${p(dt.getMinutes())}` };
-}
+document.addEventListener('click', () => document.querySelectorAll('.a-menu').forEach(m => m.remove()));
 render();
 </script>
 </body></html>

@@ -1,24 +1,15 @@
 :root{
-  --bg:#f6fafd;
-  --card:#fff;
-  --line:#c8dcea;
-  --row-line:#e3edf3;
-  --th-bg:#e8f4fb;
-  --th-text:#5b8db8;
-  --title:#15405a;
-  --section:#1b4e6b;
-  --muted:#6f8890;
-  --body:#1c2b30;
-  --primary:#1c6d9c;
+  --bg:#f6faff;--card:#fff;--line:#c8dcea;--row-line:#e3edf3;
+  --title:#15405a;--section:#1b4e6b;--muted:#6f8890;--body:#1c2b30;
+  --primary:#1c6d9c;--navy:#15254c;
   --scrim:rgba(11,42,61,.35);
-  --shadow:0 8px 24px rgba(27,78,107,.18);
-  --r-card:12px;
-  --r-btn:8px;
-  --font-title:'Outfit',sans-serif;
-  --font-section:'Lexend',sans-serif;
-  --font-body:'Inter',sans-serif;
+  --shadow:0 4px 14px rgba(0,0,0,.15);
   --header-grad:linear-gradient(90deg,#dff9ff 0%,#3393c9 65.9%,#1b4e6b 100%);
-  --pill-in-bg:#ffcba3;--pill-in-fg:#a6460a;
-  --pill-ok-bg:#d8ffd3;--pill-ok-fg:#084d02;
-  --pill-off-bg:#e9ecef;--pill-off-fg:#1a1a1a;
+  --ok-bg:#d8ffd3;--ok-fg:#084d02;
+  --in-bg:#ffcba3;--in-fg:#a6460a;
+  --off-bg:rgba(28,43,48,.16);--off-fg:#1c2b30;
+  --red-bg:#ffd6d3;--red-fg:#9b1c14;
+  --font-title:'Outfit',sans-serif;
+  --font-lexend:'Lexend',sans-serif;
+  --font-inter:'Inter',sans-serif;
 }

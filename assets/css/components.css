@@ -1,33 +1,31 @@
-/* extra pill colors */
-.pill.red{background:#ffd6d3;color:#9b1c14}
-.pill.blue{background:#d6e8ff;color:#154a8a}
-.pill.yellow{background:#fff0c2;color:#8a5a00}
+/* badges (Figma mh-badge: 93x30, r999, Lexend Bold 12) */
+.badge{display:inline-flex;align-items:center;justify-content:center;height:30px;min-width:93px;padding:0 14px;border-radius:999px;font:700 12px/15px var(--font-lexend);white-space:nowrap}
+.badge.ok{background:var(--ok-bg);color:var(--ok-fg)}
+.badge.in{background:var(--in-bg);color:var(--in-fg)}
+.badge.off{background:var(--off-bg);color:var(--off-fg)}
+.badge.red{background:var(--red-bg);color:var(--red-fg)}
 
-/* page head + toolbar */
-.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin:8px 0 16px}
-.head h1{margin:0}
-.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
-.toolbar .grow{flex:1;min-width:180px}
-.toolbar select{width:auto;min-width:170px}
-.tabs{display:flex;gap:8px}
-.tab{background:#fff;border:1px solid var(--line);color:var(--section);border-radius:var(--r-btn);padding:8px 18px;font:600 12px var(--font-body);cursor:pointer}
-.tab.on{background:#4a5f9a;border-color:#4a5f9a;color:#fff}
+/* custom dropdown (Figma dropdown frames: 236x45, list items 38 high) */
+.dd{position:absolute}
+.dd-btn{display:flex;justify-content:space-between;align-items:center;width:100%;height:100%;background:#fff;border:1px solid rgba(0,0,0,.3);border-radius:10px;padding:0 14px;font:500 14px/17px var(--font-inter);color:#000}
+.dd-panel{display:none;position:absolute;top:100%;left:0;width:100%;margin-top:4px;background:#fff;border:1px solid rgba(0,0,0,.3);border-radius:10px;z-index:15;overflow:hidden;box-shadow:var(--shadow)}
+.dd.open .dd-panel{display:block}
+.dd-panel button{display:block;width:100%;height:38px;padding:0 14px;text-align:left;background:#fff;border:0;font:400 14px var(--font-inter);color:#000;white-space:nowrap}
+.dd-panel button:hover{background:#eef6fb}
+.dd.light .dd-btn{border:1px solid #e2e8f0;border-radius:8px;padding:0 12px;color:#1e293b}
+.dd.light .dd-panel{border:1px solid #e2e8f0;border-radius:8px;width:max-content;min-width:100%}
+.dd.light .dd-panel button{height:34px;color:#1e293b}
 
-.av{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--th-bg);color:var(--primary);font:600 10px var(--font-body);margin-right:10px;vertical-align:middle}
-.who{display:inline-block;vertical-align:middle}
-.icon-btn{width:30px;height:30px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;color:var(--section)}
-.icon-btn:hover{background:var(--th-bg)}
-.icon-btn:disabled{opacity:.4;cursor:default}
-.empty{padding:28px;text-align:center;color:var(--muted)}
-.pager{display:flex;justify-content:space-between;align-items:center;margin-top:14px;color:var(--muted);font-size:11px}
-.pager .pages{display:flex;gap:6px}
-.pager .icon-btn.on{background:#1b4e6b;color:#fff;border-color:#1b4e6b}
-.kpi.compact .val{font-size:26px}
-.kpi-note{font-size:11px;color:var(--muted)}
+.empty{padding:36px;text-align:center;color:var(--muted)}
 
-/* modal */
+/* temporary modal (NOT in Figma; to be replaced by the real Figma form screens) */
 .modal-bg{position:fixed;inset:0;background:var(--scrim);display:grid;place-items:center;z-index:60;padding:16px}
-.modal{background:#fff;border-radius:var(--r-card);width:460px;max-width:100%;padding:24px;box-shadow:var(--shadow)}
-.modal h3{margin:0 0 4px}
+.modal{background:#fff;border-radius:14px;width:460px;max-width:100%;padding:24px;box-shadow:var(--shadow)}
+.modal h3{margin:0 0 4px;font:500 20px var(--font-lexend)}
+.modal p{margin:0;color:var(--muted)}
+.modal label{display:block;font-size:12px;color:var(--muted);margin:12px 0 4px}
+.modal input,.modal select{width:100%;height:38px;border:1px solid var(--line);border-radius:10px;padding:0 12px;font:14px var(--font-inter);background:#fff}
 .modal .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .modal .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.mbtn{height:40px;padding:0 20px;border-radius:10px;border:1px solid var(--primary);background:var(--primary);color:#fff;font:600 14px var(--font-inter)}
+.mbtn.out{background:#fff;color:var(--section);border-color:var(--line)}
