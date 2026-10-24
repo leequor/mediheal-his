@@ -1,0 +1,23 @@
+/* Patient profile action modals (Figma 2027:2615 Edit, 2027:2800 Transfer, 2027:2985 Discharge: modal 680x568 at frame-local (380,192); 2047:26162 Pharmacy dispense and 2047:25563 Discharge summary: 680x664 at (380,120)). Shadows ESTIMATED. */
+.pm-scrim{position:absolute;left:0;top:0;right:0;bottom:0;background:rgba(11,42,61,.35);z-index:1000}
+.pm-modal{position:absolute;left:380px;width:680px;box-sizing:border-box;background:#fff;border:1px solid #c8dcea;border-radius:16px;z-index:1001;box-shadow:0 20px 50px rgba(15,30,46,.25)}
+.pm-modal>*{position:absolute;margin:-1px 0 0 -1px;box-sizing:border-box}
+.pm-x{left:616px;top:24px;width:32px;height:32px;border:1px solid #c8dcea;border-radius:8px;background:#f6fafd;color:#1b4e6b;font:500 18px/28px Inter,sans-serif;padding:0;cursor:pointer}
+.pm-t{left:32px;top:28px;font:500 22px/27.5px Lexend,sans-serif;color:#15405a;white-space:nowrap}
+.pm-s{left:32px;top:62px;font:400 13px/15.73px Inter,sans-serif;color:#6f8890;white-space:nowrap}
+.pm-d{left:32px;top:100px;width:616px;height:1px;background:#e3edf3}
+.pm-l{font:600 12px/14.52px Inter,sans-serif;color:#1b4e6b;white-space:nowrap}
+.pm-i{height:40px;border:1px solid #c8dcea;border-radius:8px;background:#f6fafd;padding:0 13px 2px;font:500 13px/15.73px Inter,sans-serif;color:#1c2b30;outline:none}
+.pm-i:focus{border-color:#1c6d9c}
+.pm-i.err{border-color:#e2554f}
+.pm-i[readonly]{cursor:default}
+.pm-ta{height:88px;padding:11px 13px;resize:none}
+.pm-b{left:32px;top:366px;width:616px;height:76px;background:#e8f4fb;border:1px solid #c8dcea;border-radius:8px;padding:13px 15px}
+.pm-b b{display:block;font:600 13px/15.73px Inter,sans-serif;color:#1b4e6b;margin-bottom:6px}
+.pm-b span{display:block;font:400 12px/14.52px Inter,sans-serif;color:#1b4e6b}
+.pm-b.err b,.pm-b.err span{color:#a31c1a}
+.pm-c,.pm-ok{height:40px;border-radius:8px;border:1px solid #c8dcea;font:600 13px/15.73px Inter,sans-serif;cursor:pointer;padding:0}
+.pm-c{left:396px;width:100px;background:#fff;color:#1b4e6b}
+.pm-ok{left:508px;width:140px;background:#1c6d9c;border-color:#1c6d9c;color:#fff}
+.pm-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%);background:#15405a;color:#fff;font:500 13px/18px Inter,sans-serif;padding:10px 18px;border-radius:10px;z-index:3000;opacity:0;pointer-events:none;transition:opacity .2s}
+.pm-toast.on{opacity:1}
