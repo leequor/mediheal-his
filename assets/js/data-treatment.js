@@ -1,0 +1,34 @@
+// Treatment Plans data (Figma 2047:17739). Isabel Geliz V. Ramos (PT-99213) is the only plan drawn in Figma: every value of hers is the Figma text.
+// The other 7 plans keep the Figma list text (name, initials, diagnosis line, id) but their detail values are DERIVED (invented, plausible) because Figma draws no detail for them.
+// `sub` = the text drawn in the list row; `dept` = used by the department filter (Ana's and Hana's list lines carry no department that is in the Figma menu, so a department was derived).
+window.HIS = window.HIS || {};
+HIS.treatment = {
+  today: 'Aug 31, 2026',
+  depts: ['Cardiology', 'Orthopedics', 'General Medicine', 'Neurology', 'Gastroenterology', 'Dermatology'],
+  plans: [
+    { id: 'PT-99208', name: 'Ana Villanueva', ini: 'AV', sub: 'Hypertension \u00b7 Medication review', dept: 'General Medicine', sex: 'Female', type: 'Outpatient', f: {
+      pdx: 'Essential hypertension \u00b7 I10', started: 'Aug 31, 2026 \u00b7 after consultation', goal: 'BP below 130/80 within 4 weeks', duration: 'Ongoing, review monthly', meds: 'Amlodipine 5 mg', procs: 'None scheduled', monitoring: 'Home BP log twice daily', review: 'Sep 14, 2026 \u00b7 Dr. Yumie Pasiol',
+      allergies: 'No known allergies', severity: 'None', bp: '146/92 mmHg', hr: '78 bpm', temp: '36.6 \u00b0C', spo2: '98% \u00b7 62 kg', attending: 'Dr. Yumie Pasiol', department: 'General Medicine', care: 'Outpatient \u00b7 Clinic follow-up', next: 'Medication review' } },
+    { id: 'PT-99213', name: 'Isabel Geliz V. Ramos', ini: 'IR', sub: 'Acute coronary syndrome \u00b7 Cardiology', dept: 'Cardiology', sex: 'Female', age: '54', type: 'Inpatient', f: {
+      pdx: 'Acute coronary syndrome \u00b7 I24.9', started: 'Aug 31, 2026 \u00b7 after consultation', goal: 'Relieve chest pain, BP below 130/80', duration: '7 days inpatient, then follow-up', meds: 'Aspirin 81 mg, Atorvastatin 40 mg', procs: 'Coronary angiography \u00b7 Sep 2, 2026', monitoring: 'Vitals every 4 hours, oxygen as needed', review: 'Sep 3, 2026 \u00b7 Dr. Laurice Laureta',
+      allergies: 'Penicillin \u00b7 skin rash', severity: 'Moderate', bp: '150/95 mmHg', hr: '92 bpm', temp: '36.8 \u00b0C', spo2: '97% \u00b7 68 kg', attending: 'Dr. Laurice Laureta', department: 'Cardiology', care: 'Inpatient \u00b7 Ward 3, Bed 12', next: 'Prescribe medication' } },
+    { id: 'PT-99212', name: 'Rilaneh Marie L. Acabal', ini: 'RMA', sub: 'Knee osteoarthritis \u00b7 Orthopedics', dept: 'Orthopedics', sex: 'Female', type: 'Outpatient', f: {
+      pdx: 'Knee osteoarthritis \u00b7 M17.9', started: 'Aug 31, 2026 \u00b7 after consultation', goal: 'Reduce knee pain, walk comfortably', duration: '6 weeks of therapy', meds: 'Paracetamol 500 mg, Celecoxib 200 mg', procs: 'Physiotherapy \u00b7 3 sessions a week', monitoring: 'Pain score at each visit', review: 'Sep 8, 2026 \u00b7 Dr. Marc Laureta',
+      allergies: 'Sulfa drugs \u00b7 rash', severity: 'Mild', bp: '128/82 mmHg', hr: '74 bpm', temp: '36.7 \u00b0C', spo2: '98% \u00b7 71 kg', attending: 'Dr. Marc Laureta', department: 'Orthopedics', care: 'Outpatient \u00b7 Orthopedics clinic', next: 'Start physiotherapy' } },
+    { id: 'PT-99215', name: 'Maria Santos', ini: 'MS', sub: 'Viral fever \u00b7 General Medicine', dept: 'General Medicine', sex: 'Female', type: 'Outpatient', f: {
+      pdx: 'Viral fever \u00b7 B34.9', started: 'Aug 31, 2026 \u00b7 after consultation', goal: 'Fever resolved within 3 days', duration: '5 days, then review', meds: 'Paracetamol 500 mg every 6 hours', procs: 'None scheduled', monitoring: 'Temperature every 6 hours', review: 'Sep 2, 2026 \u00b7 Dr. Yumie Pasiol',
+      allergies: 'None recorded', severity: 'None', bp: '112/72 mmHg', hr: '88 bpm', temp: '38.1 \u00b0C', spo2: '98% \u00b7 58 kg', attending: 'Dr. Yumie Pasiol', department: 'General Medicine', care: 'Outpatient \u00b7 Clinic follow-up', next: 'Review in 2 days' } },
+    { id: 'PT-99210', name: 'Tobias Reyes', ini: 'TR', sub: 'Acute bronchitis \u00b7 General Medicine', dept: 'General Medicine', sex: 'Male', type: 'Outpatient', f: {
+      pdx: 'Acute bronchitis \u00b7 J20.9', started: 'Aug 31, 2026 \u00b7 after consultation', goal: 'Clear the cough and breathe easily', duration: '7 days', meds: 'Amoxicillin 500 mg, Salbutamol inhaler', procs: 'Chest X-ray \u00b7 Sep 1, 2026', monitoring: 'Oxygen saturation twice daily', review: 'Sep 5, 2026 \u00b7 Dr. Yumie Pasiol',
+      allergies: 'Dust \u00b7 sneezing', severity: 'Mild', bp: '122/78 mmHg', hr: '84 bpm', temp: '37.4 \u00b0C', spo2: '96% \u00b7 76 kg', attending: 'Dr. Yumie Pasiol', department: 'General Medicine', care: 'Outpatient \u00b7 Clinic follow-up', next: 'Chest X-ray' } },
+    { id: 'PT-99211', name: 'Eleanor Whitfield', ini: 'EW', sub: 'Migraine \u00b7 Neurology', dept: 'Neurology', sex: 'Female', type: 'Outpatient', f: {
+      pdx: 'Migraine with aura \u00b7 G43.1', started: 'Aug 31, 2026 \u00b7 after consultation', goal: 'Fewer than 2 attacks a month', duration: '3 months, then review', meds: 'Sumatriptan 50 mg, Propranolol 40 mg', procs: 'MRI brain \u00b7 Sep 3, 2026', monitoring: 'Headache diary', review: 'Sep 17, 2026 \u00b7 Dr. Jeremias Esperanza',
+      allergies: 'None recorded', severity: 'None', bp: '118/76 mmHg', hr: '70 bpm', temp: '36.5 \u00b0C', spo2: '99% \u00b7 60 kg', attending: 'Dr. Jeremias Esperanza', department: 'Neurology', care: 'Outpatient \u00b7 Neurology clinic', next: 'MRI brain' } },
+    { id: 'PT-99218', name: 'Luis Garcia', ini: 'LG', sub: 'Gastritis \u00b7 Gastroenterology', dept: 'Gastroenterology', sex: 'Male', type: 'Outpatient', f: {
+      pdx: 'Chronic gastritis \u00b7 K29.5', started: 'Aug 31, 2026 \u00b7 after consultation', goal: 'Relieve pain, heal the stomach lining', duration: '8 weeks', meds: 'Omeprazole 20 mg', procs: 'Upper endoscopy \u00b7 Sep 9, 2026', monitoring: 'Diet and symptom diary', review: 'Sep 23, 2026 \u00b7 Dr. Elsie Chen',
+      allergies: 'Aspirin \u00b7 stomach upset', severity: 'Mild', bp: '124/80 mmHg', hr: '76 bpm', temp: '36.6 \u00b0C', spo2: '98% \u00b7 82 kg', attending: 'Dr. Elsie Chen', department: 'Gastroenterology', care: 'Outpatient \u00b7 Clinic follow-up', next: 'Upper endoscopy' } },
+    { id: 'PT-99209', name: 'Hana Kobayashi', ini: 'HK', sub: 'Contact dermatitis \u00b7 Pediatrics', dept: 'Dermatology', sex: 'Female', type: 'Outpatient', f: {
+      pdx: 'Contact dermatitis \u00b7 L25.9', started: 'Aug 31, 2026 \u00b7 after consultation', goal: 'Rash cleared, skin healed', duration: '2 weeks', meds: 'Hydrocortisone 1% cream', procs: 'None scheduled', monitoring: 'Skin check at each visit', review: 'Sep 7, 2026 \u00b7 Dr. Paolo Tipay',
+      allergies: 'Latex \u00b7 rash', severity: 'Mild', bp: '100/64 mmHg', hr: '90 bpm', temp: '36.8 \u00b0C', spo2: '99% \u00b7 \u2014', attending: 'Dr. Paolo Tipay', department: 'Pediatrics', care: 'Outpatient \u00b7 Pediatrics clinic', next: 'Skin check' } }
+  ]
+};

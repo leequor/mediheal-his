@@ -1,10 +1,13 @@
 <!doctype html>
 <html lang='en'><head>
 <meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>Treatment · MediHeal</title>
-<link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@700&display=swap' rel='stylesheet'>
-<link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/base.css'>
+<title>Treatment Plans · MediHeal</title>
+<link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@600;700&display=swap' rel='stylesheet'>
+<link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/base.css'><link rel='stylesheet' href='assets/css/treatment.css'>
 </head><body data-page='treatment'>
-<div class='stage'><section class='stub'><h1>Treatment</h1><p>Not converted yet. Figma: Module 3 board <code>2027:1926</code>; patient profiles <code>459:680</code>, <code>488:1955</code>, <code>488:2105</code>, <code>488:2255</code>, <code>488:2405</code>.</p></section></div>
-<script src='assets/js/data.js'></script><script src='assets/js/icons.js'></script><script src='assets/js/shell.js'></script>
+<!-- Figma Treatment Plan 2047:17739 (Module 3; origin 0,57800; 1440x1262) + state frames as JS states of this ONE template:
+     Department filter 4011:4115, Prescribe 2047:18007, Order lab/imaging 2047:19218, Schedule procedure 2047:20125, Assign ward and bed 2047:23469, Update status 2047:24075.
+     Nursing care 2047:20735 is a separate page (nursing.html). Data: assets/js/data-treatment.js, layout + states: assets/js/treatment.js, styles: assets/css/treatment.css. -->
+<div class='stage tp' id='stage'></div>
+<script src='assets/js/data.js'></script><script src='assets/js/data-records.js'></script><script src='assets/js/data-profiles.js'></script><script src='assets/js/data-treatment.js'></script><script src='assets/js/icons.js'></script><script src='assets/js/shell.js'></script><script src='assets/js/treatment.js'></script>
 </body></html>

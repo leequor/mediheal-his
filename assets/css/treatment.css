@@ -1,0 +1,97 @@
+/* Treatment Plans (Figma 2047:17739, 1440x1262, origin 0,57800). Frame-local coordinates read in session 14 (same Module 3/Module 2 pattern as Personnel).
+   ESTIMATED: shadows, active dot colour (#4f9a2b), selected-row left bar (3px), completed/cancelled pill colours, menu/modal shadows, hover colours. */
+.tp{height:1262px;min-height:0}
+#tpc{position:absolute;left:0;top:0;width:0;height:0}
+#tpc *{box-sizing:border-box}
+.tp-a{position:absolute;white-space:nowrap}
+.tp-t{margin:0;font:700 36px/45.36px Outfit,sans-serif;color:#15405a}
+.tp-d{font:400 14px/16.94px Inter,sans-serif;color:#6f8890}
+.tp-card{background:#fff;box-shadow:inset 0 0 0 1px #c8dcea,0 4px 16px rgba(27,78,107,.06)}
+.tp-sum{left:68px;top:207px;width:1304px;height:78px;border-radius:12px}
+.tp-ico{left:88px;top:224px;width:44px;height:44px;border-radius:22px;background:#e8f4fb;color:#1c6d9c}
+.tp-ico svg{position:absolute;left:11px;top:11px}
+.tp-v1{font:700 18px/21.78px Inter,sans-serif;color:#15405a}
+.tp-v2{font:600 15px/18.15px Inter,sans-serif;color:#15405a}
+.tp-l{font:400 11px/13.31px Inter,sans-serif;color:#6f8890}
+.tp-sd{width:1px;height:34px;background:#e3edf3}
+.tp-rx{left:868px;top:225px;width:122px;height:42px;border:0;padding:0;border-radius:8px;background:#1c6d9c;box-shadow:inset 0 0 0 1px #1c6d9c;color:#fff;font:600 13px/15.73px Inter,sans-serif;cursor:pointer;text-align:left}
+.tp-rx:hover{background:#185f88}
+.tp-rx svg{position:absolute;left:16px;top:10.5px}
+.tp-rx span{position:absolute;left:45px;top:13px}
+.tp-btn2{height:38px;border:0;padding:0;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea;color:#1c6d9c;font:600 12px/14.52px Inter,sans-serif;cursor:pointer;text-align:left}
+.tp-btn2:hover{background:#f6fafd}
+.tp-btn2 svg{position:absolute;left:13px;top:11px}
+.tp-btn2 span{position:absolute;left:36px;top:11.5px}
+.tp-dir{left:68px;top:309px;width:456px;height:917px;border-radius:14px}
+.tp-prof{left:548px;top:309px;width:824px;height:917px;border-radius:14px}
+.tp-h2{font:500 18px/22.5px Lexend,sans-serif;color:#15405a}
+.tp-s12{font:400 12px/14.52px Inter,sans-serif;color:#6f8890}
+.tp-cnt{font:600 12px/14.52px Inter,sans-serif;color:#1c6d9c;text-align:right}
+.tp-search{left:92px;top:393px;width:408px;height:40px;border-radius:8px;box-shadow:inset 0 0 0 1px #c8dcea}
+.tp-search svg{position:absolute;left:12px;top:11px;color:#6f8890}
+.tp-search input{position:absolute;left:40px;top:12.5px;width:350px;height:15px;border:0;outline:0;background:transparent;padding:0;font:400 12px/14.52px Inter,sans-serif;color:#15405a}
+.tp-search input::placeholder{color:#6f8890;opacity:1}
+.tp-flt{left:92px;top:449px;width:408px;height:40px;border:0;padding:0;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea;text-align:left;cursor:pointer}
+.tp-flt.open{box-shadow:inset 0 0 0 1px #1c6d9c}
+.tp-flt .v{position:absolute;left:12px;top:12.5px;font:400 12px/14.52px Inter,sans-serif;color:#15405a}
+.tp-flt svg{position:absolute;left:380px;top:12px;color:#15405a}
+.tp-th{left:68px;top:513px;width:456px;height:34px;background:#e8f4fb;box-shadow:inset 0 1px 0 #c8dcea,inset 0 -1px 0 #c8dcea}
+.tp-th span{position:absolute;top:10.5px;font:600 11px/13.31px Inter,sans-serif;color:#5b8db8}
+.tp-r{left:68px;width:456px;height:76px;border:0;padding:0;margin:0;background:#fff;box-shadow:inset 0 -1px 0 #e3edf3;text-align:left;cursor:pointer;font-family:Inter,sans-serif}
+.tp-r>*{position:absolute;white-space:nowrap}
+.tp-r:hover{background:#f6fafd}
+.tp-r.on{background:#f0f8fd;box-shadow:inset 3px 0 0 #1c6d9c,inset 0 -1px 0 #e3edf3}
+.tp-r .av{left:24px;top:19px;width:38px;height:38px;border-radius:50%;background:#e8f4fb;color:#1c6d9c;font:600 12px/38px Inter,sans-serif;text-align:center}
+.tp-r .nm{left:74px;top:12px;font:600 13px/15.73px Inter,sans-serif;color:#1c2b30}
+.tp-r.on .nm{color:#1c6d9c}
+.tp-r .rl{left:74px;top:33px;font:400 11px/13.31px Inter,sans-serif;color:#6f8890}
+.tp-r .id{left:74px;top:51px;font:400 11px/13.31px Inter,sans-serif;color:#5b8db8}
+.tp-r .dot{left:425px;top:34px;width:8px;height:8px;border-radius:50%;background:#4f9a2b}
+.tp-r .dot.off{background:#b5c2cc}
+.tp-r .chv{left:420px;top:29px;color:#1c6d9c}
+.tp-r .chv svg{display:block}
+.tp-none{left:68px;top:547px;width:456px;text-align:center;font:500 13px/76px Inter,sans-serif;color:#6f8890}
+.tp-ft{left:68px;top:1155px;width:456px;height:49px}
+.tp-bav{left:572px;top:395.5px;width:64px;height:64px;border-radius:50%;background:#e8f4fb;color:#1c6d9c;font:600 24px/64px Inter,sans-serif;text-align:center}
+.tp-name{font:600 25px/31.5px Outfit,sans-serif;color:#15405a}
+.tp-badge{height:23px;border-radius:999px;background:#d8ffd3;color:#084d02;font:600 11px/23px Inter,sans-serif;text-align:center}
+.tp-badge.done{background:#e9ecef;color:#1a1a1a}
+.tp-badge.stop{background:#fce7e6;color:#a31c1a}
+.tp-role{font:400 13px/15.73px Inter,sans-serif;color:#6f8890}
+.tp-eid{font:600 11px/13.31px Inter,sans-serif;color:#1c6d9c}
+.tp-hr{height:1px;background:#e3edf3}
+.tp-sh{font:500 15px/18.75px Lexend,sans-serif;color:#15405a}
+.tp-sico{color:#1c6d9c}
+.tp-fl{font:400 11px/13.31px Inter,sans-serif;color:#6f8890}
+.tp-fv{font:500 13px/18.2px Inter,sans-serif;color:#1c2b30}
+.tp-foot{left:548px;top:1179px;width:824px;height:47px;background:#f6fafd;box-shadow:inset 0 1px 0 #e3edf3;border-radius:0 0 14px 14px}
+/* department filter menu: Figma 4011:4406 panel (92,493) 408x268; options 400x36 at +4,+8 */
+.tp-ml{position:absolute;left:0;top:0;width:1440px;height:1262px;z-index:300}
+.tp-menu{position:absolute;left:92px;top:493px;width:408px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea,0 8px 24px rgba(15,30,46,.12);border-radius:12px;padding:8px 4px;z-index:301}
+.tp-o{display:block;width:400px;height:36px;border:0;border-radius:8px;background:transparent;text-align:left;padding:0 0 0 12px;font:400 12px/36px Inter,sans-serif;color:#15405a;cursor:pointer}
+.tp-o.on{background:#e8f4fb;color:#1c6d9c;font-weight:600}
+.tp-o:hover{background:#f1f7fb}
+/* action modals: Figma 2047:18276 (Prescribe), 2047:19467, 2047:20374, 2047:23718, 2047:24324: 680x664 at (380,120), same template as Billing/Pharmacy */
+.tp-scrim{position:absolute;left:0;top:0;width:1440px;height:1262px;background:rgba(11,42,61,.35);z-index:1000}
+.tp-modal{position:absolute;left:380px;top:120px;width:680px;height:664px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea,0 20px 50px rgba(15,30,46,.25);border-radius:16px;z-index:1001}
+.tp-modal>*{position:absolute}
+.tp-m-x{left:616px;top:24px;width:32px;height:32px;border:0;border-radius:8px;background:#f6fafd;box-shadow:inset 0 0 0 1px #c8dcea;color:#1b4e6b;font:500 18px/30px Inter,sans-serif;padding:0;cursor:pointer}
+.tp-m-t{left:32px;top:28px;font:500 22px/27.5px Lexend,sans-serif;color:#15405a;white-space:nowrap}
+.tp-m-s{left:32px;top:62px;font:400 13px/15.73px Inter,sans-serif;color:#6f8890;white-space:nowrap}
+.tp-m-d{left:32px;top:100px;width:616px;height:1px;background:#e3edf3}
+.tp-m-l{font:600 12px/14.52px Inter,sans-serif;color:#1b4e6b;white-space:nowrap}
+.tp-m-i{height:40px;border-radius:8px;border:0;background:#f6fafd;box-shadow:inset 0 0 0 1px #c8dcea;padding:0 14px;font:500 13px/40px Inter,sans-serif;color:#1c2b30;outline:0;margin:0}
+textarea.tp-m-i{height:88px;padding:12px 14px;line-height:20px;resize:none;font-family:Inter,sans-serif}
+.tp-m-i:focus{box-shadow:inset 0 0 0 1px #1c6d9c}
+.tp-m-i.bad{box-shadow:inset 0 0 0 1px #d64545}
+.tp-m-b{left:32px;top:366px;width:616px;height:76px;background:#e8f4fb;box-shadow:inset 0 0 0 1px #c8dcea;border-radius:8px;padding:14px 16px}
+.tp-m-b b{display:block;font:600 13px/15.73px Inter,sans-serif;color:#1b4e6b;margin-bottom:6px}
+.tp-m-b span{display:block;font:400 12px/14.52px Inter,sans-serif;color:#1b4e6b;white-space:normal}
+.tp-m-b.green{background:#edffe8;box-shadow:inset 0 0 0 1px #99d694}
+.tp-m-b.green b,.tp-m-b.green span{color:#084d02}
+.tp-m-c,.tp-m-ok{top:600px;height:40px;border-radius:8px;border:0;padding:0;font:600 13px/15.73px Inter,sans-serif;cursor:pointer}
+.tp-m-c{left:396px;width:100px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea;color:#1b4e6b}
+.tp-m-ok{left:508px;width:140px;background:#1c6d9c;box-shadow:inset 0 0 0 1px #1c6d9c;color:#fff}
+.tp-m-ok:hover{background:#185f88}
+.tp-tip{position:fixed;z-index:2000;left:50%;bottom:28px;transform:translateX(-50%);background:#15405a;color:#fff;font:600 13px/16px Inter,sans-serif;padding:10px 16px;border-radius:10px}
+@media print{.tp-ml,.tp-scrim,.tp-modal{display:none!important}}
