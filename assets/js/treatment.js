@@ -4,8 +4,9 @@
 // Prototype links read: Prescribe 2047:17783 -> 2047:18007; Status 2047:25308 and 2047:24672 -> 2047:24075; Order tests 2047:17885 -> 2047:19218; Schedule procedure 2047:20722 -> 2047:20125;
 // Nursing care 2047:22236 -> Nursing Care page 2047:20735 (nursing.html); Assign bed 2047:23456 -> 2047:23469; Department filter 2047:17798 -> 4011:4115; patient rows have NO reaction.
 // Pharmacy (session 18): pharmacy.html redirects to treatment.html?modal=pharmacy (no Pharmacy page frame exists in Figma). Dispense -> Medication dispensed (680x368, 4 visible fields, buttons y300; Figma clips Input 5/6).
-// Additions (not in Figma): clicking a row selects that plan (the 7 plans other than PT-99213 have DERIVED details), live search, department filter filters, modals are editable and
-// change the plan in memory only (reload resets). Figma quirk NOT copied: the overlay frames draw a single "Plan history" button where the main frame has 5 action buttons; the Dispensed frame sits over a Personnel clone.
+// Additions (not in Figma): clicking a row selects that plan (the 7 plans other than PT-99213 have DERIVED details), live search, department filter filters, modals are editable.
+// Session 21: saved changes persist in this browser under localStorage key `mh_treatment_state` ({ stock, plans: { <id>: { pstat, type, f: { meds, next, procs, care } } } }); delete the key to reset.
+// Figma quirk NOT copied: the overlay frames draw a single "Plan history" button where the main frame has 5 action buttons; the Dispensed frame sits over a Personnel clone.
 (function () {
   var T = HIS.treatment, stage = document.getElementById('stage');
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
@@ -28,6 +29,30 @@
   var ic = function (n, w, sw, style) { return "<svg width='" + w + "' height='" + w + "' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='" + (sw || 2) + "' stroke-linecap='round' stroke-linejoin='round'" + (style ? " style='" + style + "'" : '') + '>' + IC[n] + '</svg>'; };
   var at = function (cls, l, t, inner, extra) { return "<div class='tp-a " + cls + "' style='left:" + l + 'px;top:' + t + 'px;' + (extra || '') + "'>" + inner + '</div>'; };
   var byId = function (id) { return T.plans.filter(function (p) { return p.id === id; })[0]; };
+
+  // ---- persistence (localStorage, own key) ----
+  var KEY = 'mh_treatment_state';
+  function saveState() {
+    try {
+      var o = { stock: st.stock, plans: {} };
+      T.plans.forEach(function (p) { o.plans[p.id] = { pstat: p.pstat || '', type: p.type, f: { meds: p.f.meds, next: p.f.next, procs: p.f.procs, care: p.f.care } }; });
+      localStorage.setItem(KEY, JSON.stringify(o));
+    } catch (e) { /* storage blocked: keep the change in memory only */ }
+  }
+  (function loadState() {
+    try {
+      var o = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (!o) return;
+      if (typeof o.stock === 'number') st.stock = o.stock;
+      T.plans.forEach(function (p) {
+        var s = o.plans && o.plans[p.id];
+        if (!s) return;
+        if (s.pstat) p.pstat = s.pstat; else delete p.pstat;
+        if (s.type) p.type = s.type;
+        ['meds', 'next', 'procs', 'care'].forEach(function (k) { if (s.f && s.f[k] != null) p.f[k] = s.f[k]; });
+      });
+    } catch (e) { /* ignore bad data */ }
+  })();
 
   // age and sex come from the patient profile / registration data when it exists (Figma lists no age for the other plans)
   function who(p) {
@@ -204,7 +229,8 @@
   function vals() { var o = []; [].forEach.call(document.querySelectorAll('#tpmodal [data-i]'), function (n) { o[+n.dataset.i] = n.value.trim(); }); return o; }
   function qtyOf(v) { return parseInt(String(v || '').replace(/[^0-9]/g, ' ').trim().split(' ')[0], 10) || 0; }
 
-  function confirm() {
+  function confirm() { confirm0(); saveState(); }
+  function confirm0() {
     var kind = st.modal, s = spec(kind, byId(st.sel)), v = vals(), p = byId(st.sel), f = p.f, bad = false;
     var req = s.req.slice(); if (kind === 'status' && /cancel/i.test(v[2] || '')) req.push(4);
     [].forEach.call(document.querySelectorAll('#tpmodal [data-i]'), function (n) { var miss = req.indexOf(+n.dataset.i) > -1 && !n.value.trim(); n.classList.toggle('bad', miss); if (miss) bad = true; });
@@ -218,7 +244,7 @@
     }
     if (kind === 'summary') {
       // ESTIMATED behaviour (Figma has no discharged state): the plan is marked completed and the next step reads Discharged
-      p.pstat = 'done'; f.next = 'Discharged on ' + v[2]; st.modal = ''; render(); tip('Discharge summary saved for ' + p.name + ' (in memory only)'); return;
+      p.pstat = 'done'; f.next = 'Discharged on ' + v[2]; st.modal = ''; render(); tip('Discharge summary saved for ' + p.name); return;
     }
     if (kind === 'rx') {
       var nm = v[0].replace(/\s+tablets?$/i, '');
@@ -228,7 +254,7 @@
     else if (kind === 'proc') { f.procs = v[0] + ' \u00b7 ' + v[3]; msg = v[0] + ' scheduled for ' + v[3]; }
     else if (kind === 'bed') { f.care = 'Inpatient \u00b7 ' + v[0].replace(/^Inpatient\s+/i, '') + ', ' + v[1].replace(/\s*\(.*\)$/, ''); p.type = 'Inpatient'; msg = 'Bed assigned: ' + v[0] + ', ' + v[1].replace(/\s*\(.*\)$/, ''); }
     else { p.pstat = /complet/i.test(v[2]) ? 'done' : /cancel/i.test(v[2]) ? 'stop' : ''; msg = 'Status updated to ' + v[2]; }
-    st.modal = ''; render(); tip(msg + ' (in memory only)');
+    st.modal = ''; render(); tip(msg);
   }
 
   stage.addEventListener('click', function (ev) {
