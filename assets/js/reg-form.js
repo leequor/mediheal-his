@@ -23,7 +23,7 @@
   const WARDS = ['General Ward', 'Semi-Private', 'Private Room', 'ICU', 'Pediatric Ward', 'Maternity Ward'];
   const COND = ['Stable', 'Fair', 'Serious', 'Critical'];
 
-  // r = required (asterisk, Figma uses Inter Regular 12 black); otherwise Inter SemiBold 13 #0e2a3f
+  // r = required: red asterisk (#e05252) after the label. Every label is Inter SemiBold 13 #0e2a3f (get_styled_text_segments on Figma 420:1624).
   const SECS = [
     { top: 327.2, h: 565.8, icon: 'user', title: 'Personal Information', sub: 'Basic identity and contact details of the patient', sw: 276.8, rows: [
       { c: 3, h: 93.6, f: [{ k: 'first', l: 'First Name', r: 1, ph: 'Enter first name' }, { k: 'mi', l: 'Middle Initial', ph: 'e.g. R', hint: 'Optional' }, { k: 'last', l: 'Last Name', r: 1, ph: 'Enter last name' }] },
@@ -55,7 +55,7 @@
   ];
 
   const fld = f => {
-    let h = "<div class='rf-f'><span class='rf-l" + (f.r ? '' : ' o') + "'>" + f.l + (f.r ? '*' : '') + '</span>';
+    let h = "<div class='rf-f'><span class='rf-l'>" + f.l + (f.r ? '<i>*</i>' : '') + '</span>';
     if (f.sel) h += "<div class='rf-ctl rf-sel' id='f-" + f.k + "' data-k='" + f.k + "'></div>";
     else if (f.ta) h += "<textarea class='rf-ctl' id='f-" + f.k + "' maxlength='500' aria-label='" + f.l + "' placeholder=\"" + f.ph + "\"></textarea><div class='rf-cc' id='cc-" + f.k + "'>0/500</div>";
     else h += "<input class='rf-ctl' id='f-" + f.k + "' aria-label='" + f.l + "' placeholder='" + f.ph + "' autocomplete='off'>" + (f.date ? "<span class='rf-cal'>" + ico('cal', 18, '#4d6a80', 1.6) + '</span>' : '');
