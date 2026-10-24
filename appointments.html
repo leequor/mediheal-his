@@ -5,7 +5,7 @@
 <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@700&display=swap' rel='stylesheet'>
 <link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/base.css'><link rel='stylesheet' href='assets/css/components.css'><link rel='stylesheet' href='assets/css/pages.css'>
 </head><body data-page='appointments'>
-<!-- Figma: Appointments 23:2289 (frame origin 4800,34000). Appointment Form 248:821 and Appointment confirmed 304:502 are still to convert; the modal is temporary. -->
+<!-- Figma: Appointments 23:2289 (frame origin 4800,34000). New Appointment / Walk-In opens appointment-form.html (Figma 248:821). The Edit modal below is still temporary: Figma has no edit screen. -->
 <div class='stage'>
   <div id='kpis'></div>
   <h1 class='a-title'>Appointments</h1>
@@ -19,7 +19,7 @@
     <div class='a-grid a-th'><span>PATIENT NAME</span><span>DATE &amp; TIME</span><span>APPOINTMENT TYPE</span><span>DOCTOR</span><span>STATUS</span><span>ACTIONS</span></div>
     <div id='rows'></div>
     <div class='a-foot'><span id='count'></span>
-      <div class='a-pages'><button disabled aria-label='Previous page'>\u2039</button><button class='on'>1</button><button disabled title='Demo data fits on one page'>2</button><button disabled>3</button><button disabled aria-label='Next page'>\u203a</button></div>
+      <div class='a-pages'><button disabled aria-label='Previous page'>&lsaquo;</button><button class='on'>1</button><button disabled title='Demo data fits on one page'>2</button><button disabled>3</button><button disabled aria-label='Next page'>&rsaquo;</button></div>
     </div>
   </section>
 </div>
@@ -27,6 +27,8 @@
 <script>
 const $ = id => document.getElementById(id);
 const T = HIS.apptTotals;
+// Appointments saved by appointment-form.html (localStorage, same browser only).
+try { JSON.parse(localStorage.getItem('mh_appts_extra') || '[]').forEach(r => HIS.appointments.push(r)); } catch (e) { /* storage blocked */ }
 $('sicon').innerHTML = svg('search', 16);
 $('picon').innerHTML = svg('plus', 16);
 // [label, value, icon, icon bg, icon color, width, height, left]
@@ -67,7 +69,7 @@ function toInputs(when) {
 function form(a) {
   a = a || {};
   openModal({
-    title: a.patient ? 'Edit Appointment' : 'New Appointment / Walk-In', sub: 'Temporary form. The real Appointment Form screen comes from Figma next.',
+    title: a.patient ? 'Edit Appointment' : 'New Appointment / Walk-In', sub: 'Temporary form. Figma has no edit screen yet.',
     saveLabel: a.patient ? 'Save changes' : 'Create',
     body: "<label>Patient</label><input name='patient' required value='" + (a.patient || '') + "'>" +
       "<div class='row'><div><label>Date</label><input name='date' type='date' required value='" + (a.date || '2026-08-31') + "'></div><div><label>Time</label><input name='time' type='time' required value='" + (a.time || '09:00') + "'></div></div>" +
@@ -84,7 +86,7 @@ function form(a) {
 }
 
 $('q').oninput = e => { state.q = e.target.value; render(); };
-$('new').onclick = () => form();
+$('new').onclick = () => { location.href = 'appointment-form.html'; };
 $('rows').onclick = e => {
   const ed = e.target.closest('[data-edit]');
   const mo = e.target.closest('[data-more]');
