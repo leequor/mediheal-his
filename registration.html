@@ -5,7 +5,7 @@
 <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@700&display=swap' rel='stylesheet'>
 <link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/base.css'><link rel='stylesheet' href='assets/css/components.css'><link rel='stylesheet' href='assets/css/pages.css'>
 </head><body data-page='registration'>
-<!-- Figma: Registration 23:2285 (frame origin 3200,34000). Inpatient form 420:1147 and outpatient form 420:1434 are still to convert; the New Registration modal is temporary. -->
+<!-- Figma: Registration 23:2285 (frame origin 3200,34000). New Registration now opens registration-form.html (Inpatient form 420:1147, session 3). Outpatient form 420:1434 is still a stub (outpatient-form.html). -->
 <div class='stage'>
   <div id='kpis'></div>
   <h1 class='page-h'>Patient Registration</h1>
@@ -62,20 +62,11 @@ function render() {
 $('tabs').onclick = e => { if (e.target.dataset.t) { state.tab = e.target.dataset.t; render(); } };
 $('q').oninput = e => { state.q = e.target.value; render(); };
 
-$('new').onclick = () => openModal({
-  title: 'New Registration', sub: 'Temporary form. The real inpatient/outpatient screens come from Figma next.', saveLabel: 'Register',
-  body: "<label>Full name</label><input name='name' required>" +
-    "<div class='row'><div><label>Age</label><input name='age' type='number' min='0' max='120' required></div><div><label>Type</label><select name='type'>" + opts(['Outpatient', 'Inpatient']) + '</select></div></div>' +
-    "<div class='row'><div><label>Department</label><select name='dept'>" + opts(HIS.departments) + "</select></div><div><label>Doctor</label><select name='doctor'>" + opts(HIS.doctors) + '</select></div></div>',
-  onSave: d => {
-    const next = Math.max(...HIS.patients.map(p => +p.id.slice(3))) + 1;
-    const now = new Date();
-    HIS.patients.unshift({ name: d.name, id: 'PT-' + next, age: +d.age, type: d.type, dept: d.dept, doctor: d.doctor,
-      registered: HIS.fmtShort(HIS.today) + ' \u00b7 ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-      status: d.type === 'Inpatient' ? 'Admitted' : 'Waiting' });
-    renderKpis(); render();
-  }
-});
+// Figma: New Registration -> Inpatient form 420:1147 (the previous temporary modal was removed in session 3)
+$('new').onclick = () => { location.href = 'registration-form.html'; };
+
+// Registrations saved from registration-form.html (localStorage key mh_regs_extra, oldest first); newest ends up on top.
+try { JSON.parse(localStorage.getItem('mh_regs_extra') || '[]').forEach(p => HIS.patients.unshift(p)); } catch (e) { /* ignore bad data */ }
 renderKpis(); render();
 </script>
 </body></html>
