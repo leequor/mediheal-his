@@ -1,0 +1,93 @@
+/* Payroll (Figma 623:702, 1440x1345, origin 3200,42700). Frame-local coordinates read in session 10. ESTIMATED: shadows, status dot colour, period select inner layout, menu/modal shadows,
+   button/date text colours (the main frame draws them at 30% orange, a Figma defect; the state frames 4001:4423/4001:4733 show dark text, used here). */
+.pr{height:1345px;min-height:0}
+#prc{position:absolute;left:0;top:0;width:0;height:0}
+#prc *{box-sizing:border-box}
+#prc [hidden]{display:none!important}
+.pr-a{position:absolute;white-space:nowrap}
+.pr-t{margin:0;font:700 36px/45.36px Outfit,sans-serif;color:#15405a}
+.pr-d{font:400 14px/16.94px Inter,sans-serif;color:#6f8890}
+.pr-card{background:#fff;box-shadow:inset 0 0 0 1px #c8dcea,0 4px 16px rgba(27,78,107,.06);border-radius:12px}
+.pr-lbl{font:600 11px/13.31px Inter,sans-serif;color:#6f8890}
+.pr-date{font:600 14px/16.94px Inter,sans-serif;color:#1c2b30}
+.pr-meth{font:400 11px/13.31px Inter,sans-serif;color:#6f8890}
+.pr-sel{width:185px;height:40px;border-radius:8px;box-shadow:inset 0 0 0 1px #c8dcea}
+.pr-sel .v{position:absolute;left:37px;top:12px;font:500 13px/16px Inter,sans-serif;color:#1b4e6b}
+.pr-div{width:1px;height:48px;background:#e3edf3}
+.pr-btn{position:absolute;top:29px;height:42px;border:0;padding:0;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea;font:600 13px/15.73px Inter,sans-serif;color:#1b4e6b;cursor:pointer;text-align:left}
+.pr-btn:hover{background:#f6fafd}
+.pr-btn.pri{background:#1c6d9c;box-shadow:inset 0 0 0 1px #1c6d9c;color:#fff}
+.pr-btn.pri:hover{background:#185f88}
+.pr-btn svg{position:absolute;left:16px;top:12px}
+.pr-btn span{position:absolute;left:42px;top:13px}
+.pr-m{width:311px;height:124px}
+.pr-m .ic{position:absolute;left:20px;top:38px;width:48px;height:48px;border-radius:24px;background:#e8f4fb;color:#1c6d9c}
+.pr-m .ic svg{position:absolute;left:12px;top:12px}
+.pr-m .l{position:absolute;left:84px;top:26px;font:500 13px/15.73px Inter,sans-serif;color:#5b8db8}
+.pr-m .n{position:absolute;left:84px;top:47px;font:700 27px/32.68px Inter,sans-serif;color:#1b4e6b}
+.pr-m .s{position:absolute;left:84px;top:85px;font:400 11px/13.31px Inter,sans-serif;color:#6f8890}
+.pr-reg{left:68px;top:483px;width:1304px;height:826px;border-radius:14px}
+.pr-st{font:500 18px/22.5px Lexend,sans-serif;color:#1b4e6b}
+.pr-ex{font:400 12px/14.52px Inter,sans-serif;color:#6f8890}
+.pr-search{width:408px;height:40px;border-radius:8px;box-shadow:inset 0 0 0 1px #c8dcea}
+.pr-search svg{position:absolute;left:12px;top:11px;color:#6f8890}
+.pr-search input{position:absolute;left:40px;top:12px;width:350px;height:16px;border:0;outline:0;background:transparent;padding:0;font:400 13px/15.73px Inter,sans-serif;color:#1c2b30}
+.pr-search input::placeholder{color:#6f8890}
+.pr-flt{position:absolute;top:86px;height:40px;border:0;padding:0;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea;text-align:left;cursor:pointer}
+.pr-flt.open{box-shadow:inset 0 0 0 1px #1c6d9c}
+.pr-flt .v{position:absolute;left:12px;top:12.5px;font:400 12px/14.52px Inter,sans-serif;color:#1b4e6b;white-space:nowrap}
+.pr-flt svg{position:absolute;right:12px;top:12px;color:#1b4e6b}
+.pr-th{left:0;top:150px;width:1304px;height:46px;background:#e8f4fb;box-shadow:inset 0 1px 0 #c8dcea,inset 0 -1px 0 #c8dcea}
+.pr-h{top:16.5px;font:600 11px/13.31px Inter,sans-serif;color:#5b8db8}
+.pr-cb{position:absolute;width:16px;height:16px;border-radius:3px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea;cursor:pointer;border:0;padding:0}
+.pr-cb.on{background:#1c6d9c;box-shadow:inset 0 0 0 1px #1c6d9c}
+.pr-cb svg{position:absolute;left:2px;top:2px}
+.pr-r{left:0;width:1304px;height:64px;box-shadow:inset 0 -1px 0 #e3edf3}
+.pr-r>*{position:absolute;white-space:nowrap}
+.pr-r .nm{left:52px;top:15px;font:600 13px/15.73px Inter,sans-serif;color:#1c2b30}
+.pr-r .mt{left:52px;top:36px;font:400 11px/13.31px Inter,sans-serif;color:#6f8890}
+.pr-r .dp,.pr-r .dh{top:24.5px;font:400 12px/14.52px Inter,sans-serif;color:#1c2b30}
+.pr-r .dp{left:290px}.pr-r .dh{left:440px}
+.pr-r .am,.pr-tot .am{top:24px;width:auto;text-align:right;font:400 13px/15.73px Inter,sans-serif;color:#1c2b30}
+.pr-r .net,.pr-tot .net{font-weight:700;color:#1b4e6b}
+.pr-p{position:absolute;left:1068px;top:18px;height:28px;border-radius:999px}
+.pr-p .lb{position:absolute;top:7px;font:600 11px/13.75px Lexend,sans-serif}
+.pr-p i{position:absolute;left:10px;top:9px;width:10px;height:10px;border-radius:50%;background:#2d9d27}
+.pr-p.Paid{width:61px;background:#d8ffd3}.pr-p.Paid .lb{left:26px;color:#084d02}
+.pr-p.Processing{width:80px;background:#ffcba3}.pr-p.Processing .lb{left:10px;color:#a6460a}
+.pr-p.Pending{width:65px;background:#e9ecef}.pr-p.Pending .lb{left:10px;color:#1a1a1a}
+.pr-ps{position:absolute;left:1186px;top:24.5px;width:94px;height:15px;border:0;padding:0;background:transparent;cursor:pointer;color:#1c6d9c;font:600 12px/14.52px Inter,sans-serif}
+.pr-ps svg{position:absolute;left:32px;top:0}
+.pr-ps span{position:absolute;left:52px;top:0}
+.pr-ps:hover span{text-decoration:underline}
+.pr-tot{left:0;top:708px;width:1304px;height:52px;background:#f6fafd}
+.pr-tot>*{position:absolute;white-space:nowrap}
+.pr-tot .tl{left:24px;top:18px;font:600 13px/15.73px Inter,sans-serif;color:#1b4e6b}
+.pr-tot .am{top:18px;font-weight:700;color:#1b4e6b}
+.pr-tot .dd{left:440px;top:18px;font:700 13px/15.73px Inter,sans-serif;color:#1b4e6b}
+.pr-ft{left:0;top:760px;width:1304px;height:66px;box-shadow:inset 0 1px 0 #e3edf3}
+.pr-none{left:0;top:196px;width:1304px;text-align:center;font:500 13px/64px Inter,sans-serif;color:#6f8890}
+.pr-pg{position:absolute;left:1189px;top:16px;width:91px;height:34px;border:0;padding:0;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea;font:600 13px/34px Inter,sans-serif;color:#1b4e6b;text-align:center}
+/* dropdown menus: Figma 4001:5046 (dept) and 4001:5060 (status), panels at (512,613) and (672,613) 220 wide */
+.pr-ml{position:absolute;left:0;top:0;width:1440px;height:1345px;z-index:300}
+.pr-menu{position:absolute;top:613px;width:220px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea,0 8px 24px rgba(15,30,46,.12);border-radius:12px;padding:8px;z-index:301}
+.pr-o{display:block;width:204px;height:36px;border:0;border-radius:8px;background:transparent;text-align:left;padding:0 0 0 12px;font:400 12px/36px Inter,sans-serif;color:#1c2b30;cursor:pointer}
+.pr-o.on{background:#e8f4fb;color:#1c6d9c;font-weight:600}
+.pr-o:hover{background:#f1f7fb}
+/* action modals: Figma 2030:8616, 4008:3346, 4008:3317 (680x438 at (380,453)), 2030:8351 payslip (680x568 at (380,388)) */
+.pr-scrim{position:absolute;left:0;top:0;width:1440px;height:1345px;background:rgba(11,42,61,.35);z-index:1000}
+.pr-modal{position:absolute;left:380px;width:680px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea,0 20px 50px rgba(15,30,46,.25);border-radius:16px;z-index:1001}
+.pr-modal>*{position:absolute}
+.pr-m-x{left:616px;top:24px;width:32px;height:32px;border:0;border-radius:8px;background:#f6fafd;box-shadow:inset 0 0 0 1px #c8dcea;color:#1b4e6b;font:500 18px/30px Inter,sans-serif;padding:0;cursor:pointer}
+.pr-m-t{left:32px;top:28px;font:500 22px/27.5px Lexend,sans-serif;color:#15405a;white-space:nowrap}
+.pr-m-s{left:32px;top:62px;font:400 13px/15.73px Inter,sans-serif;color:#6f8890;white-space:nowrap}
+.pr-m-d{left:32px;top:100px;width:616px;height:1px;background:#e3edf3}
+.pr-m-l{font:600 12px/14.52px Inter,sans-serif;color:#1b4e6b;white-space:nowrap}
+.pr-m-i{height:40px;border-radius:8px;background:#f6fafd;box-shadow:inset 0 0 0 1px #c8dcea;padding:12px 14px;font:500 13px/16px Inter,sans-serif;color:#1c2b30;white-space:nowrap;overflow:hidden}
+.pr-m-i.ta{height:88px;white-space:normal;line-height:20px}
+.pr-m-c,.pr-m-ok{height:40px;border-radius:8px;border:0;padding:0;font:600 13px/15.73px Inter,sans-serif;cursor:pointer}
+.pr-m-c{left:396px;width:100px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea;color:#1b4e6b}
+.pr-m-ok{left:508px;width:140px;background:#1c6d9c;box-shadow:inset 0 0 0 1px #1c6d9c;color:#fff}
+.pr-m-ok:hover{background:#185f88}
+.pr-tip{position:fixed;z-index:2000;left:50%;bottom:28px;transform:translateX(-50%);background:#15405a;color:#fff;font:600 13px/16px Inter,sans-serif;padding:10px 16px;border-radius:10px}
+@media print{.pr .pr-reg>*:not(.pr-th):not(.pr-r):not(.pr-tot){display:none!important}.pr-ml,.pr-scrim,.pr-modal{display:none!important}}
