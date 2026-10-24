@@ -1,5 +1,7 @@
 // Shared header + slide-in sidebar. Edit NAV once, every page updates.
 // Figma: header-bar 239:2978, Sidebar 211:1949 (430x1024). Staff (211:1953) links to Attendance (2002:369).
+// Fit-to-width (assets/js/fit.js v3, session 22) is loaded from here so every shell page gets it; index.html (sign-in) loads it itself. No effect at 1440px and wider.
+(function () { var s = document.createElement('script'); s.src = 'assets/js/fit.js'; document.head.appendChild(s); })();
 const NAV = [
   ['dashboard', 'Dashboard', 'grid'], ['registration', 'Registration', 'users'], ['appointments', 'Appointments', 'calendar-check'],
   ['consultation', 'Consultation', 'clipboard-plus'], ['treatment', 'Treatment', 'bag'], ['nursing', 'Nursing', 'heart'],
