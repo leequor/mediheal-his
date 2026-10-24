@@ -9,11 +9,13 @@
   var bill = function () { return B.bills.filter(function (b) { return b.id === HIS.blState.sel; })[0]; };
   var paidOf = function (b) { return b.items ? b.paid : (b.status === 'Paid' ? b.amount : (b.paid || 0)); };
   var is01 = function (b) { return b.id === 'BL-8801'; };
+  // Figma shows "Isabel G. Ramos" (middle name abbreviated) in the Record payment and Final statement subtitles; Coverage uses the full name.
+  var short = function (n) { var w = String(n).split(' '); return (w.length === 3 && w[1].length > 2) ? w[0] + ' ' + w[1][0] + '. ' + w[2] : n; };
 
   function spec(kind, b) {
     var total = b.amount, paid = paidOf(b), bal = total - paid, cov = is01(b) ? 7040 : 0;
     if (kind === 'pay') return {
-      title: 'Record payment', sub: b.name + ' \u00b7 ' + b.pt + ' \u00b7 Invoice ' + b.id + ' \u00b7 Balance due ' + peso(bal), ok: 'Record payment',
+      title: 'Record payment', sub: short(b.name) + ' \u00b7 ' + b.pt + ' \u00b7 Invoice ' + b.id + ' \u00b7 Balance due ' + peso(bal), ok: 'Record payment',
       l: ['Invoice', 'Payment method', 'Amount received', 'Reference number', 'Received by', 'Notes'],
       v: [b.id + ' (' + b.status + ')', 'GCash', p2(bal), is01(b) ? 'GC-2026-083112' : '', 'Billing clerk on duty \u00b7 Aug 31, 2026', is01(b) ? 'Full settlement of the remaining balance. Official receipt issued to the patient.' : ''],
       bt: 'Payment check', bx: bal > 0 ? peso(bal) + ' clears the balance. Invoice ' + b.id + ' will change from ' + b.status + ' to Paid.' : 'Nothing due on this invoice.' };
@@ -23,7 +25,7 @@
       v: is01(b) ? ['01-234567890-1', '\u20b13,000.00', 'Maxicare \u00b7 LOA MX-20418', '\u20b12,000.00', 'PWD 20% on room and nursing (\u20b110,200 \u00d7 20% = \u20b12,040.00)', 'Deductions apply after VAT. The patient pays only the net amount.'] : ['', '\u20b10.00', '', '\u20b10.00', '', ''],
       bt: 'Net payable', bx: peso(total - cov) + (cov ? ' after ' + peso(cov) + ' in coverage and discounts. Paid ' + peso(paid) + ', so the balance is ' + peso(total - cov - paid) + '.' : ' with no coverage or discounts applied.') };
     return {
-      title: 'Final statement', sub: b.name + ' \u00b7 ' + b.pt + ' \u00b7 ' + b.dept + ' \u00b7 discharge billing', ok: 'Issue statement',
+      title: 'Final statement', sub: short(b.name) + ' \u00b7 ' + b.pt + ' \u00b7 ' + b.dept + ' \u00b7 discharge billing', ok: 'Issue statement',
       l: ['Invoice', 'Statement date', 'Total charges (incl. 12% VAT)', 'Less PhilHealth, HMO and discount', 'Less payments received', 'Discharge note'],
       v: [b.id + ' \u00b7 ' + b.pt, 'Aug 31, 2026', p2(total), p2(cov), p2(paid) + ' received on account \u00b7 balance to clear ' + p2(total - cov - paid), is01(b) ? 'Room and nursing charges closed. Clear the balance at the cashier before discharge.' : ''],
       bt: 'Balance to clear', bx: peso(total) + ' \u2212 ' + peso(cov) + ' coverage and discounts \u2212 ' + peso(paid) + ' paid = ' + peso(total - cov - paid) + ' due at discharge.' };

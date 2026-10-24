@@ -10,6 +10,8 @@ const NAV = [
 (function mountShell() {
   const page = document.body.dataset.page;
   if (!page) return;
+  // favicon: stops the /favicon.ico 404 on every page (small logo PNG)
+  if (!document.querySelector('link[rel~="icon"]')) document.head.insertAdjacentHTML('beforeend', "<link rel='icon' type='image/png' href='assets/img/logo-removebg-preview%201.png'>");
   const u = HIS.user;
   const ini = u.name.replace('Dr. ', '').split(' ').map(s => s[0]).join('');
   document.body.insertAdjacentHTML('afterbegin',
