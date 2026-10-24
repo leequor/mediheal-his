@@ -61,7 +61,7 @@
 .dp-duty{left:32px;top:435.6px;width:1376px;border-radius:16px}
 .dp-duty>*{position:absolute}
 .dp-dl{left:24px;top:31.8px;font:700 11.5px/14px var(--font-inter);letter-spacing:.8px;color:#8a97a6;white-space:nowrap}
-.dp-add{right:24px;top:20px;height:37.2px;padding:0 20px;border:0;border-radius:10px;background:#1c6d9c;color:#fff;font:700 13px/37.2px var(--font-inter);white-space:nowrap;cursor:pointer}
+.dp-add{right:24px;top:20px;width:129.325px;height:37.2px;padding:0;text-align:center;border:0;border-radius:10px;background:#1c6d9c;color:#fff;font:700 13px/37.2px var(--font-inter);white-space:nowrap;cursor:pointer}
 .dp-add:hover{background:#1b4e6b}
 .dp-row{left:24px;width:1328px;height:54px}
 .dp-row>*{position:absolute}
