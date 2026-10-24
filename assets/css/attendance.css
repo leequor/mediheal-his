@@ -67,11 +67,12 @@
 .at-ft{left:0;top:760px;width:1304px;height:66px;box-shadow:inset 0 1px 0 #e3edf3}
 .at-none{left:0;top:196px;width:1304px;text-align:center;font:500 13px/64px Inter,sans-serif;color:#6f8890}
 .at-pg{position:absolute;left:1189px;top:16px;width:91px;height:34px;border:0;padding:0;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea;font:600 13px/34px Inter,sans-serif;color:#1b4e6b;text-align:center}
-/* bottom cards (y1337, 270 high): Record attendance (68) 422 wide, Leave requests (510) 422 wide, Payroll sync (952) 420 wide */
+/* bottom cards (y1337, 270 high): Record attendance (68) 422 wide, Leave requests (510) 422 wide, Payroll sync (952) 420 wide.
+   Session 12 fix: title/description were unpositioned (selectors .st/.ds did not match the classes at-st/at-ds used by attendance.js). Figma card-local: title (24,22), description (24,48). */
 .at-ac{top:1337px;height:270px}
 .at-ac>*{position:absolute;white-space:nowrap}
-.at-ac .st{left:24px;top:22px}
-.at-ac .ds{left:24px;top:48px}
+.at-ac>.at-st{left:24px;top:22px}
+.at-ac>.at-ds{left:24px;top:48px}
 .at-fl{font:600 11px/13.31px Inter,sans-serif;color:#5b8db8}
 .at-fd{height:36px;border:0;padding:0;border-radius:8px;background:#f6fafd;box-shadow:inset 0 0 0 1px #c8dcea;text-align:left;cursor:pointer}
 .at-fd.open{box-shadow:inset 0 0 0 1px #1c6d9c}
