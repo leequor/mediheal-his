@@ -3,9 +3,91 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Appointments · MediHeal</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lexend:wght@500;600&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/tokens.css"><link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/tokens.css"><link rel="stylesheet" href="assets/css/base.css"><link rel="stylesheet" href="assets/css/components.css">
 </head><body data-page="appointments">
-<main id="app"><h1>Appointments</h1>
-<div class="card stub">Not converted yet. Figma nodes: <code>23:2289</code> (Appointments), <code>248:821</code> (Appointment Form), <code>304:502</code> (Appointment confirmed)</div></main>
-<script src="assets/js/data.js"></script><script src="assets/js/shell.js"></script>
+<!-- Figma: Appointments 23:2289, Appointment Form 248:821, confirmed 304:502 -->
+<main id="app">
+  <section class="grid kpis" id="kpis"></section>
+  <div class="head" style="margin-top:28px">
+    <h1 style="font-size:26px;margin:0">Appointments</h1>
+    <div class="toolbar" style="margin:0">
+      <input id="q" type="search" placeholder="Search patients, doctors..." style="width:220px">
+      <select id="stat"></select><select id="doc"></select>
+      <button class="btn" id="new">+ New Appointment / Walk-In</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="table-wrap"><table>
+      <thead><tr><th>Patient name</th><th>Date &amp; time</th><th>Appointment type</th><th>Doctor</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+    <div class="pager"><span id="count"></span>
+      <div class="pages"><button class="icon-btn" disabled>&lsaquo;</button><button class="icon-btn on">1</button><button class="icon-btn" disabled title="Demo data fits on one page">2</button><button class="icon-btn" disabled>3</button><button class="icon-btn" disabled>&rsaquo;</button></div></div>
+  </div>
+</main>
+<script src="assets/js/data.js"></script><script src="assets/js/data-records.js"></script><script src="assets/js/shell.js"></script><script src="assets/js/ui.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const T = HIS.apptTotals;
+$('kpis').innerHTML = [['Total Appointments', T.total, '\u{1F4C5}'], ['Confirmed', T.confirmed, '\u2705'], ['Pending Approval', T.pending, '\u{1F552}'], ['Cancelled', T.cancelled, '\u274C'], ['Walk-In', T.walkin, '\u{1F6B6}']]
+  .map(([l, v, i]) => `<div class="card kpi compact"><div><div class="lbl">${l} ${i}</div><div class="val">${v}</div></div></div>`).join('');
+$('stat').innerHTML = opts(['Status: All', ...HIS.apptStatuses]);
+$('doc').innerHTML = opts(['Doctor: All Drs.', ...HIS.doctors]);
+
+const state = { q: '', stat: 'Status: All', doc: 'Doctor: All Drs.' };
+const cls = { Confirmed: 'ok', Completed: 'blue', Cancelled: 'red', Pending: 'yellow' };
+
+function render() {
+  const q = state.q.trim().toLowerCase();
+  const list = HIS.appointments.map((a, i) => ({ ...a, i })).filter(a =>
+    (state.stat === 'Status: All' || a.status === state.stat) &&
+    (state.doc === 'Doctor: All Drs.' || a.doctor === state.doc) &&
+    (!q || (a.patient + a.doctor + a.kind).toLowerCase().includes(q)));
+  $('rows').innerHTML = list.length ? list.map(a => `<tr>
+    <td><b>${a.patient}</b></td><td>${a.when}</td><td>${a.kind}</td><td>${a.doctor}</td>
+    <td><span class="pill ${cls[a.status]}">${a.status}</span></td>
+    <td><button class="icon-btn" data-edit="${a.i}" title="Edit" aria-label="Edit appointment for ${a.patient}">\u270E</button></td></tr>`).join('')
+    : `<tr><td colspan="6" class="empty">No appointments match these filters.</td></tr>`;
+  $('count').textContent = `Showing ${list.length} of ${HIS.appointments.length} loaded (${T.total} total)`;
+}
+
+function form(a = {}) {
+  openModal({
+    title: a.patient ? 'Edit Appointment' : 'New Appointment / Walk-In', sub: 'Schedule or update a visit',
+    saveLabel: a.patient ? 'Save changes' : 'Create',
+    body: `<label>Patient</label><input name="patient" required value="${a.patient || ''}">
+      <div class="row"><div><label>Date</label><input name="date" type="date" required value="${a.date || '2026-08-31'}"></div>
+      <div><label>Time</label><input name="time" type="time" required value="${a.time || '09:00'}"></div></div>
+      <label>Type</label><select name="kind">${opts(HIS.apptKinds, a.kind)}</select>
+      <div class="row"><div><label>Doctor</label><select name="doctor">${opts(HIS.doctors, a.doctor)}</select></div>
+      <div><label>Status</label><select name="status">${opts(HIS.apptStatuses, a.status || 'Pending')}</select></div></div>`,
+    onSave: d => {
+      const dt = new Date(d.date + 'T' + d.time);
+      const rec = { patient: d.patient, kind: d.kind, doctor: d.doctor, status: d.status,
+        when: HIS.fmtShort(dt) + ' \u2022 ' + dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }), date: d.date, time: d.time };
+      if (a.i != null) HIS.appointments[a.i] = rec; else HIS.appointments.push(rec);
+      render();
+    }
+  });
+}
+
+$('q').oninput = e => { state.q = e.target.value; render(); };
+$('stat').onchange = e => { state.stat = e.target.value; render(); };
+$('doc').onchange = e => { state.doc = e.target.value; render(); };
+$('new').onclick = () => form();
+$('rows').onclick = e => {
+  const b = e.target.closest('[data-edit]');
+  if (!b) return;
+  const a = HIS.appointments[+b.dataset.edit];
+  form({ ...a, i: +b.dataset.edit, ...(a.date ? {} : toInputs(a.when)) });
+};
+// turn "Aug 31, 2026 • 09:30 AM" into input values for the edit form
+function toInputs(when) {
+  const [d, t] = when.split(' \u2022 ');
+  const dt = new Date(d + ' ' + t);
+  const p = n => String(n).padStart(2, '0');
+  return { date: `${dt.getFullYear()}-${p(dt.getMonth() + 1)}-${p(dt.getDate())}`, time: `${p(dt.getHours())}:${p(dt.getMinutes())}` };
+}
+render();
+</script>
 </body></html>

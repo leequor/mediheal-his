@@ -3,9 +3,88 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Registration · MediHeal</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lexend:wght@500;600&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/tokens.css"><link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/tokens.css"><link rel="stylesheet" href="assets/css/base.css"><link rel="stylesheet" href="assets/css/components.css">
 </head><body data-page="registration">
-<main id="app"><h1>Registration</h1>
-<div class="card stub">Not converted yet. Figma nodes: <code>23:2285</code> (Registration), <code>420:1147</code> (Inpatient), <code>420:1434</code> (Outpatient)</div></main>
-<script src="assets/js/data.js"></script><script src="assets/js/shell.js"></script>
+<!-- Figma: Registration 23:2285 (inpatient form 420:1147, outpatient form 420:1434 still to do) -->
+<main id="app">
+  <section class="grid kpis" id="kpis"></section>
+  <div class="head" style="margin-top:28px">
+    <div><h1 style="font-size:26px;margin:0 0 4px">Patient Registration</h1>
+    <span class="desc" style="font-size:12px">Registry of all inpatient and outpatient registrations across departments</span></div>
+    <button class="btn" id="new">+ New Registration</button>
+  </div>
+  <div class="card">
+    <div class="toolbar">
+      <div class="tabs" id="tabs"></div>
+      <input class="grow" id="q" type="search" placeholder="Search patient..." style="max-width:260px">
+      <span class="grow"></span>
+      <select id="dept"></select>
+      <select id="stat"></select>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Patient</th><th>Type</th><th>Department</th><th>Doctor</th><th>Registered</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+  </div>
+</main>
+<script src="assets/js/data.js"></script><script src="assets/js/data-records.js"></script><script src="assets/js/shell.js"></script><script src="assets/js/ui.js"></script>
+<script>
+const state = { tab: 'All', q: '', dept: 'All Departments', stat: 'All Statuses' };
+const statuses = ['Admitted', 'Waiting', 'In Consultation', 'Completed'];
+const $ = id => document.getElementById(id);
+
+$('tabs').innerHTML = ['All', 'Inpatient', 'Outpatient'].map(t => `<button class="tab" data-t="${t}">${t}</button>`).join('');
+$('dept').innerHTML = opts(['All Departments', ...HIS.departments]);
+$('stat').innerHTML = opts(['All Statuses', ...statuses]);
+
+function renderKpis() {
+  const p = HIS.patients;
+  const k = [
+    ['Total Registered', p.length, 'All patients in the current registry', '\u{1F465}'],
+    ['Inpatients', p.filter(x => x.type === 'Inpatient').length, 'Currently admitted or under admission', '\u{1F6CF}'],
+    ['Outpatients', p.filter(x => x.type === 'Outpatient').length, 'Clinic visits without admission', '\u{1F6B6}'],
+    ['Needs Attention', p.filter(x => x.attention).length, 'Critical cases and patients waiting', '\u23F1']
+  ];
+  $('kpis').innerHTML = k.map(([l, v, n, i]) => `<div class="card kpi compact"><div class="ic">${i}</div><div><div class="lbl">${l}</div><div class="val">${v}</div><div class="kpi-note">${n}</div></div></div>`).join('');
+}
+
+function render() {
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.t === state.tab));
+  const q = state.q.trim().toLowerCase();
+  const list = HIS.patients.filter(p =>
+    (state.tab === 'All' || p.type === state.tab) &&
+    (state.dept === 'All Departments' || p.dept === state.dept) &&
+    (state.stat === 'All Statuses' || p.status === state.stat) &&
+    (!q || (p.name + p.id + p.doctor).toLowerCase().includes(q)));
+  $('rows').innerHTML = list.length ? list.map(p => `<tr>
+    <td><span class="av">${initialsOf(p.name)}</span><span class="who"><b>${p.name}</b><span class="pid">${p.id} · ${p.age} yrs</span></span></td>
+    <td>${pillOf(p.type)}</td><td>${p.dept}</td><td>${p.doctor}</td><td>${p.registered}</td><td>${pillOf(p.status)}</td>
+    <td><button class="icon-btn" title="Open profile" aria-label="Open profile for ${p.name}">\u2192</button></td></tr>`).join('')
+    : `<tr><td colspan="7" class="empty">No patients match these filters.</td></tr>`;
+}
+
+$('tabs').onclick = e => { if (e.target.dataset.t) { state.tab = e.target.dataset.t; render(); } };
+$('q').oninput = e => { state.q = e.target.value; render(); };
+$('dept').onchange = e => { state.dept = e.target.value; render(); };
+$('stat').onchange = e => { state.stat = e.target.value; render(); };
+
+$('new').onclick = () => openModal({
+  title: 'New Registration', sub: 'Register an inpatient or outpatient', saveLabel: 'Register',
+  body: `<label>Full name</label><input name="name" required>
+    <div class="row"><div><label>Age</label><input name="age" type="number" min="0" max="120" required></div>
+    <div><label>Type</label><select name="type">${opts(['Outpatient', 'Inpatient'])}</select></div></div>
+    <div class="row"><div><label>Department</label><select name="dept">${opts(HIS.departments)}</select></div>
+    <div><label>Doctor</label><select name="doctor">${opts(HIS.doctors)}</select></div></div>`,
+  onSave: d => {
+    const next = 99214 + HIS.patients.filter(p => p.id > 'PT-99213').length;
+    const now = new Date(2026, 7, 31, new Date().getHours(), new Date().getMinutes());
+    HIS.patients.unshift({ name: d.name, id: 'PT-' + next, age: +d.age, type: d.type, dept: d.dept, doctor: d.doctor,
+      registered: HIS.fmtShort(now) + ' · ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      status: d.type === 'Inpatient' ? 'Admitted' : 'Waiting' });
+    renderKpis(); render();
+  }
+});
+
+renderKpis(); render();
+</script>
 </body></html>
