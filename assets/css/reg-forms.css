@@ -1,6 +1,7 @@
-/* Registration form screens: Inpatient form (Figma 420:1147, frame origin 0,39600, 1440x2789).
+/* Registration form screens: Inpatient form (Figma 420:1147, frame origin 0,39600, 1440x2789) and Outpatient form (Figma 420:1434, frame origin 1600,39600, 1440x2676, class .rf-out).
    All positions are frame-local (Figma absolute minus origin). "est" = could not be read from Figma, check against an export. */
 .rf-stage{height:2789px}
+.rf-stage.rf-out{height:2676px}
 .rf-back{position:absolute;left:40px;top:108px;display:flex;align-items:center;gap:8px;height:17.6px;color:#4d6a80;font:500 13.5px/17.55px var(--font-inter,Inter),sans-serif;text-decoration:none;white-space:nowrap}
 .rf-title{position:absolute;left:40px;top:160px;margin:0;font:700 26px/34.32px Lexend,sans-serif;letter-spacing:-.26px;color:#0e2a3f;white-space:nowrap}
 .rf-chip{position:absolute;left:1225.75px;top:147.6px;width:174.25px;height:38px;box-sizing:border-box;background:#fff;border:1px solid #e1ebf3;border-radius:10px}
@@ -13,6 +14,13 @@
 .rf-type .ck{position:absolute;left:147.2px;top:21.4px;width:16px;height:16px;border-radius:50%;background:#1f9d6b;display:grid;place-items:center}
 .rf-type small{position:absolute;left:74px;top:40.4px;font:400 12.5px/16.75px var(--font-inter,Inter),sans-serif;color:#4d6a80;white-space:nowrap}
 
+/* Outpatient frame offsets (Figma 420:1434): back link y115, title y173, date chip y154.6, check badge x159.45 inside the Outpatient card (type cards are placed inline in the HTML) */
+.rf-out .rf-back{top:115px}
+.rf-out .rf-title{top:173px}
+.rf-out .rf-chip{top:154.6px}
+.rf-out .rf-type .ck{left:159.45px}
+.rf-out .rf-sum{top:334.2px}
+
 /* section cards */
 .rf-sec{position:absolute;left:40px;width:1000px;box-sizing:border-box;background:#fff;border:1px solid #e1ebf3;border-radius:16px;padding:25.8px 27.8px;box-shadow:0 4px 4px rgba(0,0,0,.25)} /* est: shadow */
 .rf-h{display:flex;gap:14px;height:42.2px;margin-bottom:24px}
@@ -24,8 +32,8 @@
 
 /* fields */
 .rf-f{position:relative}
-.rf-l{display:block;height:18px;font:400 12px/14.52px var(--font-inter,Inter),sans-serif;color:#000;white-space:nowrap}
-.rf-l.o{font:600 13px/17.55px var(--font-inter,Inter),sans-serif;color:#0e2a3f}
+.rf-l{display:block;height:18px;font:600 13px/17.55px var(--font-inter,Inter),sans-serif;color:#0e2a3f;white-space:nowrap} /* every label is SemiBold 13 #0e2a3f; required ones end with a red asterisk (Figma 420:1624 text segments) */
+.rf-l i{font-style:normal;color:#e05252}
 .rf-ctl{position:absolute;left:0;top:25.6px;width:100%;box-sizing:border-box;height:42px;margin:0;border:1px solid #e1ebf3;border-radius:9px;background:#fff;color:#0e2a3f;font:400 13.5px/16.34px var(--font-inter,Inter),sans-serif;outline:0}
 input.rf-ctl{padding:0 13.8px 24px} /* Figma places the text at the top of the 42px box, not centred */
 input.rf-ctl::placeholder,textarea.rf-ctl::placeholder{color:#b9c8d3;opacity:1}
@@ -35,7 +43,7 @@ textarea.rf-ctl{height:120px;padding:12px 13.8px;resize:none;line-height:20.25px
 .rf-hint{position:absolute;left:0;top:77.6px;font:400 11.5px/15.98px var(--font-inter,Inter),sans-serif;color:#8aa4b6;white-space:nowrap}
 .rf-hint.t{top:175.6px}
 .rf-cc{position:absolute;right:0;top:149.6px;font:400 11.5px/15.98px var(--font-inter,Inter),sans-serif;color:#8aa4b6}
-.rf-cal{position:absolute;left:0;top:25.6px;width:18px;height:18px;pointer-events:none} /* Figma puts the calendar icon at the input's top-left; hidden once a value is typed (my addition) */
+.rf-cal{position:absolute;left:0;top:25.6px;width:18px;height:18px;pointer-events:none} /* Inpatient only: Figma puts the calendar icon at the input's top-left; hidden once a value is typed (my addition) */
 .rf-ctl:not(:placeholder-shown)~.rf-cal{display:none}
 .rf-sel{border:0;background:none;height:42px}
 .rf-sb{position:relative;display:block;width:100%;height:42px;box-sizing:border-box;padding:0 13.8px 24px;border:1px solid #e1ebf3;border-radius:9px;background:#fff;text-align:left;font:400 13.5px/16.34px var(--font-inter,Inter),sans-serif;color:#0e2a3f;white-space:nowrap;overflow:hidden;cursor:pointer}

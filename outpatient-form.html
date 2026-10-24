@@ -3,8 +3,27 @@
 <meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
 <title>New Registration (Outpatient) · MediHeal</title>
 <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@700&display=swap' rel='stylesheet'>
-<link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/base.css'>
+<link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/base.css'><link rel='stylesheet' href='assets/css/components.css'><link rel='stylesheet' href='assets/css/reg-forms.css'>
 </head><body data-page='registration'>
-<div class='stage'><section class='stub'><h1>New Registration (Outpatient)</h1><p>Not converted yet. Figma: <code>420:1434</code> (Outpatient form). <a href='registration-form.html'>Back to the Inpatient form</a></p></section></div>
-<script src='assets/js/data.js'></script><script src='assets/js/icons.js'></script><script src='assets/js/shell.js'></script>
+<!-- Figma: Outpatient form 420:1434 (frame origin 1600,39600; 1440x2676). Prototype links read: Confirm 420:1728 and Cancel 420:1733 -> Registration 23:2285; Inpatient card 488:1819 -> Inpatient form 420:1147. The Back link 420:1460 has NO reaction in Figma; it goes to registration.html here, like the Inpatient form. -->
+<div class='stage rf-stage rf-out'>
+  <a class='rf-back' id='back' href='registration.html'></a>
+  <h1 class='rf-title'>New Registration</h1>
+  <div class='rf-chip'><i id='chipi'></i><span id='chip'></span></div>
+  <a class='rf-type' style='left:40px;top:235.4px' href='registration-form.html'><div class='ti' id='ti1'></div><b>Inpatient</b><small>Admitted for overnight or extended care</small></a>
+  <div class='rf-type on' style='left:730px;top:235.8px' aria-current='true'><div class='ti' id='ti2'></div><b>Outpatient</b><div class='ck' id='ck'></div><small>Clinic visit without admission</small></div>
+  <div id='secs'></div>
+  <aside class='rf-sum'>
+    <h3>Registration Summary</h3><p>Review the details before confirming</p>
+    <div class='rf-pb'><i id='s-av'>?</i><b id='s-name'>New patient</b><small id='s-meta'>Outpatient · Gender —</small></div>
+    <div class='rf-sr' style='top:172.2px'><span>Department</span><span id='s-dept'>—</span></div>
+    <div class='rf-sr' style='top:214.6px'><span>Attending Doctor</span><span id='s-doc'>—</span></div>
+    <div class='rf-sr' style='top:257px'><span>Appointment</span><span id='s-appt'>—</span></div>
+    <div class='rf-sr' style='top:299.4px'><span>Schedule</span><span id='s-sched'>—</span></div>
+    <div class='rf-sr last' style='top:341.8px'><span>Registered by</span><span>Dr. Elsie Chen</span></div>
+    <button type='button' class='rf-btn ok' id='confirm'>Confirm Registration</button>
+    <a class='rf-btn no' href='registration.html'>Cancel</a>
+  </aside>
+</div>
+<script src='assets/js/data.js'></script><script src='assets/js/data-records.js'></script><script src='assets/js/icons.js'></script><script src='assets/js/shell.js'></script><script src='assets/js/reg-form-out.js'></script>
 </body></html>
