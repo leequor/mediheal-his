@@ -1,5 +1,5 @@
 // Patient profile page builder. Layout = Figma 459:680 measurements (frame-local coordinates, see assets/css/profile.css).
-// URL: profile.html?id=PT-99213. Content: HIS.profiles (data-profiles.js). Patients without a Figma profile (saved from the registration forms) get a fallback built from their record, with "\u2014" for unknown fields.
+// URL: profile.html?id=PT-99213. Content: HIS.profiles (data-profiles.js). Patients without a Figma profile (saved from the registration forms) get a fallback built from their record (record.details written by the forms), with "\u2014" for unknown fields.
 (function () {
   const D = '\u2014';
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -11,15 +11,22 @@
   const ini = n => String(n || '?').trim().split(/\s+/).filter(Boolean).map((w, i, a) => (i === 0 || i === a.length - 1) ? w[0] : '').join('').toUpperCase();
 
   function fallback(p) {
+    const d = p.details || {};
+    const v = x => (x == null || String(x).trim() === '') ? D : String(x).trim();
+    const em = d.emergency || {};
+    const ename = [em.first, em.last].filter(Boolean).join(' ');
+    const addr = [d.street, d.city, d.province, d.zip].filter(x => x && String(x).trim()).join(', ');
+    const ap = d.appointment || {};
+    const apptTxt = [ap.type, ap.date, ap.time].filter(Boolean).join(' \u00b7 ');
     return {
       name: p.name, ini: ini(p.name), meta: p.id + ' \u00b7 ' + (p.age ? p.age + ' yrs' : D) + ' \u00b7 ' + p.type,
       tags: [[p.type, p.type === 'Inpatient' ? 'o' : 'g2'], [p.status, 'g']],
-      personal: [['Full Name', p.name], ['Date of Birth', D], ['Gender', D], ['Civil Status', D], ['Blood Type', D]],
-      contact: [['Phone', D], ['Email', D], ['Address', D]],
-      emergency: [['Name', D], ['Relationship', D], ['Contact Number', D]],
-      health: [['Existing Conditions', D], ['Reason for Registration', D], ['Additional Notes', D]],
+      personal: [['Full Name', p.name], ['Date of Birth', v(d.dob)], ['Gender', v(d.gender)], ['Civil Status', v(d.civil)], ['Blood Type', v(d.blood)]],
+      contact: [['Phone', v(d.phone)], ['Email', v(d.email)], ['Address', v(addr)]],
+      emergency: [['Name', v(ename)], ['Relationship', v(em.relationship)], ['Contact Number', v(em.phone)]],
+      health: [['Existing Conditions', v(d.conditions)], ['Reason for Registration', v(d.reason)], ['Additional Notes', v(d.notes)]],
       registration: [['Registered By', D], ['Registered At', p.registered || D], ['Patient Type', p.type]],
-      admission: [['Department', p.dept || D], ['Assigned Doctor', p.doctor || D], ['Ward', D], ['Bed Number', D], ['Admission Date', D], ['Condition', p.status || D]]
+      admission: [['Department', p.dept || D], ['Assigned Doctor', p.doctor || D], ['Ward', v(d.ward || apptTxt)], ['Bed Number', v(d.bed)], ['Admission Date', v(d.admitted)], ['Condition', v(d.condition || p.status)]]
     };
   }
 
