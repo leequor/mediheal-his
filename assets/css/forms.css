@@ -1,0 +1,39 @@
+/* Form screens: Appointment Form (Figma 248:821, frame origin 6400,34000) and Appointment confirmed (304:502, origin 8000,34000).
+   Every position is frame-local (Figma absolute minus frame origin). Values marked "est" could not be read from Figma and must be checked against an export. */
+
+/* ---- Appointment Form card ---- */
+.f-card{position:absolute;left:116px;top:144px;width:1207px;height:739px;background:#fff;border-radius:30px;box-shadow:0 4px 12px rgba(0,0,0,.25)} /* est: radius and shadow (the card is a vector, not readable) */
+.f-title{position:absolute;left:566px;top:195px;margin:0;font:700 37px/46.62px var(--font-title);color:#000;white-space:nowrap}
+.f-line{position:absolute;left:155px;width:1130px;height:1px;background:#b3b3b3} /* est: the Figma lines are 4px/2px tall boxes, thickness not readable */
+.f-h{position:absolute;margin:0;font:700 17px/20.57px var(--font-inter);color:#000;white-space:nowrap}
+.f-l{position:absolute;font:700 11px/13.31px var(--font-inter);color:#000;white-space:nowrap}
+.f-i{position:absolute;font:400 11px/13.31px var(--font-inter);color:#000;white-space:nowrap}
+
+/* text inputs (Figma Interactive Input: white, 1px #8e8e8e, r10, placeholder black at 20%) */
+.f-in{position:absolute;background:#fff;border:1px solid #8e8e8e;border-radius:10px;padding:0 10px;font:400 11px/13.31px var(--font-inter);color:#000;outline:0}
+textarea.f-in{padding:12px 10px 0;resize:none;overflow:auto}
+.f-in::placeholder{color:rgba(0,0,0,.2);opacity:1}
+.f-in:focus{border-color:#1b4e6b;box-shadow:0 0 0 1px #1b4e6b}
+.f-in.err{border-color:#e0322c;box-shadow:0 0 0 1px #e0322c}
+
+/* select (Figma Month/Days/Years/Gender/Status/Doctors/Appointment type: white, r10, drop shadow, text Inter 12, chevron 24px) */
+.f-sel{position:absolute}
+.f-sel .b{position:relative;display:block;width:100%;height:100%;padding:var(--tt,14.5px) 10px 0;background:#fff;border:0;border-radius:10px;box-shadow:0 4px 4px rgba(0,0,0,.25);font:400 12px/14.52px var(--font-inter);color:#000;text-align:left;white-space:nowrap;overflow:hidden} /* est: shadow */
+.f-sel .b svg{position:absolute;right:10px;top:var(--ct,10px);width:24px;height:24px}
+.f-sel.err .b{box-shadow:0 0 0 1px #e0322c,0 4px 4px rgba(0,0,0,.25)}
+.f-sel .p{display:none;position:absolute;left:0;top:calc(100% + 6px);width:100%;max-height:252px;overflow-y:auto;background:#fff;border-radius:10px;box-shadow:0 4px 4px rgba(0,0,0,.25);z-index:15}
+.f-sel.open .p{display:block}
+.f-sel .p button{display:block;width:100%;height:35px;padding:0 10px;background:#fff;border:0;text-align:left;font:400 12px var(--font-inter);color:#000;white-space:nowrap}
+.f-sel .p button:hover,.f-sel .p button:focus{background:#eef6fb;outline:0}
+
+/* buttons (Figma Frame 13 and Frame 12: 208x47, r30, Inter SemiBold 16 #d6f4fc) */
+.f-btn{position:absolute;top:948px;width:208px;height:47px;border:0;border-radius:30px;color:#d6f4fc;font:600 16px/19.36px var(--font-inter);box-shadow:0 4px 4px rgba(0,0,0,.25)} /* est: shadow */
+.f-btn.cancel{left:877px;background:#2975a0}
+.f-btn.confirm{left:1108px;background:#1b4e6b}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---- Appointment confirmed (304:502) ---- */
+.c-card{position:absolute;left:415px;top:375px;width:633px;height:307px;background:#fff;border-radius:30px;box-shadow:0 4px 12px rgba(0,0,0,.25)} /* est: shadow */
+.c-ok{position:absolute;left:673px;top:419px;width:94px;height:95px}
+.c-title{position:absolute;left:430px;top:528px;width:611.5px;margin:0;text-align:center;font:700 37px/46.62px var(--font-title);color:#15405a}
+.c-btn{position:absolute;left:632px;top:754px;width:208px;height:47px;border:0;border-radius:30px;background:linear-gradient(to left,#1b4e6b 0%,#3598d1 97.6%);color:#d6f4fc;font:700 24px/30.24px var(--font-title);box-shadow:0 4px 4px rgba(0,0,0,.25)} /* est: shadow */

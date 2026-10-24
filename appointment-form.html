@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang='en'><head>
+<meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Add Appointment · MediHeal</title>
+<link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@700&display=swap' rel='stylesheet'>
+<link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/base.css'><link rel='stylesheet' href='assets/css/components.css'><link rel='stylesheet' href='assets/css/forms.css'>
+</head><body data-page='appointments'>
+<!-- Figma: Appointment Form 248:821 (frame origin 6400,34000). All positions = Figma absolute minus origin. Confirm -> appointment-confirmed.html (Figma 276:534), Cancel -> appointments.html (Figma 276:531).
+     Figma hides the sub-labels of Middle Initial / Phone / Email / vitals behind their fields, so they are not drawn. -->
+<div class='stage'>
+  <div class='f-card'></div>
+  <h1 class='f-title'>Add Appointment</h1>
+  <div class='f-line' style='top:283px'></div>
+
+  <h2 class='f-h' style='left:177.5px;top:332.5px'>Personal Information</h2>
+
+  <span class='f-l' style='left:177.83px;top:380px'>Patient Name</span>
+  <input class='f-in' id='fn' style='left:177.83px;top:402px;width:127px;height:25px' placeholder='Enter First Name' aria-label='First name' autocomplete='given-name'>
+  <span class='f-i' style='left:177.83px;top:436px'>First Name</span>
+  <input class='f-in' id='mi' style='left:316.83px;top:400px;width:129px;height:25px' placeholder='(Optional)' aria-label='Middle initial' maxlength='3'>
+  <span class='f-i' style='left:316.83px;top:434px'>Middle Initial</span>
+  <input class='f-in' id='ln' style='left:177.83px;top:457px;width:268px;height:25px' placeholder='Enter Last Name' aria-label='Last name' autocomplete='family-name'>
+  <span class='f-i' style='left:177.83px;top:491px'>Last Name</span>
+
+  <span class='f-l' style='left:501px;top:381px'>Phone Number</span>
+  <input class='f-in' id='ph' type='tel' style='left:501px;top:400px;width:200px;height:25px' placeholder='Enter Phone Number' aria-label='Phone number' autocomplete='tel'>
+  <span class='f-l' style='left:501px;top:442px'>Email</span>
+  <input class='f-in' id='em' type='email' style='left:501px;top:461px;width:200px;height:25px' placeholder='Enter Email' aria-label='Email' autocomplete='email'>
+
+  <span class='f-l' style='left:729px;top:380px'>Address</span>
+  <input class='f-in' id='ad' style='left:729px;top:402px;width:326px;height:27px' placeholder='Enter Address' aria-label='Address' autocomplete='street-address'>
+  <span class='f-i' style='left:729px;top:438px'>Street Address</span>
+
+  <span class='f-l' style='left:177.83px;top:525px'>Date of Birth</span>
+  <div id='s-month' style='left:177.83px;top:547px;width:127px;height:36px;--tt:10.5px;--ct:6px'></div>
+  <div id='s-day' style='left:316.83px;top:543px;width:114px;height:43px'></div>
+  <div id='s-year' style='left:445.83px;top:543px;width:105px;height:44px'></div>
+
+  <span class='f-l' style='left:598px;top:531px'>Blood Pressure</span>
+  <input class='f-in' id='bp' style='left:598px;top:550px;width:94.5px;height:35px' placeholder='Enter Input' aria-label='Blood pressure'>
+  <span class='f-l' style='left:701px;top:531px'>Temperature</span>
+  <input class='f-in' id='tp' style='left:701px;top:550px;width:94.5px;height:35px' placeholder='Enter Input' aria-label='Temperature'>
+  <span class='f-l' style='left:804px;top:531px'>Weight</span>
+  <input class='f-in' id='wt' style='left:804px;top:550px;width:94.5px;height:35px' placeholder='Enter Input' aria-label='Weight'>
+  <span class='f-l' style='left:907px;top:531px'>Height</span>
+  <input class='f-in' id='ht' style='left:907px;top:550px;width:94.5px;height:35px' placeholder='Enter Input' aria-label='Height'>
+
+  <span class='f-l' style='left:177.83px;top:605px'>Sex</span>
+  <div id='s-sex' style='left:177.83px;top:622px;width:153.5px;height:40px'></div>
+  <span class='f-l' style='left:362.83px;top:605px'>Civil Status</span>
+  <div id='s-civil' style='left:356.83px;top:621px;width:129px;height:41px'></div>
+  <span class='f-l' style='left:540px;top:605px'>Notes/Main Complaint</span>
+  <textarea class='f-in' id='nt' style='left:540px;top:627px;width:518.8px;height:39px' placeholder='Enter Input' aria-label='Notes or main complaint'></textarea>
+
+  <div class='f-line' style='top:711px'></div>
+  <h2 class='f-h' style='left:177px;top:733px'>Appointment Details</h2>
+  <span class='f-l' style='left:178px;top:771px'>Doctor Assigned</span>
+  <span class='f-l' style='left:378px;top:771px'>Appointment Type</span>
+  <span class='f-l' style='left:632px;top:771px'>Date</span>
+  <span class='f-l' style='left:787px;top:771px'>Time Slot</span>
+  <div id='s-doc' style='left:177px;top:792px;width:165px;height:39px'></div>
+  <div id='s-kind' style='left:373px;top:787px;width:236px;height:44px'></div>
+  <input class='f-in' id='dt' style='left:632px;top:791px;width:127px;height:39px' placeholder='MM/DD/YYYY' aria-label='Appointment date' inputmode='numeric'>
+  <input class='f-in' id='tm' style='left:787px;top:791px;width:127px;height:39px' placeholder='e.g. 10:30 AM' aria-label='Time slot'>
+
+  <button class='f-btn cancel' id='cancel'>Cancel</button>
+  <button class='f-btn confirm' id='confirm'>Confirm</button>
+  <div class='sr-only' id='msg' role='alert'></div>
+</div>
+<script src='assets/js/data.js'></script><script src='assets/js/data-records.js'></script><script src='assets/js/icons.js'></script><script src='assets/js/forms.js'></script><script src='assets/js/shell.js'></script>
+<script>
+const $ = id => document.getElementById(id);
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const thisYear = new Date(HIS.today).getFullYear();
+// Figma shows placeholder lists only (January..May, 1..12, 'Year'); these are the real option lists.
+const S = {
+  month: fSelect($('s-month'), { options: MONTHS, placeholder: 'Month' }),
+  day: fSelect($('s-day'), { options: Array.from({ length: 31 }, (_, i) => String(i + 1)), placeholder: 'Date' }),
+  year: fSelect($('s-year'), { options: Array.from({ length: 111 }, (_, i) => String(thisYear - i)), placeholder: 'Year' }),
+  sex: fSelect($('s-sex'), { options: ['Female', 'Male'], placeholder: 'Gender' }),
+  civil: fSelect($('s-civil'), { options: ['Single', 'Married', 'Widowed', 'Separated', 'Divorced'], placeholder: 'Please Select' }),
+  doc: fSelect($('s-doc'), { options: HIS.doctors, placeholder: 'Doctors' }),
+  kind: fSelect($('s-kind'), { options: HIS.apptKinds, placeholder: 'Appointment type' })
+};
+
+function parseDate(s) {
+  const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(s.trim());
+  if (!m) return null;
+  const mo = +m[1], d = +m[2], y = +m[3];
+  const dt = new Date(y, mo - 1, d);
+  return dt.getFullYear() === y && dt.getMonth() === mo - 1 && dt.getDate() === d ? dt : null;
+}
+function parseTime(s) {
+  const m = /^(\d{1,2}):(\d{2})\s*([ap]m)?$/i.exec(s.trim());
+  if (!m) return null;
+  let h = +m[1];
+  const mi = +m[2];
+  const ap = m[3] && m[3].toLowerCase();
+  if (mi > 59) return null;
+  if (ap) { if (h < 1 || h > 12) return null; if (ap === 'pm' && h < 12) h += 12; if (ap === 'am' && h === 12) h = 0; } else if (h > 23) return null;
+  return { h, mi };
+}
+const p2 = n => String(n).padStart(2, '0');
+
+$('cancel').onclick = () => { location.href = 'appointments.html'; };
+$('confirm').onclick = () => {
+  const bad = [];
+  const need = (ok, node) => { node.classList ? node.classList.toggle('err', !ok) : node.setError(!ok); if (!ok) bad.push(node); };
+  const fn = $('fn').value.trim(), ln = $('ln').value.trim();
+  const date = parseDate($('dt').value), time = parseTime($('tm').value);
+  need(!!fn, $('fn')); need(!!ln, $('ln'));
+  need(!!S.doc.value, S.doc); need(!!S.kind.value, S.kind);
+  need(!!date, $('dt')); need(!!time, $('tm'));
+  if (bad.length) {
+    $('msg').textContent = 'Please complete the highlighted fields. Date is MM/DD/YYYY and time looks like 10:30 AM.';
+    const first = bad[0];
+    (first.focus ? first : first.el.querySelector('button')).focus();
+    return;
+  }
+  const dt = new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.h, time.mi);
+  const mi = $('mi').value.trim();
+  const rec = {
+    patient: fn + (mi ? ' ' + mi.replace(/\.?$/, '.') : '') + ' ' + ln,
+    kind: S.kind.value, doctor: S.doc.value, status: 'Pending',
+    date: dt.getFullYear() + '-' + p2(dt.getMonth() + 1) + '-' + p2(dt.getDate()), time: p2(dt.getHours()) + ':' + p2(dt.getMinutes()),
+    when: HIS.fmtShort(dt) + ' \u2022 ' + dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+    patientInfo: { phone: $('ph').value, email: $('em').value, address: $('ad').value, dob: [S.month.value, S.day.value, S.year.value], sex: S.sex.value, civil: S.civil.value,
+      bp: $('bp').value, temp: $('tp').value, weight: $('wt').value, height: $('ht').value, notes: $('nt').value }
+  };
+  try {
+    const list = JSON.parse(localStorage.getItem('mh_appts_extra') || '[]');
+    list.push(rec);
+    localStorage.setItem('mh_appts_extra', JSON.stringify(list));
+  } catch (e) { /* storage blocked: the confirmed screen still shows, the list just will not include it */ }
+  location.href = 'appointment-confirmed.html';
+};
+document.querySelectorAll('.f-in').forEach(i => i.addEventListener('input', () => i.classList.remove('err')));
+</script>
+</body></html>
