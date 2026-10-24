@@ -49,6 +49,7 @@ const NAV = [
 // (dot (14,17) 8x8 #1c6d9c; title (32,12) Inter 600 13 #1c2b30; body (32,33) Inter 12 #6f8890; time (32,55) Inter 500 11 #5b8db8); "Mark all as read" (24,436) 372x40 r8 #1c6d9c, Inter 600 13 white.
 // ESTIMATED (Figma draws only the all-unread state): shadow, the read look (white row, no dot, title weight 500), "All caught up" subtitle, the disabled look of the button, hiding the bell badge at 0.
 // Read state persists in localStorage key `mh_notif_read` (array of row indexes); delete the key to reset. Esc, the close button or a click outside closes the panel.
+// The outside-click test uses composedPath() because render() replaces the clicked button (panel.contains(target) would be false and close the panel).
 (function notifications() {
   const bell = document.querySelector('.bell');
   if (!bell) return;
@@ -115,7 +116,11 @@ const NAV = [
     if (b.dataset.n != null) { const i = +b.dataset.n; if (read.indexOf(i) < 0) { read.push(i); save(); render(); } }
   });
   bell.addEventListener('click', () => setOpen(!panel.classList.contains('on')));
-  document.addEventListener('click', e => { if (panel.classList.contains('on') && !panel.contains(e.target) && !bell.contains(e.target)) setOpen(false); });
+  document.addEventListener('click', e => {
+    if (!panel.classList.contains('on')) return;
+    const path = e.composedPath ? e.composedPath() : [];
+    if (path.indexOf(panel) < 0 && path.indexOf(bell) < 0) setOpen(false);
+  });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && panel.classList.contains('on')) setOpen(false); });
   render();
 })();
