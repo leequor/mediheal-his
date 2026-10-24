@@ -9,7 +9,7 @@
   if (/[?&]fit=0/.test(location.search)) return;
   var BASE = 1440, DR = 430;
   var css = document.createElement('style');
-  css.textContent = 'html{overflow-x:hidden}' +
+  css.textContent = 'html{overflow-x:hidden}body{min-width:0!important}' +
     '.fit-burger{display:none;position:fixed;left:8px;top:8px;width:44px;height:44px;border:0;border-radius:10px;background:#15405a;box-shadow:0 2px 8px rgba(15,30,46,.35);z-index:25;padding:0}' +
     '.fit-burger i{position:absolute;left:11px;width:22px;height:3px;border-radius:2px;background:#fff}' +
     '.fit-burger i:nth-child(1){top:14px}.fit-burger i:nth-child(2){top:20.5px}.fit-burger i:nth-child(3){top:27px}';
