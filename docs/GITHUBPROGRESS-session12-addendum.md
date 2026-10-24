@@ -1,0 +1,19 @@
+# Session 12 addendum (2026-10-24) - READ WITH docs/GITHUBPROGRESS.md
+
+Not yet merged into GITHUBPROGRESS.md (that file is ~35k tokens; resending it whole was skipped this turn). The next session should merge this text into section 5 (status), section 7 (next steps) and section 8 (log), then delete this file only if the owner agrees.
+
+## Log
+- Session 12 (owner uploaded the v169 FIGMAPROJECT.md: "Connect to Figma, channel l4zneptm goto github continue work interrupted"): joined `l4zneptm` (OK); opened GITHUBPROGRESS.md first; `list_commits` showed UNLOGGED work from an interrupted session: `5568421` (owner upload of images), `823725d` (image filenames background.jpg, Avatar.png, logo-removebg-preview 1.png in base.css/shell.js; this should fix the 404 images, NOT re-checked), `8e4ea9b` (Attendance built as ONE template: `attendance.html`, `assets/js/data-attendance.js`, `assets/js/attendance.js`, `assets/css/attendance.css`, sidebar Staff link in `shell.js`). No log or verification existed for it.
+- Verified Attendance live (Playwright) against Figma `2002:369` (export + `get_node_info` of `2004:719`): stage 1440x1635 (Figma frame is 1805 high because the actions frame includes picker overlays; content ends at 1607; kept 1635); title block, period card, 3 buttons (817/1004/1201, y236), 4 metric cards (68/399/730/1061, y331, 311x124), register (68,483) 1304x826, search (92,569) 408x40, filters, 8 rows from y679 pitch 64, totals y1191, footer y1243 all as in the Payroll pattern.
+- FOUND BUG: the three bottom cards (Record attendance, Leave requests, Payroll sync) had unpositioned titles and descriptions (CSS selectors `.at-ac .st` / `.at-ac .ds` did not match the classes `at-st` / `at-ds` used in `attendance.js`). Commit `a84acbd`: `.at-ac>.at-st{left:24;top:22}` and `.at-ac>.at-ds{left:24;top:48}`.
+- Verified after the fix, every child of the 3 cards equals the Figma card-local coordinates read from `2004:719` (card y1337, 270 high; cards x68/510/952, widths 422/422/420): titles Lexend 500 18 at (24,22), descriptions (24,48), field labels y80/146, fields y98/164 (374 and 179x36), Clock in/out (24,214)/(186,214) 150x34, New request (278,18) 120x30, View all (330,48), leave names y86/152, details y105/171, pills (314,88)/(314,154) 84x28, divider y134, sync value y80, detail y116, track y144 (326 of 372 filled), review y166/186, Sync 7 records (24,214), Last synced (190,223).
+- Behaviour checked live: department menu panel (512,613) 224x304 with 8 options 208x36; status menu (672,613) 224x196 with 5 options; Cardiology filter gives 1 row and "1 employee"; back to All gives 8; Details drawer for EMP-005 opens (Late, 7h 44m, grace text); New leave request modal opens (680x568) and Cancel closes it. No localStorage writes, no confirm actions (Export/Approve/Sync) clicked.
+- NOT verified: screenshot of each overlay vs its Figma export (Export `2014:2582`, Approve `2014:2571`, Sync `2014:2574`, Leave updated `2014:2578`, Recorded `2011:2563`, Details `2014:2585`, New request `2030:9301`, Leave list `2030:9330`), the 3 pickers (`2021:700`, `2021:833`, `2021:896`), the prototype links (get_reactions not re-read), the missing-image 404s after `823725d`, pixel diff of fonts/shadows. Figma not modified.
+
+## Status row to add (section 5)
+Attendance `2002:369` + ~25 state frames: BUILT by an interrupted session (`8e4ea9b`), bug fixed and main frame + bottom cards verified in session 12 (`a84acbd`). Open: items under NOT verified above.
+
+## Next steps (section 7)
+1. Merge this addendum into GITHUBPROGRESS.md.
+2. Compare each Attendance overlay and picker with its Figma export (`export_node_as_image`) and fix differences; read `get_reactions` on the buttons.
+3. Then Sign in `211:34` (still a placeholder), then profile modals (Edit/Transfer/Discharge/Pharmacy/Discharge summary) and Treatment Plan `2047:17739`.
