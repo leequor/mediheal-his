@@ -1,15 +1,16 @@
 // Treatment Plans: ONE template (Figma 2047:17739) + state frames as JS states: Department filter open (4011:4115), Prescribe (2047:18007), Order lab/imaging (2047:19218),
-// Schedule procedure (2047:20125), Assign ward and bed (2047:23469), Update status (2047:24075).
+// Schedule procedure (2047:20125), Assign ward and bed (2047:23469), Update status (2047:24075), Dispense medication (2047:25913, modal 2047:26162), Medication dispensed (2047:26213, modal 2047:26462).
 // Prototype links read: Prescribe 2047:17783 -> 2047:18007; Status 2047:25308 and 2047:24672 -> 2047:24075; Order tests 2047:17885 -> 2047:19218; Schedule procedure 2047:20722 -> 2047:20125;
 // Nursing care 2047:22236 -> Nursing Care page 2047:20735 (nursing.html); Assign bed 2047:23456 -> 2047:23469; Department filter 2047:17798 -> 4011:4115; patient rows have NO reaction.
+// Pharmacy (session 18): pharmacy.html redirects to treatment.html?modal=pharmacy (no Pharmacy page frame exists in Figma). Dispense -> Medication dispensed (680x368, 4 visible fields, buttons y300; Figma clips Input 5/6).
 // Additions (not in Figma): clicking a row selects that plan (the 7 plans other than PT-99213 have DERIVED details), live search, department filter filters, modals are editable and
-// change the plan in memory only (reload resets). Figma quirk NOT copied: the overlay frames draw a single "Plan history" button where the main frame has 5 action buttons.
+// change the plan in memory only (reload resets). Figma quirk NOT copied: the overlay frames draw a single "Plan history" button where the main frame has 5 action buttons; the Dispensed frame sits over a Personnel clone.
 (function () {
   var T = HIS.treatment, stage = document.getElementById('stage');
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var ALL = 'All departments', NA = '\u2014';
-  var qid = new URLSearchParams(location.search).get('id');
-  var st = { sel: T.plans.some(function (p) { return p.id === qid; }) ? qid : 'PT-99213', q: '', dept: ALL, menu: false, modal: '' };
+  var qs = new URLSearchParams(location.search), qid = qs.get('id');
+  var st = { sel: T.plans.some(function (p) { return p.id === qid; }) ? qid : 'PT-99213', q: '', dept: ALL, menu: false, modal: qs.get('modal') === 'pharmacy' ? 'pharmacy' : '', stock: 240, disp: null };
   HIS.tpState = st;
   var IC = {
     group: "<path d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8'/>",
@@ -123,11 +124,26 @@
   }
 
   // ---- modals: every field is the Figma text for PT-99213; for the other plans the fields are blank or derived from the plan ----
+  function stockBox(n) {
+    var over = n > st.stock;
+    return { bt: over ? '\u2715 Not enough stock' : '\u2713 Stock available', bx: over ? 'Only ' + st.stock + ' tablets are on hand.' : st.stock + ' tablets on hand. ' + (n > 0 ? 'After dispensing, ' + (st.stock - n) + ' tablets remain in the Pharmacy stock.' : 'Enter a quantity to see the remaining stock.') };
+  }
   function spec(kind, p) {
     var G = p.id === 'PT-99213', f = p.f;
     var al = String(f.allergies || '').split(' \u00b7 ')[0], bp = String(f.bp || '').replace(/\s*mmHg/, '');
     var sub1 = p.name + ' \u00b7 ' + p.id + ' \u00b7 Allergy: ' + al + ' \u00b7 BP ' + bp;
     var dx = p.sub.split(' \u00b7 ')[0];
+    if (kind === 'pharmacy') {
+      var med = G ? 'Atorvastatin 40 mg tablet' : String(f.meds || '').split(/,\s*/)[0].replace(NA, ''), sb = stockBox(G ? 30 : 0);
+      return { title: 'Dispense medication', ro: [1], ok: 'Dispense', req: [0, 2],
+        sub: G ? 'Isabel Geliz \u00b7 Cardiology \u00b7 Ward 3, Bed 12' : p.name + ' \u00b7 ' + f.department + ' \u00b7 ' + String(f.care).replace(' \u00b7 ', ' '),
+        l: ['Medication', 'Stock check', 'Quantity to dispense', 'Dispensed by', 'Prescription', 'Pharmacist notes'],
+        v: [med, 'In stock \u00b7 ' + st.stock + ' tablets', G ? '30 tablets (30 days)' : '', 'Pharmacist on duty',
+          G ? 'Atorvastatin 40 mg once daily at night \u00b7 Dr. Laurice Laureta' : (med ? med + ' \u00b7 ' + f.attending : ''),
+          G ? 'Counsel the patient: take at night, report muscle pain. Stock is updated after dispensing.' : ''],
+        bt: sb.bt, bx: sb.bx };
+    }
+    if (kind === 'dispensed') { var d = st.disp; return { title: 'Medication dispensed', sub: d.sub, l: ['Medication', 'Quantity', 'Dispensed by', 'Stock remaining'], v: [d.med, d.qty, d.by, d.left + ' tablets'] }; }
     if (kind === 'rx') return { title: 'Prescribe medication', sub: sub1, ok: 'Send to pharmacy', green: G, req: [0, 1, 3],
       l: ['Medication', 'Dose', 'Route', 'Frequency', 'Duration', 'Instructions for pharmacy and patient'],
       v: G ? ['Atorvastatin 40 mg tablet', '1 tablet (40 mg)', 'Oral', 'Once daily at bedtime', '30 days \u00b7 30 tablets', 'Take after dinner. Repeat liver enzyme test in 6 weeks.'] : ['', '', 'Oral', '', '', ''],
@@ -154,14 +170,16 @@
 
   function modal() {
     if (!st.modal || st.modal === 'nurse') return '';
-    var s = spec(st.modal, byId(st.sel));
-    var h = "<div class='tp-scrim' data-close='1'></div><div class='tp-modal' role='dialog' aria-modal='true' aria-label='" + esc(s.title) + "'>";
+    var kind = st.modal, s = spec(kind, byId(st.sel)), dn = kind === 'dispensed', pos = dn ? POS.slice(0, 4) : POS;
+    var h = "<div class='tp-scrim' data-close='1'></div><div class='tp-modal' role='dialog' aria-modal='true' aria-label='" + esc(s.title) + "'" + (dn ? " style='height:368px'" : '') + '>';
     h += "<button class='tp-m-x' data-close='1' aria-label='Close'>\u00d7</button><div class='tp-m-t'>" + esc(s.title) + "</div><div class='tp-m-s'>" + esc(s.sub) + "</div><div class='tp-m-d'></div>";
-    POS.forEach(function (q, i) {
+    pos.forEach(function (q, i) {
+      var ro = dn || (s.ro || []).indexOf(i) > -1 ? ' readonly' : '';
       h += "<div class='tp-m-l' style='left:" + q[2] + 'px;top:' + q[0] + "px'>" + esc(s.l[i]) + '</div>';
       if (i === 5) h += "<textarea class='tp-m-i' data-i='5' style='left:32px;top:" + q[1] + "px;width:616px'>" + esc(s.v[i]) + '</textarea>';
-      else h += "<input class='tp-m-i' data-i='" + i + "' value='" + esc(s.v[i]) + "' style='left:" + q[2] + 'px;top:' + q[1] + 'px;width:' + q[3] + "px'>";
+      else h += "<input class='tp-m-i' data-i='" + i + "' value='" + esc(s.v[i]) + "'" + ro + " style='left:" + q[2] + 'px;top:' + q[1] + 'px;width:' + q[3] + "px'>";
     });
+    if (dn) return h + "<button class='tp-m-c' data-close='1' style='top:300px'>Back to plan</button><button class='tp-m-ok' data-close='1' style='top:300px'>Close</button></div>";
     h += "<div class='tp-m-b" + (s.green ? ' green' : '') + "'><b>" + esc(s.bt) + '</b><span>' + esc(s.bx) + '</span></div>';
     h += "<button class='tp-m-c' data-close='1'>Cancel</button><button class='tp-m-ok' data-ok='1'>" + esc(s.ok) + '</button></div>';
     return h;
@@ -175,8 +193,10 @@
     if (keepFocus) { var q = document.getElementById('tpq'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
   }
   render();
+  if (st.modal === 'pharmacy') { var f0 = document.querySelector('#tpmodal .tp-m-i:not([readonly])'); if (f0) f0.focus({ preventScroll: true }); }
 
   function vals() { var o = []; [].forEach.call(document.querySelectorAll('#tpmodal [data-i]'), function (n) { o[+n.dataset.i] = n.value.trim(); }); return o; }
+  function qtyOf(v) { return parseInt(String(v || '').replace(/[^0-9]/g, ' ').trim().split(' ')[0], 10) || 0; }
 
   function confirm() {
     var kind = st.modal, s = spec(kind, byId(st.sel)), v = vals(), p = byId(st.sel), f = p.f, bad = false;
@@ -184,6 +204,12 @@
     [].forEach.call(document.querySelectorAll('#tpmodal [data-i]'), function (n) { var miss = req.indexOf(+n.dataset.i) > -1 && !n.value.trim(); n.classList.toggle('bad', miss); if (miss) bad = true; });
     if (bad) { tip(kind === 'status' ? 'Enter the new status (a reason is required to cancel)' : 'Fill in the highlighted fields'); return; }
     var msg;
+    if (kind === 'pharmacy') {
+      var n = qtyOf(v[2]);
+      if (n < 1 || n > st.stock) { document.querySelector('#tpmodal [data-i="2"]').classList.add('bad'); tip(n > st.stock ? 'Only ' + st.stock + ' tablets in stock' : 'Enter a quantity to dispense'); return; }
+      st.stock -= n; st.disp = { sub: s.sub, med: v[0], qty: v[2], by: v[3] || 'Pharmacist on duty', left: st.stock };
+      f.next = 'Medication dispensed'; st.modal = 'dispensed'; render(); return;
+    }
     if (kind === 'rx') {
       var nm = v[0].replace(/\s+tablets?$/i, '');
       if (f.meds.toLowerCase().indexOf(nm.split(' ')[0].toLowerCase()) < 0) f.meds += ', ' + nm;
@@ -207,6 +233,12 @@
     if (m) { if (m.dataset.modal === 'nurse') { location.href = 'nursing.html'; return; } st.modal = m.dataset.modal; render(); var f = document.querySelector('#tpmodal .tp-m-i'); if (f) f.focus({ preventScroll: true }); return; }
     if (X.closest('[data-ok]')) confirm();
   });
-  stage.addEventListener('input', function (ev) { if (ev.target.id === 'tpq') { st.q = ev.target.value.trim().toLowerCase(); render(true); } });
+  stage.addEventListener('input', function (ev) {
+    if (ev.target.id === 'tpq') { st.q = ev.target.value.trim().toLowerCase(); render(true); return; }
+    if (st.modal === 'pharmacy' && ev.target.getAttribute('data-i') === '2') {
+      var sb = stockBox(qtyOf(ev.target.value)), b = document.querySelector('#tpmodal .tp-m-b');
+      b.querySelector('b').textContent = sb.bt; b.querySelector('span').textContent = sb.bx; ev.target.classList.remove('bad');
+    }
+  });
   document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && (st.menu || st.modal)) { st.menu = false; st.modal = ''; render(); } });
 })();
