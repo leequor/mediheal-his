@@ -1,8 +1,9 @@
 // Nursing Care: ONE template (Figma 2047:20735) + state frames as JS states: Ward filter open (4011:5263), Give medicine (2047:21007), Record vitals (2047:21551), Add progress note (2047:22241).
 // Prototype links read (session 16): overview Record vitals 2047:20779 -> 2047:21551; Give medicine 2047:20881 -> 2047:21007; Record vitals 2047:20885 -> 2047:21551; Add note 2047:22846 -> 2047:22241;
 // Ward filter 2047:20794 -> 4011:5263; patient rows have NO reaction.
-// Additions (not in Figma): clicking a row selects that patient (the 7 records other than PT-99213 are DERIVED), live search, the ward filter filters, modals are editable and change the record in memory only
-// (reload resets), no localStorage writes. Figma quirk NOT copied: the state frames list "Maria Santos PT-99215" in place of "Rosa Mendoza PT-99220" and draw a shift of 7:00 AM to 3:00 PM / summary captions that differ from the main frame.
+// Additions (not in Figma): clicking a row selects that patient (the 7 records other than PT-99213 are DERIVED), live search, the ward filter filters, modals are editable.
+// Session 21: saved changes persist in this browser under localStorage key `mh_nursing_state` ({ doses, vitDue, vitDone, recs: { <id>: record } }); delete the key to reset.
+// Figma quirk NOT copied: the state frames list "Maria Santos PT-99215" in place of "Rosa Mendoza PT-99220" and draw a shift of 7:00 AM to 3:00 PM / summary captions that differ from the main frame.
 (function () {
   var N = HIS.nursing, stage = document.getElementById('stage');
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
@@ -51,6 +52,26 @@
     if (pa) { sex = sex || pa.sex || pa.gender; age = age || (pa.age ? String(pa.age) : ''); }
     return (sex || NA) + ' \u00b7 ' + (age ? age + ' years' : NA) + ' \u00b7 ' + p.ward + ', ' + p.bed;
   }
+
+  // ---- persistence (localStorage, own key) ----
+  var KEY = 'mh_nursing_state';
+  function saveState() {
+    try {
+      var o = { doses: st.doses, vitDue: st.vitDue, vitDone: st.vitDone, recs: {} };
+      N.pts.forEach(function (p) { o.recs[p.id] = rec(p); });
+      localStorage.setItem(KEY, JSON.stringify(o));
+    } catch (e) { /* storage blocked: keep the change in memory only */ }
+  }
+  (function loadState() {
+    try {
+      var o = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (!o) return;
+      if (typeof o.doses === 'number') st.doses = o.doses;
+      if (typeof o.vitDue === 'number') st.vitDue = o.vitDue;
+      if (o.vitDone && typeof o.vitDone === 'object') st.vitDone = o.vitDone;
+      N.pts.forEach(function (p) { if (o.recs && o.recs[p.id]) p.rec = o.recs[p.id]; });
+    } catch (e) { /* ignore bad data */ }
+  })();
 
   var wrap = document.createElement('div'); wrap.id = 'tpc'; stage.appendChild(wrap);
 
@@ -181,7 +202,8 @@
 
   function vals() { var o = []; [].forEach.call(document.querySelectorAll('#tpmodal [data-i]'), function (n) { o[+n.dataset.i] = n.value.trim(); }); return o; }
 
-  function confirm() {
+  function confirm() { confirm0(); saveState(); }
+  function confirm0() {
     var kind = st.modal, s = spec(kind, byId(st.sel)), v = vals(), p = byId(st.sel), r = rec(p), bad = false, msg;
     [].forEach.call(document.querySelectorAll('#tpmodal [data-i]'), function (n) { var miss = s.req.indexOf(+n.dataset.i) > -1 && !n.value.trim(); n.classList.toggle('bad', miss); if (miss) bad = true; });
     if (bad) { tip('Fill in the highlighted fields'); return; }
@@ -200,7 +222,7 @@
       r.upd = 'Updated Aug 31, 2026 \u00b7 ' + v[2];
       msg = 'Progress note saved for ' + p.name;
     }
-    st.modal = ''; render(); tip(msg + ' (in memory only)');
+    st.modal = ''; render(); tip(msg);
   }
 
   stage.addEventListener('click', function (ev) {

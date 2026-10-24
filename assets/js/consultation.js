@@ -1,8 +1,9 @@
 // Doctor Consultation: ONE template (Figma 2030:3609) + state frames as JS states: Department filter open (4001:3818), Record diagnosis (2030:3877 and the 3 other outcomes 2047:14674 / 14971 / 15268),
 // Outcome list (2047:17647), Diagnosis saved (2030:4174, 2047:16753 / 17050 / 17347).
 // Prototype link read (session 17): overview Record diagnosis 2030:3653 -> 2030:3877. Other buttons/rows not read (rows have no reaction in the sibling pages).
-// Additions (not in Figma): clicking a row selects that patient (7 records are DERIVED), live search, the department filter filters, the diagnosis modal is editable and changes the record in memory only (reload resets),
+// Additions (not in Figma): clicking a row selects that patient (7 records are DERIVED), live search, the department filter filters, the diagnosis modal is editable,
 // View history has no Figma frame (tooltip). Figma quirks NOT copied: the filter state frame lists other patients (Ramon Bautista, Carla Tan, Nina Flores); the saved frames always draw "Unstable angina \u00b7 I20.0" (the build shows the saved form values).
+// Session 21: saved diagnoses persist in this browser under localStorage key `mh_consult_state` ({ prog, comp, done, recs: { <id>: record } }); delete the key to reset.
 (function () {
   var C = HIS.consult, stage = document.getElementById('stage');
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
@@ -51,6 +52,27 @@
     if (pa) { sex = sex || pa.sex || pa.gender; age = age || (pa.age ? String(pa.age) : ''); kind = kind || pa.type; }
     return (sex || NA) + ' \u00b7 ' + (age ? age + ' years' : NA) + ' \u00b7 ' + (kind || 'Outpatient');
   }
+
+  // ---- persistence (localStorage, own key) ----
+  var KEY = 'mh_consult_state';
+  function saveState() {
+    try {
+      var o = { prog: st.prog, comp: st.comp, done: st.done, recs: {} };
+      C.pts.forEach(function (p) { o.recs[p.id] = rec(p); });
+      localStorage.setItem(KEY, JSON.stringify(o));
+    } catch (e) { /* storage blocked: keep the change in memory only */ }
+  }
+  (function loadState() {
+    try {
+      var o = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (!o) return;
+      if (typeof o.prog === 'number') st.prog = o.prog;
+      if (typeof o.comp === 'number') st.comp = o.comp;
+      if (o.done && typeof o.done === 'object') st.done = o.done;
+      C.pts.forEach(function (p) { if (o.recs && o.recs[p.id]) p.rec = o.recs[p.id]; });
+    } catch (e) { /* ignore bad data */ }
+  })();
+
   var wrap = document.createElement('div'); wrap.id = 'tpc'; stage.appendChild(wrap);
 
   function visible() {
@@ -191,7 +213,8 @@
     if (o === 'Refer to specialist') return p.id === 'PT-99213' ? 'Referral sent to Cardiology' : 'Referral sent to specialist';
     return 'Admit to ward for observation';
   }
-  function confirm() {
+  function confirm() { confirm0(); saveState(); }
+  function confirm0() {
     var p = byId(st.sel), r = rec(p), bad = false, f = st.f;
     [0, 1, 2, 3, 4].forEach(function (i) {
       var n = document.querySelector('#tpmodal [data-i="' + i + '"]'), miss = !String(f[i] || '').trim();
@@ -204,7 +227,7 @@
     r.upd = 'Updated Aug 31, 2026 \u00b7 ' + DR;
     if (!st.done[p.id]) { st.done[p.id] = true; if (st.prog > 0) st.prog--; st.comp++; }
     st.saved = { diag: f[0].trim() + ' \u00b7 ' + f[1].trim(), outcome: f[3], by: DR, next: nx };
-    st.modal = 'saved'; st.pn = false; render(); tip('Diagnosis saved for ' + p.name + ' (in memory only)');
+    st.modal = 'saved'; st.pn = false; render(); tip('Diagnosis saved for ' + p.name);
   }
 
   stage.addEventListener('click', function (ev) {
