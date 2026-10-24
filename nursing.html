@@ -1,10 +1,13 @@
 <!doctype html>
 <html lang='en'><head>
 <meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>Nursing · MediHeal</title>
-<link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@700&display=swap' rel='stylesheet'>
-<link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/base.css'>
+<title>Nursing Care · MediHeal</title>
+<link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@600;700&display=swap' rel='stylesheet'>
+<link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/base.css'><link rel='stylesheet' href='assets/css/treatment.css'>
 </head><body data-page='nursing'>
-<div class='stage'><section class='stub'><h1>Nursing</h1><p>Not converted yet. No dedicated Figma screen (Nursing appears as a department in <code>351:501</code>, detail frame <code>4030:9129</code>).</p></section></div>
-<script src='assets/js/data.js'></script><script src='assets/js/icons.js'></script><script src='assets/js/shell.js'></script>
+<!-- Figma Nursing Care 2047:20735 (Module 3; origin 0,59500; 1440x1262) + state frames as JS states of this ONE template:
+     Give medicine 2047:21007, Record vitals 2047:21551, Add progress note 2047:22241, Ward filter 4011:5263.
+     Same layout system as the Treatment Plans page, so it reuses assets/css/treatment.css (classes tp-*). Data: assets/js/data-nursing.js, layout + states: assets/js/nursing.js. -->
+<div class='stage tp' id='stage'></div>
+<script src='assets/js/data.js'></script><script src='assets/js/data-records.js'></script><script src='assets/js/data-profiles.js'></script><script src='assets/js/data-treatment.js'></script><script src='assets/js/data-nursing.js'></script><script src='assets/js/icons.js'></script><script src='assets/js/shell.js'></script><script src='assets/js/nursing.js'></script>
 </body></html>
