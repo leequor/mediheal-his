@@ -220,3 +220,7 @@ Actions with side effects were skipped on purpose (sync, approve/decline, clock-
 
 ## Turn 12 (2026-10-26) - handoff update (owner: "save this in our handoff file")
 - Target: the owner's bootstrap `NEW FIGMA BALLS.md` (v171, Desktop `Dev & AI`) and its repo mirror `docs/START-HERE.md`. Both still say "NEXT STEP (as of session 17)", which session 23 closed. Plan: bump to v172 ADDITIVELY (nothing removed): mark section 4 superseded and add a section 10 with the session-23 state (Phase 0 modules, both sweep harnesses + how to run them, Turn 11 results, POV answer, next step = Phase 1 of `docs/IMPROVEMENT-PLAN.md`). Results at the end of this turn.
+
+### Turn 12 results - handoff saved as v172
+- `docs/START-HERE.md` and the owner's Desktop bootstrap `NEW FIGMA BALLS.md` both bumped v171 -> v172, ADDITIVELY (diff = title version + 3 added blocks, 0 lines removed): read-order item `d. docs/IMPROVEMENT-PLAN.md`; a "SUPERSEDED" note under section 4 (session-17 next step); new section 10 "SESSION 23 STATE" = where things stand, the plan + design-format contract, Phase 0 layers (`HIS.store` 9 keys incl. owner keys, `HIS.audit`, `HIS.kit`), how to run `scripts/smoke.mjs` and `scripts/buttons.mjs`, turn 11 results + the fixed ID chip, the POV answer (one POV; RBAC = Phase 7.1), NEXT STEP = Phase 1 (1.1-1.5, no code yet), host notes (Figma bridge client, local git push).
+- Not touched: `FIGMAPROJECT.md` on the Desktop (older v165/v168 file, 568 KB) and `docs/HANDOFF.md` (sessions 1-2 history).
