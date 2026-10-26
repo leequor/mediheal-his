@@ -202,3 +202,8 @@ Actions with side effects were skipped on purpose (sync, approve/decline, clock-
 - Plan order: 0 -> 1 -> 2 -> 3 -> 5 -> 6 -> 4 -> 7 -> 8 -> 9. Phase 0 is deployed (`719da63`, `253dda7`). Starting Phase 1.
 - Phase 1 scope: 1.1 period lock + sync audit trail, 1.2 leave ledger semantics, 1.3 night shifts / overtime, 1.4 payslip PDF, 1.5 exceptions-first payroll card. Highest-risk module; touches `assets/js/attendance.js` (sync, review, leave) and the payroll page.
 - Results at the end of this turn.
+
+## Turn 11 (2026-10-26) - exhaustive button-by-button check (owner: "we need to confirm each button's function doesn't have a bug")
+- Turn 10 (Phase 1) was redirected by the owner before any code was written; Phase 1 stays logged and unstarted.
+- Goal: prove every control on every page either does the thing it claims (for the named critical flows) or at least has an observable effect - no crashes, no dead buttons (a click that changes nothing), no broken links, no console errors. Side-effect controls handled safely: `window.print` spoofed, downloads captured and cancelled, navigation detected, scratch `mh_*` state removed afterwards.
+- New harness: `scripts/buttons.mjs` (per-control sweep). Results at the end of this turn.
