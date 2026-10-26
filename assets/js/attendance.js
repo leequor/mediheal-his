@@ -158,17 +158,17 @@
     h += "<div class='at-sv' style='left:24px;top:80px'>" + ready + ' of ' + N + "</div><div class='at-ex' style='left:24px;top:116px'>" + cap + "</div>";
     h += "<div class='at-trk' style='left:24px;top:144px;width:372px'></div><div class='at-fill' style='left:24px;top:144px;width:" + Math.round(372 * ready / N) + "px'></div>";
     if (rev.length) {
-      h += "<div class='at-ex' style='left:24px;top:166px;font:600 12px/14.52px Inter,sans-serif;color:#a6460a'>" + rev.length + " needs review</div>";
-      h += "<div class='at-ex' style='left:24px;top:186px;font:400 12px/14.52px Inter,sans-serif;color:#1c2b30'>" + esc(rev[0].name) + ' \u00b7 absent, no approved leave</div>';
+      h += "<div class='at-ex at-el' style='left:24px;top:166px;width:286px;font:600 12px/14.52px Inter,sans-serif;color:#a6460a'>" + rev.length + " needs review</div>";
+      h += "<div class='at-ex at-el' style='left:24px;top:186px;width:372px;font:400 12px/14.52px Inter,sans-serif;color:#1c2b30'>" + esc(rev[0].name) + ' \u00b7 absent, no approved leave</div>';
       h += "<button class='at-rv' data-act='review' style='left:318px;top:160px;width:78px'>Review</button>";
     } else if (unpaid.length) {
-      h += "<div class='at-ex' style='left:24px;top:166px;font:600 12px/14.52px Inter,sans-serif;color:#1c2b30'>" + unpaid.length + ' unpaid absence' + (unpaid.length === 1 ? '' : 's') + " deducted</div>";
-      h += "<div class='at-ex' style='left:24px;top:186px;font:400 12px/14.52px Inter,sans-serif;color:#6f8890'>" + esc(unpaid[0].name) + ' \u00b7 no paid leave on file</div>';
+      h += "<div class='at-ex at-el' style='left:24px;top:166px;width:372px;font:600 12px/14.52px Inter,sans-serif;color:#1c2b30'>" + unpaid.length + ' unpaid absence' + (unpaid.length === 1 ? '' : 's') + " deducted</div>";
+      h += "<div class='at-ex at-el' style='left:24px;top:186px;width:372px;font:400 12px/14.52px Inter,sans-serif;color:#6f8890'>" + esc(unpaid[0].name) + ' \u00b7 no paid leave on file</div>';
     }
     h += syncedClean
       ? "<button class='at-cbtn' disabled style='left:24px;top:214px;width:150px'>Synced</button>"
       : "<button class='at-cbtn pri' data-act='sync' style='left:24px;top:214px;width:150px'>Sync " + ready + ' records</button>';
-    h += "<div class='at-ex' style='left:190px;top:223px'>Last synced " + A.synced + '</div></div>';
+    h += "<div class='at-ex at-el' style='left:190px;top:223px;width:206px'>Last synced " + A.synced + '</div></div>';
     return h.replace(/class='ex'/g, "class='at-ex'").replace(/class='ln'/g, "class='at-ln'").replace(/class='ld'/g, "class='at-ld'");
   }
 
@@ -209,10 +209,17 @@
     }
     var xb = "<button class='at-m-x' data-close='1' aria-label='Close'>\u00d7</button><div class='at-m-d'></div>";
     if (m === 'list') {
-      var L = A.leaves, inner2 = xb + "<div class='at-m-t'>Leave requests</div><div class='at-m-s'>" + A.period + ' pay period \u00b7 ' + L.length + ' requests \u00b7 ' + pending().length + ' pending</div>';
-      L.forEach(function (l, i) { inner2 += "<div class='at-m-i' style='left:32px;top:" + (112 + 48 * i) + "px;width:616px;position:absolute'>" + esc(l.name + ' \u00b7 ' + l.type + ' \u00b7 ' + l.range + ' \u00b7 ' + l.days + ' day' + (l.days === 1 ? '' : 's') + ' \u00b7 ' + l.status) + '</div>'; });
-      inner2 += "<button class='at-m-c' data-close='1' style='top:420px'>Close</button><button class='at-m-ok' data-act='newreq' style='top:420px'>New request</button>";
-      return scr + box(680, 484, inner2);
+      var L = A.leaves, n = L.length;
+      var mh = Math.min(600, 148 + 48 * n + 72);
+      var bt = mh - 64;
+      var inner2 = xb + "<div class='at-m-t'>Leave requests</div><div class='at-m-s'>" + A.period + ' pay period \u00b7 ' + n + ' requests \u00b7 ' + pending().length + ' pending</div>';
+      inner2 += "<div class='at-lv-scroll' style='left:32px;top:100px;width:616px;height:" + (mh - 220) + "px'>";
+      L.forEach(function (l, i) {
+        inner2 += "<div class='at-m-i' style='top:" + (12 + 48 * i) + "px'>" + esc(l.name + ' \u00b7 ' + l.type + ' \u00b7 ' + l.range + ' \u00b7 ' + l.days + ' day' + (l.days === 1 ? '' : 's') + ' \u00b7 ' + l.status) + '</div>';
+      });
+      inner2 += '</div>';
+      inner2 += "<button class='at-m-c' data-close='1' style='top:" + bt + "px'>Close</button><button class='at-m-ok' data-act='newreq' style='top:" + bt + "px'>New request</button>";
+      return scr + box(680, mh, inner2);
     }
     // new leave request
     var lbl = function (t, l, tp) { return "<div class='at-m-l' style='left:" + l + 'px;top:' + tp + "px'>" + t + '</div>'; };

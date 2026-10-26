@@ -162,3 +162,8 @@ textarea.at-m-i{height:88px;resize:none;white-space:normal;line-height:20px}
 .at-cbtn[disabled]{opacity:.55;cursor:default}
 .at-rv{position:absolute;height:26px;border:0;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea;color:#a6460a;font:600 12px/26px Inter,sans-serif;cursor:pointer;padding:0;text-align:center}
 .at-rv:hover{background:#fff7ed;box-shadow:inset 0 0 0 1px #e9b27c}
+.at-lv-scroll{position:absolute;overflow-y:auto;overflow-x:hidden}
+.at-lv-scroll .at-m-i{position:absolute;left:0;width:616px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.at-lv-scroll::-webkit-scrollbar{width:8px}
+.at-lv-scroll::-webkit-scrollbar-thumb{background:#c8dcea;border-radius:4px}
+.at-el{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
