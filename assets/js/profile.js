@@ -6,7 +6,7 @@
   const stage = document.getElementById('stage');
   const id = new URLSearchParams(location.search).get('id') || 'PT-99213';
   const all = HIS.patients.slice();
-  try { JSON.parse(localStorage.getItem('mh_regs_extra') || '[]').forEach(p => all.unshift(p)); } catch (e) { /* ignore bad data */ }
+  HIS.store.get('mh_regs_extra', []).forEach(p => all.unshift(p));
   const pat = all.find(p => p.id === id);
   const ini = n => String(n || '?').trim().split(/\s+/).filter(Boolean).map((w, i, a) => (i === 0 || i === a.length - 1) ? w[0] : '').join('').toUpperCase();
 

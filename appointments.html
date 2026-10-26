@@ -42,12 +42,12 @@ textarea.ap-i{height:88px;padding:12px 14px;line-height:20px;resize:none;font-fa
     </div>
   </section>
 </div>
-<script src='assets/js/data.js'></script><script src='assets/js/data-records.js'></script><script src='assets/js/icons.js'></script><script src='assets/js/ui.js'></script><script src='assets/js/shell.js'></script>
+<script src='assets/js/data.js'></script><script src='assets/js/store.js'></script><script src='assets/js/audit.js'></script><script src='assets/js/kit.js'></script><script src='assets/js/data-records.js'></script><script src='assets/js/icons.js'></script><script src='assets/js/ui.js'></script><script src='assets/js/shell.js'></script>
 <script>
 const $ = id => document.getElementById(id);
 const T = HIS.apptTotals;
-// Appointments saved by appointment-form.html (localStorage, same browser only).
-try { JSON.parse(localStorage.getItem('mh_appts_extra') || '[]').forEach(r => HIS.appointments.push(r)); } catch (e) { /* storage blocked */ }
+// Appointments saved by appointment-form.html (localStorage key mh_appts_extra via HIS.store, same browser only).
+HIS.store.get('mh_appts_extra', []).forEach(r => HIS.appointments.push(r));
 $('sicon').innerHTML = svg('search', 16);
 $('picon').innerHTML = svg('plus', 16);
 // [label, value, icon, icon bg, icon color, width, height, left]

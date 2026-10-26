@@ -48,7 +48,7 @@ const NAV = [
 // close button (360,20) 36x36 r8 stroke #c8dcea, "\u2715" Inter 500 16 #1b4e6b; divider y68 h1 #e3edf3; rows x24, y84 + 86*i, 372x78 r10 fill #f6fafd stroke #e3edf3
 // (dot (14,17) 8x8 #1c6d9c; title (32,12) Inter 600 13 #1c2b30; body (32,33) Inter 12 #6f8890; time (32,55) Inter 500 11 #5b8db8); "Mark all as read" (24,436) 372x40 r8 #1c6d9c, Inter 600 13 white.
 // ESTIMATED (Figma draws only the all-unread state): shadow, the read look (white row, no dot, title weight 500), "All caught up" subtitle, the disabled look of the button, hiding the bell badge at 0.
-// Read state persists in localStorage key `mh_notif_read` (array of row indexes); delete the key to reset. Esc, the close button or a click outside closes the panel.
+// Read state persists in localStorage key `mh_notif_read` (array of row indexes) through HIS.store; delete the key to reset. Esc, the close button or a click outside closes the panel.
 // The outside-click test uses composedPath() because render() replaces the clicked button (panel.contains(target) would be false and close the panel).
 (function notifications() {
   const bell = document.querySelector('.bell');
@@ -61,10 +61,9 @@ const NAV = [
     ['Absence needs review', 'Daniel Cruz \u00b7 No clock entry or leave on file', 'Today, 9:00 AM'],
     ['Payroll sync ready', '7 of 8 records ready for the Aug 16\u201331 period', 'Today, 9:15 AM']
   ];
-  const KEY = 'mh_notif_read';
-  let read = [];
-  try { read = JSON.parse(localStorage.getItem(KEY) || '[]') || []; } catch (e) { read = []; }
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(read)); } catch (e) { /* storage blocked: memory only */ } };
+  const KEY = HIS.store.KEY.notifRead;
+  let read = HIS.store.get(KEY, []);
+  const save = () => { HIS.store.set(KEY, read); };
   const css = document.createElement('style');
   css.textContent =
     '.nf-p{position:absolute;left:952px;top:90px;width:420px;height:492px;box-sizing:border-box;background:#fff;border-radius:16px;box-shadow:inset 0 0 0 1px #c8dcea,0 12px 32px rgba(15,30,46,.18);z-index:22;display:none;font-family:Inter,sans-serif}' +

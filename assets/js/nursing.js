@@ -54,23 +54,19 @@
   }
 
   // ---- persistence (localStorage, own key) ----
-  var KEY = 'mh_nursing_state';
+  var KEY = HIS.store.KEY.nursing;
   function saveState() {
-    try {
-      var o = { doses: st.doses, vitDue: st.vitDue, vitDone: st.vitDone, recs: {} };
-      N.pts.forEach(function (p) { o.recs[p.id] = rec(p); });
-      localStorage.setItem(KEY, JSON.stringify(o));
-    } catch (e) { /* storage blocked: keep the change in memory only */ }
+    var o = { doses: st.doses, vitDue: st.vitDue, vitDone: st.vitDone, recs: {} };
+    N.pts.forEach(function (p) { o.recs[p.id] = rec(p); });
+    HIS.store.set(KEY, o);
   }
   (function loadState() {
-    try {
-      var o = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (!o) return;
-      if (typeof o.doses === 'number') st.doses = o.doses;
-      if (typeof o.vitDue === 'number') st.vitDue = o.vitDue;
-      if (o.vitDone && typeof o.vitDone === 'object') st.vitDone = o.vitDone;
-      N.pts.forEach(function (p) { if (o.recs && o.recs[p.id]) p.rec = o.recs[p.id]; });
-    } catch (e) { /* ignore bad data */ }
+    var o = HIS.store.get(KEY, null);
+    if (!o) return;
+    if (typeof o.doses === 'number') st.doses = o.doses;
+    if (typeof o.vitDue === 'number') st.vitDue = o.vitDue;
+    if (o.vitDone && typeof o.vitDone === 'object') st.vitDone = o.vitDone;
+    N.pts.forEach(function (p) { if (o.recs && o.recs[p.id]) p.rec = o.recs[p.id]; });
   })();
 
   var wrap = document.createElement('div'); wrap.id = 'tpc'; stage.appendChild(wrap);

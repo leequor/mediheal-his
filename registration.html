@@ -55,7 +55,7 @@
     <div id='rows'></div>
   </section>
 </div>
-<script src='assets/js/data.js'></script><script src='assets/js/data-records.js'></script><script src='assets/js/icons.js'></script><script src='assets/js/ui.js'></script><script src='assets/js/shell.js'></script>
+<script src='assets/js/data.js'></script><script src='assets/js/store.js'></script><script src='assets/js/audit.js'></script><script src='assets/js/kit.js'></script><script src='assets/js/data-records.js'></script><script src='assets/js/icons.js'></script><script src='assets/js/ui.js'></script><script src='assets/js/shell.js'></script>
 <script>
 const $ = id => document.getElementById(id);
 const state = { tab: 'All', q: '', dept: 'All Departments', stat: 'All Statuses' };
@@ -135,8 +135,8 @@ function findPatient() {
   document.addEventListener('keydown', function esc(ev) { if (ev.key === 'Escape') { closeFp(); document.removeEventListener('keydown', esc); } });
 }
 
-// Registrations saved from registration-form.html (localStorage key mh_regs_extra, oldest first); newest ends up on top.
-try { JSON.parse(localStorage.getItem('mh_regs_extra') || '[]').forEach(p => HIS.patients.unshift(p)); } catch (e) { /* ignore bad data */ }
+// Registrations saved from registration-form.html (localStorage key mh_regs_extra via HIS.store, oldest first); newest ends up on top.
+HIS.store.get('mh_regs_extra', []).forEach(p => HIS.patients.unshift(p));
 renderKpis(); render();
 </script>
 </body></html>

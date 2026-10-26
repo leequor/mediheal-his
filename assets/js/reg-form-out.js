@@ -143,8 +143,7 @@
     const dob = parseDMY(val('dob'));
     let age = today.getFullYear() - dob.getFullYear();
     if (today < new Date(today.getFullYear(), dob.getMonth(), dob.getDate())) age--;
-    let extra = [];
-    try { extra = JSON.parse(localStorage.getItem('mh_regs_extra') || '[]'); } catch (e) { extra = []; }
+    let extra = HIS.store.get('mh_regs_extra', []);
     const maxId = Math.max.apply(null, HIS.patients.map(p => +p.id.slice(3)).concat(extra.map(p => +p.id.slice(3))));
     const rec = {
       name: patientName(), id: 'PT-' + (maxId + 1), age, type: 'Outpatient', dept: val('dept'), doctor: val('doctor'),
@@ -158,7 +157,7 @@
         insurance: { philhealth: val('phid'), memberType: val('mtype'), hmo: val('hmo'), policy: val('policy') } }
     };
     extra.push(rec);
-    try { localStorage.setItem('mh_regs_extra', JSON.stringify(extra)); } catch (e) { /* storage blocked: record is lost on navigation */ }
+    HIS.store.set('mh_regs_extra', extra);
     location.href = 'registration.html'; // Figma 420:1728 -> 23:2285
   };
 

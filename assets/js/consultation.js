@@ -54,23 +54,19 @@
   }
 
   // ---- persistence (localStorage, own key) ----
-  var KEY = 'mh_consult_state';
+  var KEY = HIS.store.KEY.consultation;
   function saveState() {
-    try {
-      var o = { prog: st.prog, comp: st.comp, done: st.done, recs: {} };
-      C.pts.forEach(function (p) { o.recs[p.id] = rec(p); });
-      localStorage.setItem(KEY, JSON.stringify(o));
-    } catch (e) { /* storage blocked: keep the change in memory only */ }
+    var o = { prog: st.prog, comp: st.comp, done: st.done, recs: {} };
+    C.pts.forEach(function (p) { o.recs[p.id] = rec(p); });
+    HIS.store.set(KEY, o);
   }
   (function loadState() {
-    try {
-      var o = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (!o) return;
-      if (typeof o.prog === 'number') st.prog = o.prog;
-      if (typeof o.comp === 'number') st.comp = o.comp;
-      if (o.done && typeof o.done === 'object') st.done = o.done;
-      C.pts.forEach(function (p) { if (o.recs && o.recs[p.id]) p.rec = o.recs[p.id]; });
-    } catch (e) { /* ignore bad data */ }
+    var o = HIS.store.get(KEY, null);
+    if (!o) return;
+    if (typeof o.prog === 'number') st.prog = o.prog;
+    if (typeof o.comp === 'number') st.comp = o.comp;
+    if (o.done && typeof o.done === 'object') st.done = o.done;
+    C.pts.forEach(function (p) { if (o.recs && o.recs[p.id]) p.rec = o.recs[p.id]; });
   })();
 
   var wrap = document.createElement('div'); wrap.id = 'tpc'; stage.appendChild(wrap);

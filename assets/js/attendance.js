@@ -28,30 +28,26 @@
   var at = function (cls, l, t, inner, extra) { return "<div class='at-a " + cls + "' style='left:" + l + 'px;top:' + t + 'px;' + (extra || '') + "'>" + inner + '</div>'; };
   var wrap = document.createElement('div'); wrap.id = 'atc'; stage.appendChild(wrap);
   // Session 23: the register, leave list and payroll sync persist in this browser (own key; delete to reset).
-  var KEY = 'mh_attendance_state';
+  var KEY = HIS.store.KEY.attendance;
   function save() {
-    try {
-      localStorage.setItem(KEY, JSON.stringify({
-        emps: A.emps.map(function (e) { return { id: e.id, tin: e.tin, tout: e.tout, status: e.status, reviewed: !!e.reviewed }; }),
-        leaves: A.leaves, synced: A.synced,
-        syncedCount: A.syncedCount == null ? null : A.syncedCount,
-        dirty: !!A.dirty
-      }));
-    } catch (e) { /* storage blocked: memory only */ }
+    HIS.store.set(KEY, {
+      emps: A.emps.map(function (e) { return { id: e.id, tin: e.tin, tout: e.tout, status: e.status, reviewed: !!e.reviewed }; }),
+      leaves: A.leaves, synced: A.synced,
+      syncedCount: A.syncedCount == null ? null : A.syncedCount,
+      dirty: !!A.dirty
+    });
   }
   function loadSaved() {
-    try {
-      var s = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (!s) return;
-      if (Array.isArray(s.leaves)) A.leaves = s.leaves;
-      if (s.synced) A.synced = s.synced;
-      if (s.syncedCount != null) A.syncedCount = s.syncedCount;
-      if (s.dirty != null) A.dirty = s.dirty;
-      (s.emps || []).forEach(function (r) {
-        var e = A.emps.filter(function (x) { return x.id === r.id; })[0];
-        if (e) { e.tin = r.tin || ''; e.tout = r.tout || ''; e.status = r.status || e.status; e.reviewed = !!r.reviewed; }
-      });
-    } catch (e) { /* bad data: ignore */ }
+    var s = HIS.store.get(KEY, null);
+    if (!s) return;
+    if (Array.isArray(s.leaves)) A.leaves = s.leaves;
+    if (s.synced) A.synced = s.synced;
+    if (s.syncedCount != null) A.syncedCount = s.syncedCount;
+    if (s.dirty != null) A.dirty = s.dirty;
+    (s.emps || []).forEach(function (r) {
+      var e = A.emps.filter(function (x) { return x.id === r.id; })[0];
+      if (e) { e.tin = r.tin || ''; e.tout = r.tout || ''; e.status = r.status || e.status; e.reviewed = !!r.reviewed; }
+    });
   }
   function nowTime() {
     var d = new Date(), h = d.getHours(), ap = h >= 12 ? 'PM' : 'AM';

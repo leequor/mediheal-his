@@ -7,7 +7,7 @@
   var stage = document.getElementById('stage');
   if (!stage || !stage.querySelector('.pf-name')) return;
   var D = '\u2014';
-  var KEY = 'mh_profile_edits';
+  var KEY = HIS.store.KEY.profileEdits;
   var id = new URLSearchParams(location.search).get('id') || 'PT-99213';
   var isG = id === 'PT-99213';
   var cur = null;
@@ -39,8 +39,8 @@
   }
 
   // ---- persistence (localStorage, own key; never touches mh_regs_extra / mh_appts_extra) ----
-  function loadAll() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
-  function persist(fn) { try { var all = loadAll(), r = all[id] || (all[id] = {}); fn(r); localStorage.setItem(KEY, JSON.stringify(all)); } catch (e) { /* storage blocked: keep the change in memory only */ } }
+  function loadAll() { return HIS.store.get(KEY, {}); }
+  function persist(fn) { var all = loadAll(), r = all[id] || (all[id] = {}); fn(r); HIS.store.set(KEY, all); }
   function sv(t, i, v) {
     setV(t, i, v);
     persist(function (r) { r.v = (r.v || []).filter(function (x) { return !(x[0] === t && x[1] === i); }); r.v.push([t, i, v]); });
@@ -102,11 +102,7 @@
   }
   function close() { if (cur) { cur.el.remove(); cur = null; } }
 
-  function toast(t) {
-    var el = document.getElementById('pmtoast');
-    if (!el) { el = document.createElement('div'); el.id = 'pmtoast'; el.className = 'pm-toast'; document.body.appendChild(el); }
-    el.textContent = t; el.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(function () { el.classList.remove('on'); }, 3200);
-  }
+  function toast(t) { HIS.kit.toast(t); }
   function val(i) { return cur.el.querySelector('[data-i="' + i + '"]').value.trim(); }
   function flag(i, bad) { cur.el.querySelector('[data-i="' + i + '"]').classList.toggle('err', !!bad); return !!bad; }
 

@@ -29,3 +29,11 @@
 .modal .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
 .mbtn{height:40px;padding:0 20px;border-radius:10px;border:1px solid var(--primary);background:var(--primary);color:#fff;font:600 14px var(--font-inter)}
 .mbtn.out{background:#fff;color:var(--section);border-color:var(--line)}
+
+/* UI kit (session 23, Phase 0). Shared table row and toast; badge + dropdown + modal live above.
+   The Figma action-modal geometry is in assets/js/kit.js GEOM, not here, until its first real
+   consumer (Phase 1). */
+.kit-row{display:grid;align-items:center;gap:8px}
+.kit-td{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kit-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%);background:#15405a;color:#fff;font:500 13px/18px var(--font-inter);padding:10px 18px;border-radius:10px;z-index:3000;opacity:0;pointer-events:none;transition:opacity .2s}
+.kit-toast.on{opacity:1}

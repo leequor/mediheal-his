@@ -31,27 +31,23 @@
   var byId = function (id) { return T.plans.filter(function (p) { return p.id === id; })[0]; };
 
   // ---- persistence (localStorage, own key) ----
-  var KEY = 'mh_treatment_state';
+  var KEY = HIS.store.KEY.treatment;
   function saveState() {
-    try {
-      var o = { stock: st.stock, plans: {} };
-      T.plans.forEach(function (p) { o.plans[p.id] = { pstat: p.pstat || '', type: p.type, f: { meds: p.f.meds, next: p.f.next, procs: p.f.procs, care: p.f.care } }; });
-      localStorage.setItem(KEY, JSON.stringify(o));
-    } catch (e) { /* storage blocked: keep the change in memory only */ }
+    var o = { stock: st.stock, plans: {} };
+    T.plans.forEach(function (p) { o.plans[p.id] = { pstat: p.pstat || '', type: p.type, f: { meds: p.f.meds, next: p.f.next, procs: p.f.procs, care: p.f.care } }; });
+    HIS.store.set(KEY, o);
   }
   (function loadState() {
-    try {
-      var o = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (!o) return;
-      if (typeof o.stock === 'number') st.stock = o.stock;
-      T.plans.forEach(function (p) {
-        var s = o.plans && o.plans[p.id];
-        if (!s) return;
-        if (s.pstat) p.pstat = s.pstat; else delete p.pstat;
-        if (s.type) p.type = s.type;
-        ['meds', 'next', 'procs', 'care'].forEach(function (k) { if (s.f && s.f[k] != null) p.f[k] = s.f[k]; });
-      });
-    } catch (e) { /* ignore bad data */ }
+    var o = HIS.store.get(KEY, null);
+    if (!o) return;
+    if (typeof o.stock === 'number') st.stock = o.stock;
+    T.plans.forEach(function (p) {
+      var s = o.plans && o.plans[p.id];
+      if (!s) return;
+      if (s.pstat) p.pstat = s.pstat; else delete p.pstat;
+      if (s.type) p.type = s.type;
+      ['meds', 'next', 'procs', 'care'].forEach(function (k) { if (s.f && s.f[k] != null) p.f[k] = s.f[k]; });
+    });
   })();
 
   // age and sex come from the patient profile / registration data when it exists (Figma lists no age for the other plans)
