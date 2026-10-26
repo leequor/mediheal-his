@@ -136,7 +136,10 @@
     h += rows([['Allergies', f.allergies], ['Allergy severity', f.severity], ['Blood pressure', f.bp], ['Heart rate', f.hr], ['Temperature', f.temp], ['SpO\u2082 \u00b7 Weight', f.spo2]], 834);
     h += at('tp-hr', 572, 1003, '', 'width:776px');
     h += at('tp-sico', 572, 1027, ic('phone', 17, 1.8)) + at('tp-sh', 598, 1026, 'Plan details');
-    h += rows([['Attending doctor', f.attending], ['Department', f.department], ['Care setting', f.care], ['Next step', f.next]], 1063);
+    h += rows([['Attending doctor', f.attending], ['Department', f.department], ['Care setting', f.care]], 1063);
+    h += /^Awaiting result/i.test(f.next)
+      ? at('tp-fl', 976, 1118, 'Next step') + "<button class='tp-a tp-fv tp-fvlink' data-modal='results' style='left:976px;top:1137px' title='Open test results'>" + esc(f.next) + ' \u203a</button>'
+      : field(976, 1118, 'Next step', f.next);
     h += "<div class='tp-a tp-foot'>" + at('tp-l', 24, 16, ic('shield', 15, 1.8, 'color:#6f8890'), '') + at('tp-l', 46, 17, 'Confidential patient record') + at('tp-l', 480, 17, 'Updated Aug 31, 2026 \u00b7 ' + esc(f.attending), 'width:320px;text-align:right') + '</div>';
     return h;
   }
@@ -191,6 +194,13 @@
       l: ['Ward', 'Bed', 'Admission date', 'Attending doctor', 'Isolation precautions', 'Admission notes'],
       v: G ? ['Inpatient Ward 3', 'Bed 12 (vacant)', 'Aug 31, 2026', 'Dr. Laurice Laureta, Cardiology', 'None required', 'Admitted for cardiac monitoring. Telemetry requested. Family contact is on file at the front desk.'] : ['', '', 'Aug 31, 2026', f.attending + ', ' + f.department, 'None required', ''],
       bt: G ? 'Bed available' : 'Bed check', bx: G ? 'Bed check: Bed 12 in Ward 3 is vacant and cleaned. No isolation conflict with the neighbouring beds.' : 'Enter a ward and bed to check availability.' };
+    if (kind === 'results') {
+      var tname = String(f.next || '').replace(/^Awaiting result:\s*/i, '').replace(/\s*\(.*\)$/, '') || 'Troponin I';
+      return { title: 'Test results', sub: tname + ' \u00b7 ' + p.name + ' \u00b7 ' + p.id + ' \u00b7 Aug 31, 2026',
+        l: ['Result', 'Reference range', 'Ordered by', 'Status', 'Interpretation', "Doctor's notes"],
+        v: G ? ['0.42 ng/mL (High)', 'Below 0.04 ng/mL', 'Dr. Laurice Laureta', 'Completed \u00b7 Aug 31, 2:15 PM', 'Elevated troponin, consistent with myocardial injury', 'Result reviewed. Continue the cardiac plan; repeat troponin in 6 hours.']
+             : ['Pending', '\u2014', f.attending, 'Completed \u00b7 Aug 31, 2:15 PM', 'Awaiting clinician review', ''] };
+    }
     return { title: 'Update treatment status', sub: p.name + ' \u00b7 ' + p.id + ' \u00b7 ' + f.department, ok: 'Update status', req: [2],
       l: ['Treatment', 'Current status', 'New status', 'Updated by', 'Reason for change', 'Status notes'],
       v: G ? ['Cardiac monitoring', 'Ordered', 'In progress', 'Dr. Laurice Laureta', 'Telemetry connected on Ward 3', 'Telemetry connected at 6:30 PM. Nursing notified to check vitals every 4 hours.'] : ['', 'Ordered', 'In progress', f.attending, '', ''],
@@ -198,19 +208,22 @@
   }
   // [label top, input top, left, width]
   var POS = [[120, 142, 32, 300], [120, 142, 348, 300], [202, 224, 32, 300], [202, 224, 348, 300], [284, 306, 32, 616], [462, 484, 32, 616]];
+  // Test results modal (Figma 2047:19815): no info banner, so the notes row sits higher and the buttons move to y=500.
+  var POSR = [[120, 142, 32, 300], [120, 142, 348, 300], [202, 224, 32, 300], [202, 224, 348, 300], [284, 306, 32, 616], [366, 388, 32, 616]];
 
   function modal() {
     if (!st.modal || st.modal === 'nurse') return '';
-    var kind = st.modal, s = spec(kind, byId(st.sel)), dn = kind === 'dispensed', pos = dn ? POS.slice(0, 4) : POS;
-    var h = "<div class='tp-scrim' data-close='1'></div><div class='tp-modal' role='dialog' aria-modal='true' aria-label='" + esc(s.title) + "'" + (dn ? " style='height:368px'" : '') + '>';
+    var kind = st.modal, s = spec(kind, byId(st.sel)), dn = kind === 'dispensed', rs = kind === 'results', pos = dn ? POS.slice(0, 4) : rs ? POSR : POS;
+    var h = "<div class='tp-scrim' data-close='1'></div><div class='tp-modal" + (rs ? ' rs' : '') + "' role='dialog' aria-modal='true' aria-label='" + esc(s.title) + "'" + (dn ? " style='height:368px'" : '') + '>';
     h += "<button class='tp-m-x' data-close='1' aria-label='Close'>\u00d7</button><div class='tp-m-t'>" + esc(s.title) + "</div><div class='tp-m-s'>" + esc(s.sub) + "</div><div class='tp-m-d'></div>";
     pos.forEach(function (q, i) {
-      var ro = dn || (s.ro || []).indexOf(i) > -1 ? ' readonly' : '';
+      var ro = dn || rs || (s.ro || []).indexOf(i) > -1 ? ' readonly' : '';
       h += "<div class='tp-m-l' style='left:" + q[2] + 'px;top:' + q[0] + "px'>" + esc(s.l[i]) + '</div>';
-      if (i === 5) h += "<textarea class='tp-m-i' data-i='5' style='left:32px;top:" + q[1] + "px;width:616px'>" + esc(s.v[i]) + '</textarea>';
+      if (i === 5) h += "<textarea class='tp-m-i' data-i='5'" + ro + " style='left:32px;top:" + q[1] + "px;width:616px'>" + esc(s.v[i]) + '</textarea>';
       else h += "<input class='tp-m-i' data-i='" + i + "' value='" + esc(s.v[i]) + "'" + ro + " style='left:" + q[2] + 'px;top:' + q[1] + 'px;width:' + q[3] + "px'>";
     });
     if (dn) return h + "<button class='tp-m-c' data-close='1' style='top:300px'>Back to plan</button><button class='tp-m-ok' data-close='1' style='top:300px'>Close</button></div>";
+    if (rs) return h + "<button class='tp-m-c' data-close='1' style='top:500px'>Order another</button><button class='tp-m-ok' data-close='1' style='top:500px'>Back to plan</button></div>";
     h += "<div class='tp-m-b" + (s.green ? ' green' : '') + "'><b>" + esc(s.bt) + '</b><span>' + esc(s.bx) + '</span></div>';
     h += "<button class='tp-m-c' data-close='1'>Cancel</button><button class='tp-m-ok' data-ok='1'>" + esc(s.ok) + '</button></div>';
     return h;

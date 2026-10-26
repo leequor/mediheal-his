@@ -32,3 +32,6 @@
 .si-b:hover{background:#1b2a47}
 .si-tip{position:fixed;z-index:2000;left:50%;bottom:28px;transform:translateX(-50%);background:#15405a;color:#fff;font:600 13px/16px Inter,sans-serif;padding:10px 16px;border-radius:10px}
 .si-tip[hidden]{display:none}
+.si-state{left:0;top:0;width:0;height:0}
+.si-state[hidden]{display:none}
+.si-state>*{position:absolute}

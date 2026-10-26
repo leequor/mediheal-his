@@ -4,6 +4,25 @@
 <title>Appointments · MediHeal</title>
 <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@700&display=swap' rel='stylesheet'>
 <link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/base.css'><link rel='stylesheet' href='assets/css/components.css'><link rel='stylesheet' href='assets/css/pages.css'>
+<style>
+/* Figma 2027:3041 Reschedule and 2027:3286 Cancel: Action modal 680x568 at (380,252) */
+.ap-scrim{position:absolute;left:0;top:0;width:1440px;height:100%;background:rgba(11,42,61,.35);z-index:1000}
+.ap-modal{position:absolute;left:380px;top:252px;width:680px;height:568px;background:#fff;border-radius:16px;box-shadow:inset 0 0 0 1px #c8dcea,0 20px 50px rgba(15,30,46,.25);z-index:1001}
+.ap-modal>*{position:absolute}
+.ap-x{left:616px;top:24px;width:32px;height:32px;border:0;border-radius:8px;background:#f6fafd;box-shadow:inset 0 0 0 1px #c8dcea;color:#1b4e6b;font:500 18px/30px Inter,sans-serif;padding:0;cursor:pointer}
+.ap-t{left:32px;top:28px;font:500 22px/27.5px Lexend,sans-serif;color:#15405a;white-space:nowrap}
+.ap-s{left:32px;top:62px;font:400 13px/15.73px Inter,sans-serif;color:#6f8890;white-space:nowrap}
+.ap-d{left:32px;top:100px;width:616px;height:1px;background:#e3edf3}
+.ap-l{font:600 12px/14.52px Inter,sans-serif;color:#1b4e6b;white-space:nowrap}
+.ap-i{height:40px;border-radius:8px;border:0;background:#f6fafd;box-shadow:inset 0 0 0 1px #c8dcea;padding:0 14px;font:500 13px/40px Inter,sans-serif;color:#1c2b30;outline:0;margin:0;box-sizing:border-box}
+textarea.ap-i{height:88px;padding:12px 14px;line-height:20px;resize:none;font-family:Inter,sans-serif}
+.ap-i:focus{box-shadow:inset 0 0 0 1px #1c6d9c}
+.ap-i[readonly]{color:#1c2b30}
+.ap-c,.ap-ok{top:504px;height:40px;border-radius:8px;border:0;padding:0;font:600 13px/15.73px Inter,sans-serif;cursor:pointer}
+.ap-c{left:396px;width:100px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea;color:#1b4e6b}
+.ap-ok{left:508px;width:140px;background:#1c6d9c;color:#fff}
+.ap-ok.red{background:#c0392b}
+</style>
 </head><body data-page='appointments'>
 <!-- Figma: Appointments 23:2289 (frame origin 4800,34000). New Appointment / Walk-In opens appointment-form.html (Figma 248:821). The Edit modal below is still temporary: Figma has no edit screen. -->
 <div class='stage'>
@@ -97,12 +116,64 @@ $('rows').onclick = e => {
     const i = +mo.dataset.more;
     const menu = document.createElement('div');
     menu.className = 'a-menu';
-    menu.innerHTML = "<button data-s='Completed'>Mark completed</button><button data-s='Cancelled'>Cancel appointment</button>";
-    menu.onclick = ev => { const b = ev.target.closest('button'); if (b) { HIS.appointments[i].status = b.dataset.s; render(); } };
+    menu.innerHTML = "<button data-r='1'>Reschedule</button><button data-s='Completed'>Mark completed</button><button data-x='1'>Cancel appointment</button>";
+    menu.onclick = ev => {
+      const b = ev.target.closest('button'); if (!b) return;
+      if (b.dataset.r) { actionModal('res', i); menu.remove(); return; }
+      if (b.dataset.x) { actionModal('can', i); menu.remove(); return; }
+      HIS.appointments[i].status = b.dataset.s; render();
+    };
     mo.closest('.a-act').appendChild(menu);
   }
 };
 document.addEventListener('click', () => document.querySelectorAll('.a-menu').forEach(m => m.remove()));
+
+function closeAp() { document.querySelectorAll('.ap-layer').forEach(n => n.remove()); }
+function actionModal(kind, i) {
+  closeAp();
+  const a = HIS.appointments[i] || {};
+  const it = a.date && a.time ? { date: a.date, time: a.time } : toInputs(a.when || 'Aug 31, 2026 \u2022 09:00 AM');
+  const res = kind === 'res';
+  const field = (l, t, w, left, inner) => "<div class='ap-l' style='left:" + left + 'px;top:' + t + "px'>" + l + '</div>' + inner.replace('{ST}', "style='left:" + left + 'px;top:' + (t + 22) + 'px;width:' + w + 'px');
+  const layer = document.createElement('div');
+  layer.className = 'ap-layer';
+  layer.innerHTML = "<div class='ap-scrim' data-close></div><div class='ap-modal'>" +
+    "<button class='ap-x' data-close aria-label='Close'>\u00d7</button>" +
+    "<div class='ap-t'>" + (res ? 'Reschedule appointment' : 'Cancel appointment') + "</div>" +
+    "<div class='ap-s'>" + (res ? 'Move this appointment to a new date, time or doctor' : 'This frees the slot and notifies the patient') + "</div>" +
+    "<div class='ap-d'></div>" +
+    field('Patient', 120, 300, 32, "<input class='ap-i' readonly {ST} value='" + (a.patient || '') + "'>") +
+    field('Doctor', 120, 300, 348, res
+      ? "<select class='ap-i' name='doctor' {ST}>" + HIS.doctors.map(d => "<option" + (d === a.doctor ? ' selected' : '') + '>' + d + '</option>').join('') + '</select>'
+      : "<input class='ap-i' readonly {ST} value='" + (a.doctor || '') + "'>") +
+    (res ? field('New date', 202, 300, 32, "<input class='ap-i' type='date' name='date' {ST} value='" + it.date + "'>") +
+           field('New time', 202, 300, 348, "<input class='ap-i' type='time' name='time' {ST} value='" + it.time + "'>") +
+           field('Reason for rescheduling', 284, 616, 32, "<input class='ap-i' name='reason' {ST} value='Doctor unavailable at the original time'>") +
+           field('Message to patient', 366, 616, 32, "<textarea class='ap-i' name='msg' {ST}>Your appointment has been moved. Please arrive 15 minutes early.</textarea>")
+         : field('Cancelled by', 202, 300, 32, "<input class='ap-i' name='by' {ST} value='Front desk'>") +
+           field('Notify patient', 202, 300, 348, "<input class='ap-i' name='notify' {ST} value='SMS and email'>") +
+           field('Reason for cancelling', 284, 616, 32, "<input class='ap-i' name='reason' {ST} value='Patient requested cancellation'>") +
+           field('Notes', 366, 616, 32, "<textarea class='ap-i' name='notes' {ST}>Offer the patient a new slot when they call back.</textarea>")) +
+    "<button class='ap-c' data-close>" + (res ? 'Cancel' : 'Go back') + "</button>" +
+    "<button class='ap-ok" + (res ? '' : ' red') + "'>" + (res ? 'Confirm reschedule' : 'Cancel appointment') + "</button></div>";
+  document.querySelector('.stage').appendChild(layer);
+  layer.onclick = ev => { if (ev.target.closest('[data-close]') || ev.target.classList.contains('ap-scrim')) closeAp(); };
+  layer.querySelector('.ap-ok').onclick = () => {
+    if (res) {
+      const d = layer.querySelector('[name=date]').value, t = layer.querySelector('[name=time]').value;
+      if (!d || !t) return;
+      const dt = new Date(d + 'T' + t);
+      Object.assign(HIS.appointments[i], {
+        date: d, time: t, doctor: layer.querySelector('[name=doctor]').value,
+        when: HIS.fmtShort(dt) + ' \u2022 ' + dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      });
+    } else {
+      HIS.appointments[i].status = 'Cancelled';
+    }
+    closeAp(); render();
+  };
+  document.addEventListener('keydown', function esc(ev) { if (ev.key === 'Escape') { closeAp(); document.removeEventListener('keydown', esc); } });
+}
 render();
 </script>
 </body></html>

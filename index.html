@@ -20,8 +20,8 @@
   <svg class='si-ic' style='left:57px;top:679px;width:40px;height:40px' viewBox='0 0 24 24' fill='none' stroke='#fff' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 4.5A1.5 1.5 0 0 1 5.5 3h10A1.5 1.5 0 0 1 17 4.5V12'/><path d='M4 4.5V19a1.5 1.5 0 0 0 1.5 1.5H12'/><path d='M7.5 8h6M7.5 11.5h4'/><rect x='12' y='13.5' width='9' height='6.5' rx='1.5'/><path d='M14.5 16.8h4'/></svg>
   <div class='si-ft' style='left:110px;top:676px'>Billing &amp; Management Reports</div><div class='si-fd' style='left:110px;top:699px'>Clear, accurate reports for management</div>
 
-  <h1 class='si-t'>Sign in to your workspace</h1>
-  <p class='si-s'>Enter your staff credentials to access the hospital Information System.</p>
+  <h1 class='si-t' id='sit1'>Sign in to your workspace</h1>
+  <p class='si-s' id='sis1'>Enter your staff credentials to access the hospital Information System.</p>
   <form id='sif' novalidate>
     <label class='si-l' for='sie' style='left:820px;top:429px'>Email Address</label>
     <input class='si-i' id='sie' type='email' autocomplete='username' placeholder='name@mediheal.com' style='left:820px;top:457px'>
@@ -31,6 +31,16 @@
     <button type='button' class='si-f' id='sif2'>Forgot password?</button>
     <button class='si-b' type='submit'>Sign in →</button>
   </form>
+  <!-- Figma states 4031:9535 Forgot password and 4031:9586 Reset link sent (same right column, frame-local coords) -->
+  <div class='si-state' id='si-forgot' hidden>
+    <label class='si-l' for='sife' style='left:820px;top:429px'>Email Address</label>
+    <input class='si-i' id='sife' type='email' autocomplete='username' placeholder='name@mediheal.com' style='left:820px;top:457px'>
+    <button type='button' class='si-b' id='sif-send' style='top:550px'>Send reset link</button>
+    <button type='button' class='si-f' id='sif-back' style='left:820px;top:616px;width:130px'>Back to sign in</button>
+  </div>
+  <div class='si-state' id='si-sent' hidden>
+    <button type='button' class='si-b' id='sis-back' style='top:440px'>Back to sign in</button>
+  </div>
 </div>
 <div class='si-tip' id='sit' hidden></div>
 <script src='assets/js/fit.js'></script>
@@ -47,7 +57,27 @@
     if(!ok2){tip('Enter your password');p.focus();return}
     location.href='dashboard.html';
   });
-  document.getElementById('sif2').addEventListener('click',function(){tip('Password resets are handled by the hospital IT desk')});
+  document.getElementById('sif2').addEventListener('click',function(){view('forgot');document.getElementById('sife').focus()});
+  var VIEWS={
+    signin:['Sign in to your workspace','Enter your staff credentials to access the hospital Information System.'],
+    forgot:['Reset your password','Enter your staff email address and we will send you a link to reset your password.'],
+    sent:['Check your email','If that email is registered, a reset link is on its way. It expires in 30 minutes.']
+  };
+  function view(v){
+    document.getElementById('sif').hidden=v!=='signin';
+    document.getElementById('si-forgot').hidden=v!=='forgot';
+    document.getElementById('si-sent').hidden=v!=='sent';
+    document.getElementById('sit1').textContent=VIEWS[v][0];
+    document.getElementById('sis1').textContent=VIEWS[v][1];
+  }
+  var fe=document.getElementById('sife');
+  fe.addEventListener('input',function(){fe.classList.remove('bad')});
+  document.getElementById('sif-send').addEventListener('click',function(){
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(fe.value.trim())){fe.classList.add('bad');tip('Enter a valid email address');fe.focus();return}
+    view('sent');
+  });
+  document.getElementById('sif-back').addEventListener('click',function(){view('signin');e.focus()});
+  document.getElementById('sis-back').addEventListener('click',function(){view('signin');e.focus()});
 })();
 </script>
 </body></html>

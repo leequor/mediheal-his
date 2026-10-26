@@ -4,6 +4,38 @@
 <title>Registration · MediHeal</title>
 <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@700&display=swap' rel='stylesheet'>
 <link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/base.css'><link rel='stylesheet' href='assets/css/components.css'><link rel='stylesheet' href='assets/css/pages.css'>
+<style>
+/* Figma 2027:2164 Registration - Find existing patient: modal 720x580 at (360,230) */
+.fp-scrim{position:absolute;left:0;top:0;width:1440px;height:100%;background:rgba(11,42,61,.35);z-index:1000}
+.fp-modal{position:absolute;left:360px;top:230px;width:720px;height:580px;background:#fff;border-radius:16px;box-shadow:inset 0 0 0 1px #c8dcea,0 20px 50px rgba(15,30,46,.25);z-index:1001}
+.fp-modal>*{position:absolute}
+.fp-t{left:32px;top:28px;font:500 22px/27.5px Lexend,sans-serif;color:#15405a;white-space:nowrap}
+.fp-s{left:32px;top:62px;font:400 13px/15.73px Inter,sans-serif;color:#6f8890;white-space:nowrap}
+.fp-x{left:656px;top:24px;width:32px;height:32px;border:0;border-radius:8px;background:#f6fafd;box-shadow:inset 0 0 0 1px #c8dcea;color:#1b4e6b;font:500 18px/30px Inter,sans-serif;cursor:pointer;padding:0}
+.fp-search{left:32px;top:104px;width:656px;height:44px;background:#f6fafd;box-shadow:inset 0 0 0 1px #c8dcea;border-radius:10px}
+.fp-search svg{position:absolute;left:16px;top:14px}
+.fp-search input{position:absolute;left:44px;top:0;width:500px;height:44px;border:0;background:transparent;font:500 14px Inter,sans-serif;color:#1c2b30;outline:0}
+.fp-count{position:absolute;right:14px;top:15px;font:400 12px Inter,sans-serif;color:#6f8890}
+.fp-hint{left:32px;top:156px;font:400 12px Inter,sans-serif;color:#6f8890}
+.fp-lab{left:32px;top:192px;font:600 11px Inter,sans-serif;color:#5b8db8;letter-spacing:.4px}
+.fp-r{position:absolute;left:32px;top:214px;width:656px;height:88px;background:#f6fafd;box-shadow:inset 0 0 0 1px #e3edf3;border-radius:12px}
+.fp-r>*{position:absolute}
+.fp-av{left:16px;top:20px;width:48px;height:48px;border-radius:24px;background:#e8f4fb;color:#1b4e6b;font:600 14px/48px Inter,sans-serif;text-align:center}
+.fp-r b{left:80px;top:16px;font:600 15px Inter,sans-serif;color:#15405a;white-space:nowrap}
+.fp-r small{left:80px;font:400 12px Inter,sans-serif;color:#6f8890;white-space:nowrap}
+.fp-r small:nth-of-type(1){top:42px}
+.fp-r small:nth-of-type(2){top:64px}
+.fp-pill{left:392px;top:30px;height:28px;line-height:28px;padding:0 14px;border-radius:999px}
+.fp-open{left:504px;top:26px;width:128px;height:36px;background:#1c6d9c;border-radius:8px;color:#fff;font:600 13px/36px Inter,sans-serif;text-align:center;text-decoration:none}
+.fp-empty{position:absolute;left:32px;top:214px;width:656px;height:88px;background:#f6fafd;box-shadow:inset 0 0 0 1px #e3edf3;border-radius:12px;font:400 13px/88px Inter,sans-serif;color:#6f8890;text-align:center}
+.fp-d{left:32px;top:326px;width:656px;height:1px;background:#e3edf3}
+.fp-nt{left:32px;top:346px;font:600 15px Inter,sans-serif;color:#15405a}
+.fp-nd{left:32px;top:370px;font:400 12px Inter,sans-serif;color:#6f8890}
+.fp-card{top:406px;width:320px;height:92px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea;border-radius:12px;text-decoration:none}
+.fp-card b{position:absolute;left:20px;top:24px;font:600 14px Inter,sans-serif;color:#1b4e6b}
+.fp-card small{position:absolute;left:20px;top:50px;font:400 12px Inter,sans-serif;color:#6f8890;white-space:nowrap}
+.fp-c{left:588px;top:522px;width:100px;height:40px;border:0;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1px #c8dcea;color:#1b4e6b;font:600 13px/15.73px Inter,sans-serif;cursor:pointer}
+</style>
 </head><body data-page='registration'>
 <!-- Figma: Registration 23:2285 (frame origin 3200,34000). New Registration opens registration-form.html (Inpatient form 420:1147); the Inpatient/Outpatient type cards link the two forms (outpatient-form.html, 420:1434). The row arrow opens profile.html?id=<patient id> (Figma profile frames 459:680, 488:1955, 488:2105, 488:2255, 488:2405; session 6). -->
 <div class='stage'>
@@ -64,8 +96,44 @@ $('q').oninput = e => { state.q = e.target.value; render(); };
 // Row arrow -> patient profile (session 6; profile.html reads ?id= and uses HIS.profiles)
 $('rows').onclick = e => { const b = e.target.closest('.go-btn'); if (b) location.href = 'profile.html?id=' + encodeURIComponent(b.dataset.id); };
 
-// Figma: New Registration -> Inpatient form 420:1147 (the previous temporary modal was removed in session 3)
-$('new').onclick = () => { location.href = 'registration-form.html'; };
+// Figma 2027:2164 Find existing patient (registry guard before a new registration)
+$('new').onclick = findPatient;
+function closeFp() { document.querySelectorAll('.fp-layer').forEach(n => n.remove()); }
+function findPatient() {
+  closeFp();
+  const layer = document.createElement('div');
+  layer.className = 'fp-layer';
+  layer.innerHTML = "<div class='fp-scrim' data-close></div><div class='fp-modal'>" +
+    "<div class='fp-t'>Find existing patient</div><div class='fp-s'>Check the registry first so the same person is not registered twice.</div>" +
+    "<button class='fp-x' data-close aria-label='Close'>\u00d7</button>" +
+    "<div class='fp-search'><span id='fpi'></span><input id='fpq' placeholder='Search by name, patient ID or PhilHealth ID' aria-label='Search registry'><span class='fp-count' id='fpc'></span></div>" +
+    "<div class='fp-hint'>Search by name, patient ID, phone number or PhilHealth ID.</div>" +
+    "<div class='fp-lab'>MATCHING PATIENT</div><div id='fp-res'></div>" +
+    "<div class='fp-d'></div><div class='fp-nt'>Not in the registry?</div>" +
+    "<div class='fp-nd'>Register them as a new patient. Pick the care type to open the matching form.</div>" +
+    "<a class='fp-card' href='registration-form.html' style='left:32px'><b>New inpatient</b><small>Admitted for overnight or extended care</small></a>" +
+    "<a class='fp-card' href='outpatient-form.html' style='left:368px'><b>New outpatient</b><small>Clinic visit without admission</small></a>" +
+    "<button class='fp-c' data-close>Cancel</button></div>";
+  document.querySelector('.stage').appendChild(layer);
+  layer.querySelector('#fpi').innerHTML = svg('search', 15);
+  const q = layer.querySelector('#fpq'), res = layer.querySelector('#fp-res'), cnt = layer.querySelector('#fpc');
+  function draw() {
+    const t = q.value.trim().toLowerCase();
+    const list = HIS.patients.filter(p => !t || (p.name + ' ' + p.id + ' ' + (p.phone || '')).toLowerCase().includes(t));
+    cnt.textContent = list.length + (list.length === 1 ? ' match' : ' matches');
+    if (!t) { res.innerHTML = "<div class='fp-empty'>Start typing to check the registry.</div>"; return; }
+    if (!list.length) { res.innerHTML = "<div class='fp-empty'>No patient matches that search.</div>"; return; }
+    const p = list[0];
+    res.innerHTML = "<div class='fp-r'><span class='fp-av'>" + initialsOf(p.name) + "</span><b>" + p.name + "</b>" +
+      "<small>" + p.id + ' \u00b7 ' + p.age + ' yrs \u00b7 ' + p.dept + ' \u00b7 ' + p.doctor + "</small>" +
+      "<small>Registered " + p.registered + "</small>" +
+      "<span class='badge " + HIS.statusClass[p.status] + " fp-pill'>" + p.status + "</span>" +
+      "<a class='fp-open' href='profile.html?id=" + encodeURIComponent(p.id) + "'>Open profile</a></div>";
+  }
+  q.addEventListener('input', draw); draw(); q.focus();
+  layer.onclick = ev => { if (ev.target.closest('[data-close]') || ev.target.classList.contains('fp-scrim')) closeFp(); };
+  document.addEventListener('keydown', function esc(ev) { if (ev.key === 'Escape') { closeFp(); document.removeEventListener('keydown', esc); } });
+}
 
 // Registrations saved from registration-form.html (localStorage key mh_regs_extra, oldest first); newest ends up on top.
 try { JSON.parse(localStorage.getItem('mh_regs_extra') || '[]').forEach(p => HIS.patients.unshift(p)); } catch (e) { /* ignore bad data */ }
