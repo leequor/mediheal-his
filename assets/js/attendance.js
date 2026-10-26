@@ -154,7 +154,8 @@
     var unpaid = A.emps.filter(function (x) { return x.status === 'Absent' && x.reviewed; });
     var syncedClean = A.syncedCount === ready && !A.dirty;
     h += "<div class='at-a at-card at-ac' style='left:952px;width:420px'><div class='at-st'>Payroll sync</div><div class='at-ds at-ex'>Feeds the " + A.period + ' pay period.</div>';
-    h += "<div class='at-sv' style='left:24px;top:80px'>" + ready + ' of ' + N + "</div><div class='at-ex' style='left:24px;top:116px'>" + (syncedClean ? 'records synced for this period' : 'records ready to sync today') + "</div>";
+    var cap = syncedClean ? 'records synced for this period' : (A.syncedCount != null && A.dirty ? 'records ready to sync \u00b7 changes since last sync' : 'records ready to sync today');
+    h += "<div class='at-sv' style='left:24px;top:80px'>" + ready + ' of ' + N + "</div><div class='at-ex' style='left:24px;top:116px'>" + cap + "</div>";
     h += "<div class='at-trk' style='left:24px;top:144px;width:372px'></div><div class='at-fill' style='left:24px;top:144px;width:" + Math.round(372 * ready / N) + "px'></div>";
     if (rev.length) {
       h += "<div class='at-ex' style='left:24px;top:166px;font:600 12px/14.52px Inter,sans-serif;color:#a6460a'>" + rev.length + " needs review</div>";
@@ -167,7 +168,7 @@
     h += syncedClean
       ? "<button class='at-cbtn' disabled style='left:24px;top:214px;width:150px'>Synced</button>"
       : "<button class='at-cbtn pri' data-act='sync' style='left:24px;top:214px;width:150px'>Sync " + ready + ' records</button>';
-    h += "<div class='at-ex' style='left:190px;top:223px'>Last synced " + A.synced + (A.dirty && A.synced ? ' \u00b7 changes since' : '') + '</div></div>';
+    h += "<div class='at-ex' style='left:190px;top:223px'>Last synced " + A.synced + '</div></div>';
     return h.replace(/class='ex'/g, "class='at-ex'").replace(/class='ln'/g, "class='at-ln'").replace(/class='ld'/g, "class='at-ld'");
   }
 
