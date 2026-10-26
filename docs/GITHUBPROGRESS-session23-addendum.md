@@ -111,5 +111,31 @@ All five were measured in Figma (`get_node_info` depth 3-5 + `export_node_as_ima
 - localStorage: nothing written (the treatment test key was removed).
 - The five audit gaps are now CLOSED; the audit's "consolidated/toast" items and the non-UI frames are unchanged by design.
 
+## Turn 5 (2026-10-26) - attendance payroll sync + Daniel Cruz review (owner report)
+Owner: "it should update right when I click sync ... how do we review Daniel Cruz's absence ... evaluate all flaws". Confirmed live first: Sync only opened a modal - `A.synced` stayed "Aug 30, 6:00 PM", the card stayed "7 of 8 / Sync 7 records", repeat clicks repeated the modal, reload reset everything, and "1 needs review" was dead text.
+### Implemented (commit `a10b222`, one file pair `attendance.js` + `attendance.css`)
+- SYNC NOW MUTATES STATE: sets `A.synced` = register date + current time, `A.syncedCount` = ready, `A.dirty` = false, saves, re-renders. The card switches to "records synced for this period", the button becomes a disabled "Synced", "Last synced" updates, and a repeat click is guarded. Any later change sets `dirty`, so the card shows "Last synced ... · changes since" and re-enables "Sync N records".
+- ABSENCE REVIEW (not in Figma; flagged as an addition): the "1 needs review" block now has a **Review** button -> 680x568 "Review absence" modal for Daniel Cruz (Employee / Shift / Recorded / Leave on file / Payroll effect) with three outcomes:
+  - **Approve leave** -> adds an approved Emergency leave for Aug 31, sets him On leave, clears the review; ready goes 8/8 and the card offers "Sync 8 records".
+  - **Mark unpaid** -> keeps him Absent but marks it reviewed; the card shows "1 unpaid absence deducted" and sync stays at 7.
+  - **Add clock-in** -> closes the modal and prefills the Record attendance card with EMP-008.
+- PERSISTENCE: localStorage key `mh_attendance_state` (employee times/status/reviewed, leave list, sync timestamp/count/dirty). Delete the key to reset; test key removed after verification so the demo still opens at Figma's 7/8 state.
+### VERIFIED live (Playwright)
+- Before: "7 of 8 · 1 needs review · Daniel Cruz · Review · Sync 7 records". Click Sync -> modal "Synced to payroll", card immediately "records synced for this period", "Synced", "Last synced Aug 31, 2026 · 3:39 PM"; survived a reload.
+- Review modal: title/subtitle, 5 labels, values ("No clock-in or clock-out", "Emergency leave · Aug 18 · declined", "1 day deducted..."), buttons Add clock-in / Mark unpaid / Approve leave.
+- Approve leave -> 8 of 8, On leave, "Sync 8 records · changes since"; re-sync -> 8 of 8 synced; persisted after reload.
+- Mark unpaid -> "1 unpaid absence deducted", reviewed=true, sync 7 available. Add clock-in -> `HIS.atState.f.emp === 'EMP-008'`.
+### NOT verified / known remaining flaws (evaluation, not yet built)
+1. Leave card's Approve/Decline always acts on `pending()[0]`; neither row is selectable and the buttons do not name the request. Fix: per-row actions or a selected-row state.
+2. "Approve timesheets" is cosmetic - it claims approval but changes no state and does not gate the sync.
+3. Paid vs unpaid leave is not modelled: any "On leave" employee counts as ready for payroll regardless of leave type/approval; only the new review path marks an unpaid deduction.
+4. No sync audit trail or undo (who synced, which IDs, previous timestamp); no CSV of the synced batch.
+5. Register row checkboxes are dead UI (no bulk action); sync is all-or-nothing.
+6. Night shifts crossing midnight are unsupported (`dur()` returns null when time-out < time-in); no overtime/undertime vs shift, only the 15-minute late grace.
+7. No confirmation step before syncing payroll (sensitive action); no role check.
+8. Details drawer has no actions; review is reachable only from the payroll card.
+9. Export has no period/date selection.
+
+
 
 
