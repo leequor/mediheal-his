@@ -6,13 +6,16 @@
 // Entry shape: { seq, at, who, role, what, entity, before, after }.
 (function () {
   var KEY = 'mh_audit';
-  function list() { return HIS.store.get(KEY, []); }
+  function list() { var rows = HIS.store.get(KEY, []); return Array.isArray(rows) ? rows : []; }
+  // seq continues past whatever is already stored, so a foreign or truncated entry cannot make it NaN.
+  function nextSeq(rows) {
+    return rows.reduce(function (m, r) { return Math.max(m, r && typeof r.seq === 'number' ? r.seq : 0); }, 0) + 1;
+  }
   function append(e) {
     e = e || {};
     var rows = list();
-    var seq = rows.length ? rows[rows.length - 1].seq + 1 : 1;
     var row = {
-      seq: seq,
+      seq: nextSeq(rows),
       at: e.at || new Date().toISOString(),
       who: e.who || (window.HIS && HIS.user ? HIS.user.name : 'unknown'),
       role: e.role || (window.HIS && HIS.user ? HIS.user.role : ''),

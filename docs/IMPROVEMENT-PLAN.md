@@ -21,6 +21,8 @@ Owner decisions that shape everything below (2026-10-26):
 | 0.4 | Audit primitive: `HIS.audit.append({who, what, entity, before, after, at})` persisted in `mh_audit` | Payroll, clinical and compliance phases all depend on it |
 Size M. Deliverable: substrate + a demo-data reset; no visible feature change.
 
+**Phase 0 built (session 23):** `assets/js/kit.js` (modal, dropdown, pill, row, toast, esc, `GEOM`), `assets/js/store.js` (`HIS.store`), `assets/js/audit.js` (`HIS.audit`), `scripts/smoke.mjs`; `ui.js` is now a thin facade over the kit and the profile toast moved to the kit. Deliberate deferral: the Figma action-modal *builder* is not in the kit yet because it has no consumer until 1.1 - `HIS.kit.GEOM` carries the shell geometry until then. The visible "Reset demo data" control comes with 7.2; `HIS.store.reset()` exists now.
+
 ## Phase 1 - Payroll & HR correctness (HR officer, auditor, finance)
 1.1 **Period lock + sync audit trail** - after sync the Aug 16-31 period locks; reopening needs a reason and writes an audit entry; every sync records who/when/count/skipped.
 1.2 **Leave ledger semantics** - paid/unpaid per leave, per-row approve/decline (row selection, not `pending()[0]`), auto-resolve the absence review when leave is approved, paid/unpaid reflected in the ready count.
