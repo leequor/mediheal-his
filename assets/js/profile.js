@@ -83,11 +83,18 @@
   // Prototype links read in session 6: back link 459:697 -> Registration 23:2285; View treatment plan 2047:24708 -> Treatment Plan 2047:17739; Pharmacy 2047:26511 -> 2047:25913; Discharge summary 2047:25312 -> 2047:25314 (both drawn on the Treatment Plan page).
   // Edit 2027:2439 -> 2027:2458, Transfer 2027:2441 -> 2027:2643, Discharge 2027:2443 -> 2027:2828 are built in profile-modal.js.
   // Print opens the Figma "Print profile" state (4011:3773) in profile-modal.js, which saves a PDF; it no longer calls window.print().
+  // Addition (not in Figma): the patient-ID chip used to be a button with no handler. It now copies the ID
+  // and confirms with the shared toast, so the control is not dead. The chip looks exactly as in Figma.
   stage.addEventListener('click', e => {
     const b = e.target.closest('[data-act]');
     if (!b) return;
     const a = b.dataset.act;
     if (a === 'print') { /* handled by profile-modal.js (Print profile modal + PDF, Figma 4011:3773) */ }
+    else if (a === 'id') {
+      const done = () => HIS.kit.toast('Patient ID ' + id + ' copied');
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(id).then(done, () => HIS.kit.toast('Patient ID ' + id));
+      else HIS.kit.toast('Patient ID ' + id);
+    }
     else if (a === 'plan' || a === 'pharmacy-go' || a === 'summary-go') {
       location.href = 'treatment.html?id=' + encodeURIComponent(id) + (a === 'pharmacy-go' ? '&modal=pharmacy' : a === 'summary-go' ? '&modal=summary' : '');
     }
