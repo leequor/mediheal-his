@@ -134,7 +134,7 @@ function actionModal(kind, i) {
   const a = HIS.appointments[i] || {};
   const it = a.date && a.time ? { date: a.date, time: a.time } : toInputs(a.when || 'Aug 31, 2026 \u2022 09:00 AM');
   const res = kind === 'res';
-  const field = (l, t, w, left, inner) => "<div class='ap-l' style='left:" + left + 'px;top:' + t + "px'>" + l + '</div>' + inner.replace('{ST}', "style='left:" + left + 'px;top:' + (t + 22) + 'px;width:' + w + 'px');
+  const field = (l, t, w, left, inner) => "<div class='ap-l' style='left:" + left + 'px;top:' + t + "px'>" + l + '</div>' + inner.replace('{ST}', "style='left:" + left + 'px;top:' + (t + 22) + 'px;width:' + w + "px'");
   const layer = document.createElement('div');
   layer.className = 'ap-layer';
   layer.innerHTML = "<div class='ap-scrim' data-close></div><div class='ap-modal'>" +
