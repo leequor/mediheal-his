@@ -139,3 +139,7 @@ Owner: "it should update right when I click sync ... how do we review Daniel Cru
 
 
 
+
+### Turn 5b - payroll-card overflow fix (owner screenshot 2026-10-26)
+- The "changes since" hint I appended to the "Last synced ..." line ran past the 420px payroll card. Fixed in `07d72a8`: the timestamp is the exact Figma string again ("Last synced Aug 31, 2026 - 3:44 PM") and the hint moved into the caption line ("records ready to sync - changes since last sync").
+- VERIFIED by measuring every child of the payroll card in three states (fresh 7/8 with review, synced-clean, post-review dirty): widest child right edge 396-397px inside the 420px card, no overflow in any state.
