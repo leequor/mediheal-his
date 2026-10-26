@@ -143,3 +143,18 @@ Owner: "it should update right when I click sync ... how do we review Daniel Cru
 ### Turn 5b - payroll-card overflow fix (owner screenshot 2026-10-26)
 - The "changes since" hint I appended to the "Last synced ..." line ran past the 420px payroll card. Fixed in `07d72a8`: the timestamp is the exact Figma string again ("Last synced Aug 31, 2026 - 3:44 PM") and the hint moved into the caption line ("records ready to sync - changes since last sync").
 - VERIFIED by measuring every child of the payroll card in three states (fresh 7/8 with review, synced-clean, post-review dirty): widest child right edge 396-397px inside the 420px card, no overflow in any state.
+
+## Turn 6 (2026-10-26) - leave-list overflow fixed + full-site bug sweep (owner: "scan the whole website, nothing skipped")
+### Fixed (`ac03521`)
+1. Leave requests modal: rows sat at `112 + 48*i` inside a fixed 484px modal, so the 9th request spilled outside the card (owner screenshot). Now `.at-lv-scroll` is a scroll container and the modal height is computed from the count (max 600px), with Close / New request pinned below.
+2. Long text: with a 55-character employee name the payroll card line "... absent, no approved leave" ran 106px past the card. The review / unpaid / timestamp lines are now width-constrained with ellipsis (`.at-el`).
+   VERIFIED live: 9-row list (680x600, scrollable, 0 overflow), payroll card with the long name (0 overflow, `text-overflow: ellipsis` active), register row (0 overflow).
+### Sweep (method + result)
+Served the repo locally (`serve.mjs`, http://localhost:8788) so Pages lag/caching could not hide anything, then drove all 19 URLs with the Playwright extension: console + pageerror capture, an element-vs-container overflow check, and an interaction sweep that opens every `data-act` / `data-modal` / `data-edit` / `data-more` / `data-det` / `data-plan` state and re-checks overflow inside the opened container.
+- 19 URLs: 0 console errors, 0 warnings, 0 uncaught exceptions, 0 document-level horizontal overflow.
+- ~35 opened states across dashboard, registration, appointments, departments, personnel, attendance, treatment, nursing, consultation, payroll, billing, the form pages and sign in: 0 errors, 0 overflow inside modals.
+- Long-text stress (55-char names, long leave types) found exactly the two bugs above; both fixed.
+### Hazard found while sweeping (not a site bug)
+Billing's "Download" button calls `window.print()` -> a NATIVE print dialog, which blocked the automation session mid-sweep (the owner had to cancel it). Sweeps must skip `data-act=dl`, `export`, `csv` and anything matching /print|download|export/. WORTH REVISITING: Figma's "Download invoice / Invoice downloaded" states are implemented as a print dialog, not a file download.
+### Not covered
+Actions with side effects were skipped on purpose (sync, approve/decline, clock-in, export); sync + the review flow were verified in turn 5. Still open: narrow-width placement of the new modals, pixel diff vs Figma.
