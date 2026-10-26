@@ -50,3 +50,53 @@
 - Tooling note: the GitHub MCP write tool returns a schema error ("data must have required property 'result'") even when the commit succeeds - always verify by reading the commit back. For whole-file edits it is easier to use a local `git clone` + `git push` (credentials are stored); that is how `7fba064` was pushed.
 - localStorage: nothing written this turn.
 
+## Turn 3 (2026-10-26) - FULL Figma frame audit (owner: "analyze every frame ... confirm everything is converted")
+Method: `get_document_info` (250 top-level FRAMEs on page `0:1`) -> bucketed every frame by name -> scanned all site JS/HTML for cited Figma node ids (81/250 ids are cited in comments) -> grepped every page script for the feature strings -> live spot-checks with the Playwright extension (appointments menu, sign-in forgot, payroll buttons, notif panel on the 3 rebuilt pages).
+
+### Totals
+250 FRAMEs = **234 UI frames + 16 non-UI frames**. Every UI frame has a counterpart except the gaps listed below. Counts:
+
+| Figma cluster | Frames | Site implementation | Status |
+|---|---|---|---|
+| Notifications / profile menu states (every page, `2072:*`, `2011:1801/2191`) | 43 | One shared `shell.js` panel/menu, now on all 14 pages (`7fba064`) | CONVERTED (verified) |
+| Treatment Plan (`2047:*`) | 24 | `treatment.html` + modals/states + toasts | CONVERTED except `Test results` (gap) and 10 result frames = toasts |
+| Billing (`2064:*`, `351:847`) | 21 | `billing.html` + 3 modals + status/date menus + filters | CONVERTED except 4 post-action frames = toast/print |
+| Payroll (`623:702`, `2030:*`, `4008:*`) | 26 | `payroll.html`; 8 payslip views -> ONE data-driven modal; generate/export/process | CONVERTED (leave modals live on Attendance: see gaps) |
+| Profiles (5 patients, `2027:2458/2643/2828`, edit/transfer/discharge per patient, print) | 25 | `profile.html` + `profile-modal.js` (persisted in `mh_profile_edits`) | CONVERTED (verified session 20) |
+| Attendance (`2002:369`, `2011:2563`, `2014:25xx`, `2015:26xx`, details x8) | 20 | `attendance.html` + 1 generic details drawer + 5 modals + 2 filters | CONVERTED (4 legacy dropdown frames unused) |
+| Consultation (`2030:3609`, `2047:14xxx-17xxx`, `4001:3548/3818`) | 16 | `consultation.html`; one Record-diagnosis modal whose Outcome field covers the 11 "outcome" variants + Diagnosis-saved modal + search/filter | CONVERTED |
+| Departments (`351:501/733`, 8 detail frames, add doctor, search) | 15 | `departments.html` + details modal + add-doctor modal (persisted) | CONVERTED (verified session 22-23) |
+| Nursing (`2047:20735` + 6 states + ward filter/search) | 11 | `nursing.html` + modals; 3 "saved" frames = toasts | CONVERTED |
+| Registration (`23:2285`, tabs, search, 2 filters, combined states, find-existing) | 9 | `registration.html` (tabs, search, filters) | CONVERTED except the find-existing overlay = registry search |
+| Appointments (`23:2289`, filters, pages 2-3, search, reschedule, cancel) | 8 | `appointments.html` (filters, pagination, search) | PARTIAL: reschedule missing, cancel = status menu entry |
+| Personnel (`623:1805`, add/edit, deactivate, search, filter) | 7 | `personnel.html` + modals | CONVERTED |
+| Forms (`248:821`, `304:502`, `420:1147`, `420:1434`, `420:1746` open state) | 5 | `appointment-form`, `appointment-confirmed`, `outpatient-form`, custom select | CONVERTED |
+| Sign in (`211:34`, forgot, reset sent) | 3 | `index.html` | PARTIAL: Forgot = toast, reset state missing |
+| Dashboard (`211:59`) | 1 | `dashboard.html` | CONVERTED |
+| NON-UI (2 requirement boards + fix list, Color Palette, Accessibility Shortcut, Frame 97/98, Staff Attendance `192:541`, Sidebar `211:1949`, HIS modules board) | 16 | intentionally not converted | NOT UI |
+
+### Real gaps (not converted) - exact frames
+1. `4031:9535` Sign in • Forgot password and `4031:9586` Sign in • Reset link sent - the button only shows the toast "Password resets are handled by the hospital IT desk". No reset screen.
+2. `2027:3041` Appointments • Reschedule - no reschedule control anywhere (only status change to Completed/Cancelled).
+3. `2027:3286` Appointments • Cancel appointment - cancel is a row-menu status change, no confirmation modal.
+4. `2047:19815` Treatment Plan • Test results - ordering a test sets "Awaiting result: ..." but there is no results view/state.
+5. `2027:2164` Registration • Find existing patient - the registration form has no patient lookup; only `registration.html`'s "Search records..." covers the same need.
+6. `2064:1900` Payment recorded, `2064:2350` Coverage applied, `2064:5337` Statement issued, `2064:5782` Invoice downloaded - implemented as toast/`window.print()`, not as separate post-action frames (and the billing edits are in memory only).
+
+### Intentionally consolidated (converted, but as one state instead of N frames)
+- 10 Treatment result frames (`Prescription sent`, `Order placed`, `Procedure scheduled`, `Bed assigned` x2, `Status updated`, `Summary saved`, `Patient discharged`, `Medication dispensed`) -> toasts.
+- 3 Nursing saved frames (`Dose recorded`, `Vitals saved`, `Progress note saved`) -> toasts (strings present in nursing.js).
+- 8 Attendance "Overlay • Details • <doctor>" -> one drawer; 8 Payroll "Payslip • EMP-00x" + 9 "Payslip view" -> one modal.
+- 43 notification/profile menu frames -> one shell implementation (verified on every page after `7fba064`).
+- 11 Consultation outcome frames -> one Record-diagnosis modal with an Outcome field + Diagnosis-saved modal.
+
+### Deviations / leftovers
+- `2030:9301` New leave request + `2030:9330` Leave requests list are drawn on the Payroll page in Figma but built on `attendance.html` (Payroll has no leave UI). Figma's `9330` is itself a payslip clone (known Figma defect, not copied).
+- 4 legacy dropdown frames (`2006:1062`, `2008:1063/1064/1068`) are unused by design.
+- Non-UI frames are design/process artifacts, not screens: Week 1/5/10/14 requirement boards, Week 18 Fix List, Color Palette, Accessibility Shortcut, Frame 97/98, Sidebar component, Staff Attendance `192:541` (superseded by Attendance/Personnel), "Hospital information system modules" overview board.
+
+### Verified vs NOT verified
+- VERIFIED live this turn: notifications/profile panel on every page (post-fix), appointments filters/pagination/search + absence of reschedule, sign-in forgot toast, payroll action buttons, registration search, billing modals/menus (code + earlier session checks).
+- NOT verified frame-by-frame on screen: pixel comparison of each state; the 5 real gaps above are code-level findings (no matching implementation), not visual diffs.
+
+
