@@ -7,7 +7,7 @@
 
 ## Turn 1 results (verified live, Playwright on the owner's browser)
 - NOTIFICATIONS (the two unlogged commits) VERIFIED on the live site, key `mh_notif_read` (did not exist before; removed after the test):
-  - dashboard.html: bell opens `.nf-p` at frame-local (952,90) 420x492, 4 rows, badge "4", subtitle "4 unread \u00b7 Attendance and payroll".
+  - dashboard.html: bell opens `.nf-p` at frame-local (952,90) 420x492, 4 rows, badge "4", subtitle "4 unread · Attendance and payroll".
   - Mark all as read -> key `[0,1,2,3]`, 4 rows `.rd`, 0 dots, button disabled, subtitle "All caught up", badge hidden, and the panel STAYS OPEN (this is `61f3377`, verified).
   - Reload -> state re-applied (all rows read, badge hidden, aria-label "Notifications").
   - Esc closes; click outside closes; X closes (personnel.html). Row click marks one: key `[0]`, badge "3", subtitle "3 unread".
@@ -15,7 +15,7 @@
 - TREATMENT PLAN ACTIONS (session 21 item still untested) VERIFIED on treatment.html?id=PT-99213, key `mh_treatment_state` (absent before; removed after the test):
   - Order tests -> modal "Order lab / imaging test" (6/6 fields prefilled), saved `f.next` = "Awaiting result: Troponin I"; still shown on the page after reload.
   - Status -> `pstat` = "done", plan badge reads Completed.
-  - Assign bed -> modal "Assign ward and bed", `type` = "Inpatient", `f.care` = "Inpatient \u00b7 Ward 3, Bed 12".
+  - Assign bed -> modal "Assign ward and bed", `type` = "Inpatient", `f.care` = "Inpatient · Ward 3, Bed 12".
   - Discharge summary (?modal=summary) -> modal "Discharge summary", button "Discharge"; `pstat` = done, `f.next` = "Discharged on Sep 7, 2026", modal closes.
 - PHARMACY / STAFF: both stubs ALREADY redirect (`pharmacy.html` -> `treatment.html?modal=pharmacy`, `staff.html` -> `personnel.html`), matching the v171 default decision. Nothing to build there; the v171 "Next step" is closed.
 - NOT verified: the discharged / next-step TEXT rendered after a reload (the key was cleared right after the assert; localStorage values were read instead), pixel comparison vs Figma, modals/menus at narrow widths.
@@ -24,3 +24,9 @@
 1. Treatment "Schedule procedure" (proc) persistence + nursing rendered counters after reload (session 21 turn 2 left them unchecked).
 2. Modals/menus inside narrow windows with `fit.js` v3 (they scale with the stage, but were never opened at <800px); `?fit=0` path.
 3. Owner-deferred: real phone layout (needs new Figma frames), sidebar CLOSE/dismiss animation comparison.
+
+## Turn 1 results (continued, same session)
+- TREATMENT "Schedule procedure" VERIFIED on treatment.html?id=PT-99213: modal prefilled 6/6 ("Coronary angiography", Dr. Laurice Laureta (Cardiology), Cath Lab 1, Sep 2 2026, 9:00 AM · about 60 minutes); saved `f.procs` = "Coronary angiography · Sep 2, 2026" and that text is on the page after a reload. Key `mh_treatment_state` removed (did not exist before).
+- NURSING VERIFIED on nursing.html: Record vitals -> prefilled 6/6, saved `recs['PT-99213'].vit` with the 6:00 PM row now "BP 142/88 · HR 86 · 36.8 °C · SpO₂ 98%", and that row is RENDERED on the page after a reload (session 21 only checked localStorage). Give medicine -> "Give medicine" modal saved (`doses` = 6, `vitDue` = 2, `vitDone` = {PT-99213:true}). My regex did not match a rendered dose counter, so only the localStorage counter is verified.
+- localStorage after the turn: only `mh_regs_extra` (the owner's) remains; `mh_notif_read`, `mh_treatment_state`, `mh_nursing_state` were all removed after their tests.
+- Item 1 of "Next steps" above is now DONE. Items 2 and 3 stay open.
