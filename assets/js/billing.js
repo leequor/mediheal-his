@@ -88,7 +88,7 @@
     var t = e.target.closest('.bl-tab'); if (t) { st.tab = t.dataset.tab; st.menu = ''; list(); return; }
     if (e.target.closest('#blst')) { st.menu = st.menu === 'status' ? '' : 'status'; menu(); return; }
     if (e.target.closest('#bldt')) { st.menu = st.menu === 'date' ? '' : 'date'; menu(); return; }
-    if (e.target.closest('[data-act=dl]')) { window.print(); return; }
+    if (e.target.closest('[data-act=dl]')) { document.dispatchEvent(new CustomEvent('bl:open', { detail: 'dl' })); return; }
     var m = e.target.closest('[data-modal]'); if (m) { document.dispatchEvent(new CustomEvent('bl:open', { detail: m.dataset.modal })); }
   });
   stage.addEventListener('keydown', function (e) { var r = e.target.closest && e.target.closest('.bl-row'); if (r && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); st.sel = r.dataset.id; list(); } });

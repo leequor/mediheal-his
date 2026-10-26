@@ -24,6 +24,15 @@
       l: ['PhilHealth ID', 'PhilHealth case rate', 'HMO / letter of authorization', 'HMO coverage', 'Senior / PWD discount', 'Notes'],
       v: is01(b) ? ['01-234567890-1', '\u20b13,000.00', 'Maxicare \u00b7 LOA MX-20418', '\u20b12,000.00', 'PWD 20% on room and nursing (\u20b110,200 \u00d7 20% = \u20b12,040.00)', 'Deductions apply after VAT. The patient pays only the net amount.'] : ['', '\u20b10.00', '', '\u20b10.00', '', ''],
       bt: 'Net payable', bx: peso(total - cov) + (cov ? ' after ' + peso(cov) + ' in coverage and discounts. Paid ' + peso(paid) + ', so the balance is ' + peso(total - cov - paid) + '.' : ' with no coverage or discounts applied.') };
+    if (kind === 'dl') return {
+      title: 'Download invoice', sub: 'Invoice ' + b.id + ' \u00b7 ' + short(b.name) + ' \u00b7 ' + b.pt, ok: 'Download PDF',
+      l: ['Document', 'File format', 'Includes', 'Invoice total', 'Copies', 'Note'],
+      v: ['Invoice ' + b.id, 'PDF', 'Itemised charges, VAT', p2(b.amount), 'Patient copy and billing file copy', 'Coverage and discount lines appear once applied.'],
+      bt: 'Ready to download', bx: 'A PDF of invoice ' + b.id + ' will be saved to this device.' };
+    if (kind === 'dlok') return {
+      title: 'Invoice downloaded', sub: 'Invoice ' + b.id + ' \u00b7 ' + short(b.name) + ' \u00b7 ' + b.pt, ok: 'Close',
+      l: ['File name', 'Format', 'Invoice total', 'Downloaded', 'Previous status', 'Status notes'],
+      v: [b.id + '_invoice.pdf', 'PDF', p2(b.amount), 'Aug 31, 2026', b.status, 'Saved to this device by the billing desk. The invoice status is unchanged.'] };
     return {
       title: 'Final statement', sub: short(b.name) + ' \u00b7 ' + b.pt + ' \u00b7 ' + b.dept + ' \u00b7 discharge billing', ok: 'Issue statement',
       l: ['Invoice', 'Statement date', 'Total charges (incl. 12% VAT)', 'Less PhilHealth, HMO and discount', 'Less payments received', 'Discharge note'],
@@ -33,19 +42,81 @@
 
   // label top, input top, left, width
   var POS = [[120, 142, 32, 300], [120, 142, 348, 300], [202, 224, 32, 300], [202, 224, 348, 300], [284, 306, 32, 616], [462, 484, 32, 616]];
+  // "Invoice downloaded" is the compact 680x368 state (Figma 2064:5782): no banner, rows end at 388, buttons at 300.
+  var POS2 = [[120, 142, 32, 300], [120, 142, 348, 300], [202, 224, 32, 300], [202, 224, 348, 300], [284, 306, 32, 616], [366, 388, 32, 616]];
+
+  // Invoice PDF (session 23): the Figma "Download invoice" state promises a PDF, so build a real one
+  // (text-only PDF 1.4, Helvetica) instead of opening the browser print dialog.
+  function pdfEsc(s) {
+    return String(s == null ? '' : s)
+      .replace(/\u20b1/g, 'PHP ').replace(/[\u2013\u2014]/g, '-').replace(/\u00b7/g, '-')
+      .replace(/[^\x20-\x7e]/g, '').replace(/([\\()])/g, '\\$1');
+  }
+  function pdfBlob(rows) {
+    var y = 780, stream = '';
+    rows.forEach(function (r) {
+      if (r[0]) stream += 'BT /F1 ' + r[1] + ' Tf 40 ' + y + ' Td (' + pdfEsc(r[0]) + ') Tj ET\n';
+      y -= r[2];
+    });
+    var objs = [
+      '<< /Type /Catalog /Pages 2 0 R >>',
+      '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+      '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>',
+      '<< /Length ' + stream.length + ' >>\nstream\n' + stream + 'endstream',
+      '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>'
+    ];
+    var pdf = '%PDF-1.4\n', offs = [];
+    objs.forEach(function (o, i) { offs.push(pdf.length); pdf += (i + 1) + ' 0 obj\n' + o + '\nendobj\n'; });
+    var xref = pdf.length;
+    pdf += 'xref\n0 ' + (objs.length + 1) + '\n0000000000 65535 f \n';
+    offs.forEach(function (o) { pdf += ('0000000000' + o).slice(-10) + ' 00000 n \n'; });
+    pdf += 'trailer\n<< /Size ' + (objs.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + xref + '\n%%EOF';
+    return new Blob([pdf], { type: 'application/pdf' });
+  }
+  function invoiceRows(b) {
+    var sub = b.subtotal != null ? b.subtotal : Math.round(b.amount / 1.12);
+    var vat = b.vat != null ? b.vat : b.amount - sub;
+    var paid = paidOf(b), rows = [];
+    var t = function (s, size, dy) { rows.push([s, size || 10, dy || 15]); };
+    t('MediHeal - Hospital Information System', 15, 22);
+    t('Invoice ' + b.id + ' - ' + b.full, 11, 17);
+    t(b.pt + ' - ' + b.dept + ' - ' + b.date, 10, 15);
+    t('Status: ' + b.status, 10, 24);
+    t('Description / charge source                 Qty     Rate            Amount', 10, 16);
+    var items = b.items || [];
+    if (items.length) items.forEach(function (r) { t(String(r[0]).slice(0, 46) + '    ' + r[1] + '    ' + pdfEsc(String(r[2])) + '    ' + pdfEsc(String(r[3])), 10, 14); });
+    else t('Estimated summary (line items are not in the main Figma frame)', 10, 14);
+    t('', 10, 12);
+    t('Subtotal: ' + peso(sub), 10, 15);
+    t('VAT (12%): ' + peso(vat), 10, 15);
+    t('Grand total: ' + peso(b.amount), 12, 17);
+    t('Paid: ' + peso(paid), 10, 15);
+    t('Balance due: ' + peso(b.amount - paid), 12, 17);
+    t('', 10, 14);
+    t('Generated Aug 31, 2026 by the billing desk.', 9, 13);
+    return rows;
+  }
+  function saveInvoicePdf(b) {
+    var url = URL.createObjectURL(pdfBlob(invoiceRows(b)));
+    var a = document.createElement('a');
+    a.href = url; a.download = b.id + '_invoice.pdf';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
 
   function open(kind) {
     var b = bill(); if (!b) return; close();
-    cur = { kind: kind, b: b }; var s = spec(kind, b);
-    var h = "<div class='bl-scrim' data-mclose='1'></div><div class='bl-modal' role='dialog' aria-modal='true' aria-label='" + esc(s.title) + "'>";
+    cur = { kind: kind, b: b }; var s = spec(kind, b), compact = kind === 'dlok';
+    var h = "<div class='bl-scrim' data-mclose='1'></div><div class='bl-modal" + (compact ? ' compact' : '') + "' role='dialog' aria-modal='true' aria-label='" + esc(s.title) + "'>";
     h += "<button class='bl-m-x' data-mclose='1' aria-label='Close'>\u00d7</button><div class='bl-m-t'>" + esc(s.title) + "</div><div class='bl-m-s'>" + esc(s.sub) + "</div><div class='bl-m-d'></div>";
-    POS.forEach(function (p, i) {
+    (compact ? POS2 : POS).forEach(function (p, i) {
       h += "<div class='bl-m-l' style='top:" + p[0] + 'px;left:' + p[2] + "px'>" + esc(s.l[i]) + '</div>';
       if (i === 5) h += "<textarea class='bl-m-i bl-m-ta' data-i='" + i + "' style='top:" + p[1] + 'px;left:' + p[2] + 'px;width:' + p[3] + "px'>" + esc(s.v[i]) + '</textarea>';
       else h += "<input class='bl-m-i' data-i='" + i + "' value='" + esc(s.v[i]) + "' style='top:" + p[1] + 'px;left:' + p[2] + 'px;width:' + p[3] + "px'>";
     });
-    h += "<div class='bl-m-b'><b>" + esc(s.bt) + "</b><span id='blbx'>" + esc(s.bx) + "</span></div>";
-    h += "<button class='bl-m-c' data-mclose='1'>Cancel</button><button class='bl-m-ok' id='blok'>" + esc(s.ok) + '</button></div>';
+    if (compact) h += "<button class='bl-m-c' data-mclose='1'>Back to billing</button><button class='bl-m-ok' id='blok'>Close</button>";
+    else h += "<div class='bl-m-b'><b>" + esc(s.bt) + "</b><span id='blbx'>" + esc(s.bx) + "</span></div><button class='bl-m-c' data-mclose='1'>Cancel</button><button class='bl-m-ok' id='blok'>" + esc(s.ok) + '</button>';
+    h += '</div>';
     var w = document.createElement('div'); w.id = 'blmodal'; w.innerHTML = h; stage.appendChild(w);
     var f = w.querySelector(kind === 'pay' ? '[data-i="2"]' : '.bl-m-i'); if (f) f.focus();
   }
@@ -54,6 +125,8 @@
 
   function confirm() {
     var b = cur.b, w = document.getElementById('blmodal');
+    if (cur.kind === 'dlok') { close(); return; }
+    if (cur.kind === 'dl') { saveInvoicePdf(b); open('dlok'); return; }
     if (cur.kind === 'pay') {
       var inp = w.querySelector('[data-i="2"]'), bal = b.amount - paidOf(b);
       var amt = parseFloat(String(inp.value).replace(/[^0-9.]/g, ''));

@@ -22,3 +22,6 @@
 .bl-m-c,.bl-m-ok{top:600px;height:40px;border-radius:8px;border:1px solid #c8dcea;font:600 13px/15.73px Inter,sans-serif;cursor:pointer;padding:0}
 .bl-m-c{left:396px;width:100px;background:#fff;color:#1b4e6b}
 .bl-m-ok{left:508px;width:140px;background:#1c6d9c;border-color:#1c6d9c;color:#fff}
+/* "Invoice downloaded" compact state (Figma 2064:5782): 680x368 at (380,330), buttons at 300 */
+.bl-modal.compact{height:368px;top:330px}
+.bl-modal.compact .bl-m-c,.bl-modal.compact .bl-m-ok{top:300px}
