@@ -82,7 +82,7 @@
 
   // Prototype links read in session 6: back link 459:697 -> Registration 23:2285; View treatment plan 2047:24708 -> Treatment Plan 2047:17739; Pharmacy 2047:26511 -> 2047:25913; Discharge summary 2047:25312 -> 2047:25314 (both drawn on the Treatment Plan page).
   // Edit 2027:2439 -> 2027:2458, Transfer 2027:2441 -> 2027:2643, Discharge 2027:2443 -> 2027:2828 are built in profile-modal.js.
-  // Print has no Figma link read; window.print() is an addition.
+  // Print opens the Figma "Print profile" state (4011:3773) in profile-modal.js, which saves a PDF; it no longer calls window.print().
   stage.addEventListener('click', e => {
     const b = e.target.closest('[data-act]');
     if (!b) return;

@@ -1,6 +1,7 @@
 // Billing: ONE template (Figma 351:847) + state frames 2064:* as JS states.
 // Status menu (2064:3033) and Date menu (2064:4484) are dropdowns; Record payment (2064:1712), Coverage and discounts (2064:2160) and Final statement (2064:5115) open via the 'bl:open' event handled by billing-modal.js.
-// Additions (not in Figma): bill selection, live search, Inpatient/Outpatient tabs (tab frames 2064:2611..2613 have no reactions), Download = window.print().
+// Additions (not in Figma): bill selection, live search, Inpatient/Outpatient tabs (tab frames 2064:2611..2613 have no reactions).
+// Download opens the Figma "Download invoice" state (2064:5560) which saves a real PDF (billing-modal.js + pdf.js); it no longer calls window.print().
 (function () {
   var B = HIS.billing, stage = document.getElementById('stage');
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
