@@ -91,6 +91,9 @@ const NAV = [
   const panel = document.createElement('div');
   panel.className = 'nf-p'; panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Notifications');
   stage.appendChild(panel);
+  // Billing, Departments and Profile rebuild the stage with innerHTML, which drops the panel;
+  // put it back so the bell keeps working on those pages.
+  if (window.MutationObserver) new MutationObserver(() => { if (!panel.isConnected) stage.appendChild(panel); }).observe(stage, { childList: true });
   const badge = bell.querySelector('b');
   function render() {
     const unread = ITEMS.filter((_, i) => read.indexOf(i) < 0).length;
@@ -105,6 +108,7 @@ const NAV = [
     bell.setAttribute('aria-label', unread ? 'Notifications, ' + unread + ' unread' : 'Notifications');
   }
   function setOpen(o) {
+    if (o && !panel.isConnected) stage.appendChild(panel);
     panel.classList.toggle('on', o);
     bell.setAttribute('aria-expanded', o ? 'true' : 'false');
     if (o) document.body.classList.remove('menu-open');
