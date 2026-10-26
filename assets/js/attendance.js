@@ -27,6 +27,37 @@
   var ic = function (n, w, sw) { return "<svg width='" + w + "' height='" + w + "' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='" + (sw || 2) + "' stroke-linecap='round' stroke-linejoin='round'>" + IC[n] + '</svg>'; };
   var at = function (cls, l, t, inner, extra) { return "<div class='at-a " + cls + "' style='left:" + l + 'px;top:' + t + 'px;' + (extra || '') + "'>" + inner + '</div>'; };
   var wrap = document.createElement('div'); wrap.id = 'atc'; stage.appendChild(wrap);
+  // Session 23: the register, leave list and payroll sync persist in this browser (own key; delete to reset).
+  var KEY = 'mh_attendance_state';
+  function save() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify({
+        emps: A.emps.map(function (e) { return { id: e.id, tin: e.tin, tout: e.tout, status: e.status, reviewed: !!e.reviewed }; }),
+        leaves: A.leaves, synced: A.synced,
+        syncedCount: A.syncedCount == null ? null : A.syncedCount,
+        dirty: !!A.dirty
+      }));
+    } catch (e) { /* storage blocked: memory only */ }
+  }
+  function loadSaved() {
+    try {
+      var s = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (!s) return;
+      if (Array.isArray(s.leaves)) A.leaves = s.leaves;
+      if (s.synced) A.synced = s.synced;
+      if (s.syncedCount != null) A.syncedCount = s.syncedCount;
+      if (s.dirty != null) A.dirty = s.dirty;
+      (s.emps || []).forEach(function (r) {
+        var e = A.emps.filter(function (x) { return x.id === r.id; })[0];
+        if (e) { e.tin = r.tin || ''; e.tout = r.tout || ''; e.status = r.status || e.status; e.reviewed = !!r.reviewed; }
+      });
+    } catch (e) { /* bad data: ignore */ }
+  }
+  function nowTime() {
+    var d = new Date(), h = d.getHours(), ap = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return h + ':' + ('0' + d.getMinutes()).slice(-2) + ' ' + ap;
+  }
 
   function tmin(s) { var m = /^(\d{1,2}):(\d{2}) (AM|PM)$/.exec(s || ''); if (!m) return null; var h = +m[1] % 12; if (m[3] === 'PM') h += 12; return h * 60 + (+m[2]); }
   function startMin(shift) { var m = /^(\d{1,2}) (AM|PM)/.exec(shift); var h = +m[1] % 12; if (m[2] === 'PM') h += 12; return h * 60; }
@@ -118,12 +149,25 @@
     });
     h += "<div class='at-hr' style='left:24px;top:134px;width:374px'></div>";
     h += "<button class='at-cbtn pri' data-act='lapprove' style='left:24px;top:214px;width:150px'>Approve</button><button class='at-cbtn' data-act='ldecline' style='left:186px;top:214px;width:150px'>Decline</button></div>";
-    var N = A.emps.length, ready = A.emps.filter(function (x) { return x.status !== 'Absent'; }).length, rev = A.emps.filter(function (x) { return x.status === 'Absent'; });
+    var N = A.emps.length, ready = A.emps.filter(function (x) { return x.status !== 'Absent'; }).length;
+    var rev = A.emps.filter(function (x) { return x.status === 'Absent' && !x.reviewed; });
+    var unpaid = A.emps.filter(function (x) { return x.status === 'Absent' && x.reviewed; });
+    var syncedClean = A.syncedCount === ready && !A.dirty;
     h += "<div class='at-a at-card at-ac' style='left:952px;width:420px'><div class='at-st'>Payroll sync</div><div class='at-ds at-ex'>Feeds the " + A.period + ' pay period.</div>';
-    h += "<div class='at-sv' style='left:24px;top:80px'>" + ready + ' of ' + N + "</div><div class='at-ex' style='left:24px;top:116px'>records ready to sync today</div>";
+    h += "<div class='at-sv' style='left:24px;top:80px'>" + ready + ' of ' + N + "</div><div class='at-ex' style='left:24px;top:116px'>" + (syncedClean ? 'records synced for this period' : 'records ready to sync today') + "</div>";
     h += "<div class='at-trk' style='left:24px;top:144px;width:372px'></div><div class='at-fill' style='left:24px;top:144px;width:" + Math.round(372 * ready / N) + "px'></div>";
-    if (rev.length) h += "<div class='ex' style='left:24px;top:166px;font:600 12px/14.52px Inter,sans-serif;color:#a6460a'>" + rev.length + " needs review</div><div class='ex' style='left:24px;top:186px;font:400 12px/14.52px Inter,sans-serif;color:#1c2b30'>" + esc(rev[0].name) + ' \u00b7 absent, no approved leave</div>';
-    h += "<button class='at-cbtn pri' data-act='sync' style='left:24px;top:214px;width:150px'>Sync " + ready + " records</button><div class='at-ex' style='left:190px;top:223px'>Last synced " + A.synced + '</div></div>';
+    if (rev.length) {
+      h += "<div class='at-ex' style='left:24px;top:166px;font:600 12px/14.52px Inter,sans-serif;color:#a6460a'>" + rev.length + " needs review</div>";
+      h += "<div class='at-ex' style='left:24px;top:186px;font:400 12px/14.52px Inter,sans-serif;color:#1c2b30'>" + esc(rev[0].name) + ' \u00b7 absent, no approved leave</div>';
+      h += "<button class='at-rv' data-act='review' style='left:318px;top:160px;width:78px'>Review</button>";
+    } else if (unpaid.length) {
+      h += "<div class='at-ex' style='left:24px;top:166px;font:600 12px/14.52px Inter,sans-serif;color:#1c2b30'>" + unpaid.length + ' unpaid absence' + (unpaid.length === 1 ? '' : 's') + " deducted</div>";
+      h += "<div class='at-ex' style='left:24px;top:186px;font:400 12px/14.52px Inter,sans-serif;color:#6f8890'>" + esc(unpaid[0].name) + ' \u00b7 no paid leave on file</div>';
+    }
+    h += syncedClean
+      ? "<button class='at-cbtn' disabled style='left:24px;top:214px;width:150px'>Synced</button>"
+      : "<button class='at-cbtn pri' data-act='sync' style='left:24px;top:214px;width:150px'>Sync " + ready + ' records</button>';
+    h += "<div class='at-ex' style='left:190px;top:223px'>Last synced " + A.synced + (A.dirty && A.synced ? ' \u00b7 changes since' : '') + '</div></div>';
     return h.replace(/class='ex'/g, "class='at-ex'").replace(/class='ln'/g, "class='at-ln'").replace(/class='ld'/g, "class='at-ld'");
   }
 
@@ -172,6 +216,20 @@
     // new leave request
     var lbl = function (t, l, tp) { return "<div class='at-m-l' style='left:" + l + 'px;top:' + tp + "px'>" + t + '</div>'; };
     var pos = function (l, t, w) { return 'left:' + l + 'px;top:' + t + 'px;width:' + w + 'px;position:absolute'; };
+    if (m === 'review') {
+      var rv = st.emp;
+      var inner4 = xb + "<div class='at-m-t'>Review absence</div><div class='at-m-s'>" + esc(rv.name + ' \u00b7 ' + rv.id + ' \u00b7 ' + A.date) + '</div>';
+      inner4 += lbl('Employee', 32, 120) + lbl('Shift', 348, 120) + lbl('Recorded', 32, 202) + lbl('Leave on file', 348, 202) + lbl('Payroll effect', 32, 284);
+      inner4 += "<input class='at-m-i' readonly value='" + esc(rv.name + ' \u00b7 ' + rv.id) + "' style='" + pos(32, 142, 300) + "'>";
+      inner4 += "<input class='at-m-i' readonly value='" + esc(rv.shift) + "' style='" + pos(348, 142, 300) + "'>";
+      inner4 += "<input class='at-m-i' readonly value='No clock-in or clock-out' style='" + pos(32, 224, 300) + "'>";
+      inner4 += "<input class='at-m-i' readonly value='Emergency leave \u00b7 Aug 18 \u00b7 declined' style='" + pos(348, 224, 300) + "'>";
+      inner4 += "<input class='at-m-i' readonly value='1 day deducted if the absence stays unapproved' style='" + pos(32, 306, 616) + "'>";
+      inner4 += "<button class='at-m-c' data-act='reviewclock' style='left:32px;top:504px;width:120px'>Add clock-in</button>";
+      inner4 += "<button class='at-m-c' data-act='reviewunpaid' style='left:164px;top:504px;width:140px'>Mark unpaid</button>";
+      inner4 += "<button class='at-m-ok' data-act='reviewleave' style='left:508px;top:504px'>Approve leave</button>";
+      return scr + box(680, 568, inner4);
+    }
     var opt = A.emps.map(function (x) { return "<option" + (x.id === 'EMP-005' ? ' selected' : '') + ">" + esc(x.name + ' \u00b7 ' + x.id) + '</option>'; }).join('');
     var typ = A.leaveTypes.map(function (x) { return '<option' + (x === 'Vacation leave' ? ' selected' : '') + '>' + x + '</option>'; }).join('');
     var inner3 = xb + "<div class='at-m-t'>New leave request</div><div class='at-m-s'>" + A.date + ' \u00b7 Reviewed before the payroll sync \u00b7 Unapproved absences are deducted</div>';
@@ -198,6 +256,7 @@
     wrap.innerHTML = top() + register() + cards() + "<div id='atmenu'>" + menu() + '</div><div id="atmodal">' + modal() + '</div>';
     if (keepFocus) { var q = document.getElementById('atq'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
   }
+  loadSaved();
   render();
 
   var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -218,6 +277,7 @@
     if (msg) { st.bad = bad; render(); tip(msg); return; }
     if (f.tin) applyIn(e, f.tin);
     if (kind === 'out' || f.tout) e.tout = f.tout;
+    A.dirty = true; save();
     st.f = { emp: '', tin: '', tout: '' }; st.bad = {};
     st.ok = { t: 'Attendance recorded', m: "The clock entry was saved to today's register for " + A.date + '.' }; st.modal = 'ok'; render();
   }
@@ -243,16 +303,26 @@
     if (dt) { st.emp = find(dt.dataset.det); st.modal = 'det'; render(); return; }
     var b = T.closest('[data-act]');
     if (!b) return;
-    var a = b.dataset.act, N = A.emps.length, ready = A.emps.filter(function (x) { return x.status !== 'Absent'; }).length, rev = A.emps.filter(function (x) { return x.status === 'Absent'; });
+    var a = b.dataset.act, N = A.emps.length, ready = A.emps.filter(function (x) { return x.status !== 'Absent'; }).length, rev = A.emps.filter(function (x) { return x.status === 'Absent' && !x.reviewed; });
     if (a === 'export') { csv(); st.ok = { t: 'Attendance exported', m: 'The ' + A.date + ' daily register for ' + N + ' employees was exported as a spreadsheet.' }; st.modal = 'ok'; render(); }
     else if (a === 'approve') { st.ok = { t: 'Timesheets approved', m: ready + ' of ' + N + ' timesheets for ' + A.date + ' are approved.' + (rev.length ? " " + rev[0].name + "'s absence stays flagged for review." : '') }; st.modal = 'ok'; render(); }
-    else if (a === 'sync') { st.ok = { t: 'Synced to payroll', m: ready + ' attendance records now feed the ' + A.period + ' pay period.' + (rev.length ? ' ' + rev.length + ' record' + (rev.length === 1 ? '' : 's') + ' still ' + (rev.length === 1 ? 'needs' : 'need') + ' review.' : '') }; st.modal = 'ok'; render(); }
+    else if (a === 'sync') {
+      if (A.syncedCount === ready && !A.dirty) { tip('Already synced to payroll'); return; }
+      A.synced = A.date + ' \u00b7 ' + nowTime();
+      A.syncedCount = ready; A.dirty = false; save();
+      st.ok = { t: 'Synced to payroll', m: ready + ' attendance records now feed the ' + A.period + ' pay period.' + (rev.length ? ' ' + rev.length + ' absence still needs review.' : ' All records are in payroll.') }; st.modal = 'ok'; render();
+    }
+    else if (a === 'review') { st.emp = rev[0]; st.modal = 'review'; render(); }
+    else if (a === 'reviewleave') { var rl = st.emp; A.leaves.push({ name: rl.name, type: 'Emergency leave', range: A.date, days: 1, status: 'Approved' }); rl.status = 'On leave'; rl.reviewed = true; A.dirty = true; save(); st.modal = ''; render(); tip('Leave approved for ' + rl.name); }
+    else if (a === 'reviewunpaid') { var ru = st.emp; ru.reviewed = true; A.dirty = true; save(); st.modal = ''; render(); tip(ru.name + ' marked as an unpaid absence'); }
+    else if (a === 'reviewclock') { var rc = st.emp; st.f = { emp: rc.id, tin: '', tout: '' }; st.modal = ''; render(); tip('Choose the time in for ' + rc.name); }
     else if (a === 'clockin') clock('in');
     else if (a === 'clockout') clock('out');
     else if (a === 'lapprove' || a === 'ldecline') {
       var p = pending()[0];
       if (!p) { tip('No pending leave requests'); return; }
       p.status = a === 'lapprove' ? 'Approved' : 'Declined';
+      A.dirty = true; save();
       st.ok = { t: 'Leave request updated', m: p.name + "'s " + p.type.toLowerCase() + ' (' + p.range + ') was updated. Payroll sync will reflect the change.' }; st.modal = 'ok'; render();
     }
     else if (a === 'newreq') { st.menu = ''; st.pick = ''; st.modal = 'new'; render(); }
@@ -264,6 +334,7 @@
       if (!okS || !okE || !g(5).value.trim()) { tip(!okS ? 'Start date must look like Sep 9, 2026' : (!okE ? 'End date must be on or after the start date' : 'Add a reason')); return; }
       var s = new Date(sd), e2 = new Date(ed);
       A.leaves.push({ name: g(1).value.split(' \u00b7 ')[0], type: g(2).value, range: rangeLabel(s, e2), days: Math.round((ed - sd) / 86400000) + 1, status: 'Pending' });
+      A.dirty = true; save();
       st.modal = ''; render(); tip('Leave request submitted for ' + g(1).value.split(' \u00b7 ')[0]);
     }
   });
