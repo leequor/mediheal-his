@@ -46,33 +46,7 @@
   var POS2 = [[120, 142, 32, 300], [120, 142, 348, 300], [202, 224, 32, 300], [202, 224, 348, 300], [284, 306, 32, 616], [366, 388, 32, 616]];
 
   // Invoice PDF (session 23): the Figma "Download invoice" state promises a PDF, so build a real one
-  // (text-only PDF 1.4, Helvetica) instead of opening the browser print dialog.
-  function pdfEsc(s) {
-    return String(s == null ? '' : s)
-      .replace(/\u20b1/g, 'PHP ').replace(/[\u2013\u2014]/g, '-').replace(/\u00b7/g, '-')
-      .replace(/[^\x20-\x7e]/g, '').replace(/([\\()])/g, '\\$1');
-  }
-  function pdfBlob(rows) {
-    var y = 780, stream = '';
-    rows.forEach(function (r) {
-      if (r[0]) stream += 'BT /F1 ' + r[1] + ' Tf 40 ' + y + ' Td (' + pdfEsc(r[0]) + ') Tj ET\n';
-      y -= r[2];
-    });
-    var objs = [
-      '<< /Type /Catalog /Pages 2 0 R >>',
-      '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
-      '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>',
-      '<< /Length ' + stream.length + ' >>\nstream\n' + stream + 'endstream',
-      '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>'
-    ];
-    var pdf = '%PDF-1.4\n', offs = [];
-    objs.forEach(function (o, i) { offs.push(pdf.length); pdf += (i + 1) + ' 0 obj\n' + o + '\nendobj\n'; });
-    var xref = pdf.length;
-    pdf += 'xref\n0 ' + (objs.length + 1) + '\n0000000000 65535 f \n';
-    offs.forEach(function (o) { pdf += ('0000000000' + o).slice(-10) + ' 00000 n \n'; });
-    pdf += 'trailer\n<< /Size ' + (objs.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + xref + '\n%%EOF';
-    return new Blob([pdf], { type: 'application/pdf' });
-  }
+  // (text-only PDF 1.4, Helvetica) instead of opening the browser print dialog. HIS.pdf lives in assets/js/pdf.js.
   function invoiceRows(b) {
     var sub = b.subtotal != null ? b.subtotal : Math.round(b.amount / 1.12);
     var vat = b.vat != null ? b.vat : b.amount - sub;
@@ -84,7 +58,7 @@
     t('Status: ' + b.status, 10, 24);
     t('Description / charge source                 Qty     Rate            Amount', 10, 16);
     var items = b.items || [];
-    if (items.length) items.forEach(function (r) { t(String(r[0]).slice(0, 46) + '    ' + r[1] + '    ' + pdfEsc(String(r[2])) + '    ' + pdfEsc(String(r[3])), 10, 14); });
+    if (items.length) items.forEach(function (r) { t(String(r[0]).slice(0, 46) + '    ' + r[1] + '    ' + String(r[2]) + '    ' + String(r[3]), 10, 14); });
     else t('Estimated summary (line items are not in the main Figma frame)', 10, 14);
     t('', 10, 12);
     t('Subtotal: ' + peso(sub), 10, 15);
@@ -96,13 +70,7 @@
     t('Generated Aug 31, 2026 by the billing desk.', 9, 13);
     return rows;
   }
-  function saveInvoicePdf(b) {
-    var url = URL.createObjectURL(pdfBlob(invoiceRows(b)));
-    var a = document.createElement('a');
-    a.href = url; a.download = b.id + '_invoice.pdf';
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
-  }
+  function saveInvoicePdf(b) { HIS.pdf.save(invoiceRows(b), b.id + '_invoice.pdf'); }
 
   function open(kind) {
     var b = bill(); if (!b) return; close();

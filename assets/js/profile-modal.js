@@ -14,13 +14,29 @@
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
 
   // The buttons carried a "not built yet" tooltip from profile.js; these modals replace it.
-  Array.prototype.forEach.call(stage.querySelectorAll('[data-act="edit"],[data-act="transfer"],[data-act="discharge"]'), function (b) { b.removeAttribute('title'); });
+  Array.prototype.forEach.call(stage.querySelectorAll('[data-act="edit"],[data-act="transfer"],[data-act="discharge"],[data-act="print"]'), function (b) { b.removeAttribute('title'); });
 
   function card(t) { return Array.prototype.filter.call(stage.querySelectorAll('.pf-card'), function (c) { var h = c.querySelector('.pf-h3'); return h && h.textContent.trim() === t; })[0]; }
   function rowEl(t, i) { var c = card(t); return c ? c.querySelectorAll('.pf-row')[i] : null; }
   function getV(t, i) { var r = rowEl(t, i), v = r ? r.querySelector('.pf-v').textContent.trim() : ''; return v === D ? '' : v; }
   function setV(t, i, v) { var r = rowEl(t, i); if (r) r.querySelector('.pf-v').textContent = v === '' ? D : v; }
   function sub() { return stage.querySelector('.pf-name').textContent.trim() + ' \u00b7 ' + id + ' \u00b7 ' + ((stage.querySelector('.pf-tag') || {}).textContent || '').trim(); }
+
+  // Print profile (Figma 4011:3773) writes the record as it is on screen, so saved edits are included.
+  function profileRows() {
+    var rows = [[stage.querySelector('.pf-name').textContent.trim(), 15, 22], [((stage.querySelector('.pf-meta') || {}).textContent || '').trim(), 10, 15], ['', 10, 12]];
+    Array.prototype.forEach.call(stage.querySelectorAll('.pf-card'), function (c) {
+      var h = c.querySelector('.pf-h3');
+      if (h) rows.push([h.textContent.trim().toUpperCase(), 11, 16]);
+      Array.prototype.forEach.call(c.querySelectorAll('.pf-row'), function (r) {
+        var l = r.querySelector('.pf-l'), v = r.querySelector('.pf-v');
+        if (v) rows.push([(l ? l.textContent.trim() + ': ' : '') + v.textContent.trim(), 10, 14]);
+      });
+      rows.push(['', 10, 10]);
+    });
+    rows.push(['Printed Aug 31, 2026 by the front desk.', 9, 13]);
+    return rows;
+  }
 
   // ---- persistence (localStorage, own key; never touches mh_regs_extra / mh_appts_extra) ----
   function loadAll() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
@@ -45,6 +61,11 @@
   var POS = [[120, 142, 32, 300], [120, 142, 348, 300], [202, 224, 32, 300], [202, 224, 348, 300], [284, 306, 32, 616], [366, 388, 32, 616]];
 
   function spec(kind) {
+    if (kind === 'print') return { title: 'Print profile', sub: 'Patient record \u00b7 Demographics, contact and registration', ok: 'Print', f: [
+      ['Printer', 'Front desk printer'], ['Copies', '1'], ['Paper size', 'A4'], ['Orientation', 'Portrait'],
+      ['Include', 'Demographics, contact, registration and medical history'],
+      ["Doctor's notes and plan", isG ? 'Order troponin and 2D echo. Avoid penicillin.' : 'Follow the recorded treatment plan.']
+    ] };
     if (kind === 'edit') return { title: 'Edit patient details', sub: sub(), ok: 'Save changes', f: [
       ['Phone number', getV('Contact & Address', 0)], ['Email address', getV('Contact & Address', 1)],
       ['Emergency contact', getV('Emergency Contact', 0)], ['Emergency contact number', getV('Emergency Contact', 2)],
@@ -91,6 +112,7 @@
 
   function confirm() {
     var k = cur.kind, bad;
+    if (k === 'print') { HIS.pdf.save(profileRows(), id + '_profile.pdf'); close(); toast('Profile saved as ' + id + '_profile.pdf'); return; }
     if (k === 'edit') {
       bad = [flag(0, !val(0)), flag(1, val(1) && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val(1)))];
       if (bad[0] || bad[1]) { toast(bad[0] ? 'Phone number is required' : 'Enter a valid email address'); return; }
@@ -116,7 +138,7 @@
     var b = e.target.closest('[data-act]');
     if (!b) return;
     var a = b.dataset.act;
-    if (a === 'edit' || a === 'transfer' || a === 'discharge') open(a);
+    if (a === 'edit' || a === 'transfer' || a === 'discharge' || a === 'print') open(a);
   });
   stage.addEventListener('keydown', function (e) {
     if (cur && e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); confirm(); }

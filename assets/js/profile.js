@@ -87,7 +87,7 @@
     const b = e.target.closest('[data-act]');
     if (!b) return;
     const a = b.dataset.act;
-    if (a === 'print') window.print();
+    if (a === 'print') { /* handled by profile-modal.js (Print profile modal + PDF, Figma 4011:3773) */ }
     else if (a === 'plan' || a === 'pharmacy-go' || a === 'summary-go') {
       location.href = 'treatment.html?id=' + encodeURIComponent(id) + (a === 'pharmacy-go' ? '&modal=pharmacy' : a === 'summary-go' ? '&modal=summary' : '');
     }
