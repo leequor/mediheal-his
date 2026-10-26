@@ -40,3 +40,13 @@
 - IMPORTANT for future Playwright animation tests: the owner's tab was `visibilityState: hidden` this turn, so CSS transitions never advanced (drawer left stayed -430 at 120ms and 350ms even with body.menu-open set). Read end states with `transition:'none'`, or bring the tab to the foreground.
 - PHONE LAYOUT: still BLOCKED. No phone-width Figma frame exists; building one would invent design. fit.js v3 (width-only scale) is the approved substitute. Owner-deferred.
 - Nothing was pushed to the site this turn (verification only). Items 2 of "Next steps" is now DONE; item 3 stays (phone layout blocked, close comparison done).
+
+## Turn 2 (2026-10-26) - full sweep; notifications were missing on 3 pages (fixed)
+- FULL SWEEP (Playwright, one fresh tab, 15 URLs including the two redirects): all 200, `HIS` loaded, 0 console errors / 0 warnings everywhere, pharmacy -> treatment.html?modal=pharmacy and staff -> personnel.html redirect correctly.
+- The sweep found a real BUG the session-22 commits had missed: the notifications panel was MISSING on `billing.html`, `departments.html` and `profile.html` (bell present, `.nf-p` absent), so `345c09a` "on every page" was only true for 11 of 14. Cause: `billing.js:26`, `departments.js:38/68` and `profile.js:81` do `stage.innerHTML = ...`, which deletes the panel that shell.js had appended to the stage at load. The other pages render into child wrappers, which is why they were fine.
+- FIX (commit `7fba064`, ONE file `assets/js/shell.js`, +4 lines): a `MutationObserver` on the stage re-appends the panel whenever a page wipes it, plus a `setOpen` guard `if (o && !panel.isConnected) stage.appendChild(panel)`.
+- VERIFIED live after the Pages redeploy (shell.js forced with `fetch(..., {cache:'reload'})`): billing, departments and profile -> panel present on load, bell opens it (4 rows), and it SURVIVES `stage.innerHTML=''` (observer re-attaches it, still open). 0 console errors/warnings on all three.
+- NOT verified: a real billing filter/action click that re-renders (the wipe test simulates the same innerHTML replacement), pixel comparison of the panel, owner acceptance.
+- Tooling note: the GitHub MCP write tool returns a schema error ("data must have required property 'result'") even when the commit succeeds - always verify by reading the commit back. For whole-file edits it is easier to use a local `git clone` + `git push` (credentials are stored); that is how `7fba064` was pushed.
+- localStorage: nothing written this turn.
+
