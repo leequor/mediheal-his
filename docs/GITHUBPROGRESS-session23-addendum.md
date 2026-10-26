@@ -158,3 +158,13 @@ Served the repo locally (`serve.mjs`, http://localhost:8788) so Pages lag/cachin
 Billing's "Download" button calls `window.print()` -> a NATIVE print dialog, which blocked the automation session mid-sweep (the owner had to cancel it). Sweeps must skip `data-act=dl`, `export`, `csv` and anything matching /print|download|export/. WORTH REVISITING: Figma's "Download invoice / Invoice downloaded" states are implemented as a print dialog, not a file download.
 ### Not covered
 Actions with side effects were skipped on purpose (sync, approve/decline, clock-in, export); sync + the review flow were verified in turn 5. Still open: narrow-width placement of the new modals, pixel diff vs Figma.
+
+## Turn 7 (2026-10-26) - billing Download fixed (owner: "fix the print dialog issue in billing")
+- Bug: the invoice "Download" button called `window.print()`, so it opened a NATIVE print dialog instead of downloading anything (the same dialog blocked an automation sweep earlier). Figma draws two states for this flow and neither existed.
+- Fixed (`a25e51f`):
+  - `data-act=dl` now opens Figma's "Download invoice" state (`2064:5560`): Action modal 680x664 at (380,180), rows Document / File format / Includes / Invoice total / Copies / Note = "Invoice BL-8801" / PDF / "Itemised charges, VAT" / "P17,360.00" / "Patient copy and billing file copy" / "Coverage and discount lines appear once applied.", banner "Ready to download" + "A PDF of invoice BL-8801 will be saved to this device.", buttons Cancel + "Download PDF".
+  - Confirming builds a REAL one-page PDF (hand-written PDF 1.4, Helvetica, no library/build step needed) and saves it as `<invoice id>_invoice.pdf`, then shows Figma's "Invoice downloaded" state (`2064:5782`, compact 680x368 at (380,330)): File name / Format / Invoice total / Downloaded / Previous status / Status notes, buttons "Back to billing" + "Close".
+  - `window.print()` is gone from billing.
+- VERIFIED live (window.print spied): 0 print calls; file `BL-8801_invoice.pdf`; PDF 1754 bytes, `%PDF-1.4`, valid xref (all five offsets resolve to their objects), `%%EOF`, invoice lines present; both modals match Figma geometry + values; Close returns to billing.
+- Deviations to flag: Figma's "Invoice downloaded" frame is a clone leftover (its "Previous status" says "Ordered" and Status notes carry a nursing text "Telemetry connected at 6:30 PM..."), so the implementation uses the real status (Partial) and a sensible note. The PDF is plain text-only (no logo/styling) - the repo has no PDF library and no build step.
+- Other print-based patterns: checked the whole repo for `window.print()` - billing was the only one.
