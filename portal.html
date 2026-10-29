@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang='en'><head>
+<meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Patient portal · MediHeal</title>
+<link rel='icon' type='image/png' href='assets/img/logo-removebg-preview%201.png'>
+<link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@300;400;500;600;700&family=Outfit:wght@700&display=swap' rel='stylesheet'>
+<link rel='stylesheet' href='assets/css/tokens.css'><link rel='stylesheet' href='assets/css/portal.css'>
+</head><body class='pt'>
+<!-- Addition (not in Figma): public patient portal. Design supplied by the owner from the emailed
+     prototype; the signed-in card replaces that prototype's alert() stubs. Staff sign-in stays at
+     index.html, unchanged apart from the link at the bottom of the form. -->
+
+<!-- LANDING -->
+<section class='pt-view' id='landing'>
+  <header class='pt-topbar'>
+    <a class='pt-brand' href='#landing'><span class='pt-logo'>M</span>MediHeal</a>
+    <a class='pt-btn sm' href='#signin'>Sign In</a>
+  </header>
+  <main class='pt-hero'>
+    <div>
+      <h1>All your hospital operations, in one place.</h1>
+      <p class='pt-lead'>One workspace for registration, scheduling, staffing, and billing, built to keep patient care safe, accurate, and on time.</p>
+      <ul class='pt-features'>
+        <li><b>Patient Registration</b><span>Admit inpatients &amp; outpatients instantly</span></li>
+        <li><b>Appointment &amp; Scheduling</b><span>Real-time doctor &amp; appointment slots</span></li>
+        <li><b>Billing &amp; Management Reports</b><span>Clear, accurate reports for management</span></li>
+      </ul>
+      <a class='pt-btn' href='#signup'>Create Account &rarr;</a>
+    </div>
+    <div class='pt-preview'>
+      <div class='pt-preview-bar'>MediHeal</div>
+      <div class='pt-preview-grid'>
+        <div class='pt-tile'><b>Quick registration</b><span>Admit a patient in under a minute</span></div>
+        <div class='pt-tile'><b>Staff roster</b><span>Know who's on duty at a glance</span></div>
+        <div class='pt-tile'><b>Live scheduling</b><span>See open doctor slots in real time</span></div>
+        <div class='pt-tile'><b>Management reports</b><span>Revenue and activity, always up to date</span></div>
+      </div>
+    </div>
+  </main>
+</section>
+
+<!-- SIGN UP -->
+<section class='pt-view' id='signup'>
+  <form class='pt-panel wide' id='pt-signup' novalidate>
+    <div class='pt-row'>
+      <h2>Create your account</h2>
+      <a class='pt-link' href='#signin'>Already registered? Sign in</a>
+    </div>
+    <p class='pt-muted'>Let's connect you with your care. All fields are required unless marked optional.</p>
+    <div class='pt-grid'>
+      <label class='pt-label'>First name<input class='pt-input' name='first' required placeholder='Juan'></label>
+      <label class='pt-label'>Middle name <small>(optional)</small><input class='pt-input' name='middle' placeholder='Santos'></label>
+      <label class='pt-label'>Last name<input class='pt-input' name='last' required placeholder='Dela Cruz'></label>
+      <label class='pt-label'>Suffix <small>(optional)</small><input class='pt-input' name='suffix' placeholder='Jr., III'></label>
+      <label class='pt-label'>Date of birth<input class='pt-input' type='date' name='dob' required></label>
+      <label class='pt-label'>Mobile number<input class='pt-input' type='tel' name='mobile' required placeholder='+63 917 555 0124'></label>
+      <label class='pt-label'>Email address<input class='pt-input' type='email' name='email' required placeholder='name@mediheal.com' autocomplete='username'></label>
+      <label class='pt-label'>Create password<input class='pt-input' type='password' name='password' id='pt-pw' required minlength='12' autocomplete='new-password'></label>
+    </div>
+    <p class='pt-hint' id='pt-pw-hint'>Use at least 12 characters, including letters and numbers.</p>
+
+    <fieldset class='pt-box'>
+      <legend>Link your existing patient record</legend>
+      <label class='pt-check'><input type='checkbox' id='pt-hasid' checked> I have a MediHeal patient ID or hospital record</label>
+      <div class='pt-grid' id='pt-idfields'>
+        <label class='pt-label'>Patient ID<input class='pt-input' name='pid' placeholder='PT-99212'></label>
+        <label class='pt-label'>Hospital / facility
+          <select class='pt-select' name='facility'><option>MediHeal Medical Center</option><option>MediHeal Annex</option></select>
+        </label>
+      </div>
+      <p class='pt-muted pt-small'>We'll match your name and birthdate, then verify the contact on your hospital record. New patient? Choose "I don't have a patient ID" at registration.</p>
+    </fieldset>
+
+    <h3>Your privacy matters</h3>
+    <p class='pt-muted pt-small'>Under the Philippine Data Privacy Act of 2012 (RA 10173), MediHeal processes your personal and health information to verify your identity, provide care, and manage your portal.</p>
+    <label class='pt-check'><input type='checkbox' id='pt-privacy' required> I have read the Privacy Notice and consent to the processing described above.</label>
+    <label class='pt-check'><input type='checkbox' id='pt-terms' required> I agree to the Patient Portal Terms of Use.</label>
+    <label class='pt-check'><input type='checkbox' id='pt-news'> Send me optional health tips and hospital news (optional).</label>
+    <p class='pt-error' id='pt-signup-error' role='alert'></p>
+    <button class='pt-btn full' type='submit'>Create account &rarr;</button>
+    <p class='pt-foot'>&copy; 2026 MediHeal &middot; For urgent medical care, call 911. This portal is not for emergencies.</p>
+  </form>
+</section>
+
+<!-- SIGN IN -->
+<section class='pt-view split' id='signin'>
+  <aside class='pt-side'>
+    <a class='pt-brand' href='#landing'><span class='pt-logo'>M</span>MediHeal</a>
+    <h1>All your hospital operations, in one place.</h1>
+    <p>One workspace for registration, scheduling, staffing, and billing, built to keep patient care safe, accurate, and on time.</p>
+    <ul class='pt-features'>
+      <li><b>Patient Registration</b><span>Admit inpatients &amp; outpatients instantly</span></li>
+      <li><b>Appointment &amp; Scheduling</b><span>Real-time doctor &amp; appointment slots</span></li>
+      <li><b>Billing &amp; Management Reports</b><span>Clear, accurate reports for management</span></li>
+    </ul>
+  </aside>
+  <form class='pt-panel' id='pt-signin' novalidate>
+    <h2>Sign in</h2>
+    <p class='pt-muted'>Enter your email and password to access your medical profile.</p>
+    <label class='pt-label'>Email address<input class='pt-input' id='pt-si-email' type='email' name='email' required placeholder='name@mediheal.com' autocomplete='username'></label>
+    <label class='pt-label'>Password<input class='pt-input' type='password' name='password' required placeholder='Enter your password' autocomplete='current-password'></label>
+    <div class='pt-row'>
+      <label class='pt-check'><input type='checkbox' id='pt-keep' checked> Keep me signed in</label>
+      <button class='pt-link small' type='button' id='pt-forgot'>Forgot password?</button>
+    </div>
+    <p class='pt-error' id='pt-signin-error' role='alert'></p>
+    <button class='pt-btn full' type='submit'>Sign in &rarr;</button>
+    <p class='pt-muted pt-small'>New patient? <a class='pt-link small' href='#signup'>Create an account</a></p>
+  </form>
+
+  <!-- Signed-in state: replaces the emailed prototype's alert() (Addition, not in Figma). -->
+  <div class='pt-panel' id='pt-session' hidden>
+    <div class='pt-session'>
+      <h2>You're signed in</h2>
+      <p class='pt-muted'>This demo keeps the session in your browser only &mdash; no server is involved.</p>
+      <p><b id='pt-session-name'></b><br><span class='pt-muted' id='pt-session-email'></span></p>
+      <div class='pt-actions'>
+        <button class='pt-btn' type='button' id='pt-signout'>Sign out</button>
+        <a class='pt-btn' href='#landing' style='background:#1c6d9c'>Back to home</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORGOT PASSWORD (3 steps) -->
+<section class='pt-view' id='forgot'>
+  <header class='pt-topbar'>
+    <a class='pt-brand' href='#landing'><span class='pt-logo'>M</span>MediHeal</a>
+    <a class='pt-btn sm' href='#signin'>Back to sign in</a>
+  </header>
+  <div class='pt-steps'>
+    <div class='pt-step on' data-step='1'>
+      <h2>Forgot your password?</h2><span class='pt-pill'>Step 1 &middot; Request code</span>
+      <p class='pt-muted'>Enter the email linked to your patient account.</p>
+      <label class='pt-label'>Email address<input class='pt-input' id='pt-recv' type='email' placeholder='name@mediheal.com' autocomplete='username'></label>
+      <p class='pt-error' id='pt-f1err' role='alert'></p>
+      <button class='pt-btn full' type='button' id='pt-send'>Send recovery code</button>
+    </div>
+    <div class='pt-step' data-step='2' inert>
+      <h2>Verify your identity</h2><span class='pt-pill'>Step 2 &middot; OTP verification</span>
+      <p class='pt-muted'>Enter the 6-digit code we sent you.</p>
+      <div class='pt-otp' id='pt-otp'>
+        <input maxlength='1' inputmode='numeric' aria-label='Digit 1 of 6'>
+        <input maxlength='1' inputmode='numeric' aria-label='Digit 2 of 6'>
+        <input maxlength='1' inputmode='numeric' aria-label='Digit 3 of 6'>
+        <input maxlength='1' inputmode='numeric' aria-label='Digit 4 of 6'>
+        <input maxlength='1' inputmode='numeric' aria-label='Digit 5 of 6'>
+        <input maxlength='1' inputmode='numeric' aria-label='Digit 6 of 6'>
+      </div>
+      <p class='pt-muted pt-small' id='pt-timer'>Code expires in 05:00</p>
+      <p class='pt-demo' id='pt-otp-demo' hidden></p>
+      <p class='pt-error' id='pt-f2err' role='alert'></p>
+      <button class='pt-btn full' type='button' id='pt-verify'>Verify code</button>
+    </div>
+    <div class='pt-step' data-step='3' inert>
+      <h2>Set a new password</h2><span class='pt-pill'>Step 3 &middot; Reset password</span>
+      <label class='pt-label'>New password<input class='pt-input' type='password' id='pt-np' autocomplete='new-password'></label>
+      <label class='pt-label'>Confirm new password<input class='pt-input' type='password' id='pt-cp' autocomplete='new-password'></label>
+      <ul class='pt-rules'><li id='pt-r1'>At least 12 characters</li><li id='pt-r2'>Includes letters and numbers</li><li id='pt-r3'>Passwords match</li></ul>
+      <p class='pt-error' id='pt-f3err' role='alert'></p>
+      <button class='pt-btn full' type='button' id='pt-save'>Save new password</button>
+      <div class='pt-success' id='pt-done' hidden><b>Password updated</b><br>Your new password has been saved. You can now sign in with it.</div>
+      <button class='pt-link small' type='button' id='pt-back-signin'>Return to sign in &rarr;</button>
+    </div>
+  </div>
+</section>
+
+<script src='assets/js/data.js'></script>
+<script src='assets/js/store.js'></script>
+<script src='assets/js/audit.js'></script>
+<script src='assets/js/kit.js'></script>
+<script src='assets/js/portal.js'></script>
+</body></html>

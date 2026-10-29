@@ -14,7 +14,12 @@
     consultation: 'mh_consult_state',
     notifRead: 'mh_notif_read',
     attendance: 'mh_attendance_state',
-    audit: 'mh_audit'
+    audit: 'mh_audit',
+    // Patient portal demo auth (addition, not in Figma). Client-only: accounts are a map
+    // keyed by lower-case email, the reset request holds one pending 6-digit code.
+    portalAccounts: 'mh_portal_accounts',
+    portalReset: 'mh_portal_reset',
+    portalSession: 'mh_portal_session'
   };
   var VERSION = 1;
   var subs = {};

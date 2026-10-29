@@ -88,6 +88,9 @@ Size M.
 ## Blocked on new Figma frames (ask the owner, do not invent)
 - Mobile / phone layout (Phase 8.1).
 - Patient portal and any patient-facing screen.
+  - 2026-10-29 (session 24): the owner supplied a patient-portal design by email, so this is no
+    longer blocked. Built as the `portal.html` addition (landing / signup / signin / 3-step
+    reset) with client-side demo auth through `HIS.store`; see `docs/GITHUBPROGRESS-session24-addendum.md`.
 - Dedicated screens for the audit log, result inbox, order sets, patient timeline (they can be built as additions in the design format if the owner prefers).
 
 ## Order of work

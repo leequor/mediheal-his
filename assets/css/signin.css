@@ -30,6 +30,9 @@
 .si-f:hover{text-decoration:underline}
 .si-b{left:820px;top:680px;width:422px;height:46px;border:0;border-radius:10px;background:#0f172a;color:#d6f4fc;font:700 20px/24.2px Inter,sans-serif;cursor:pointer}
 .si-b:hover{background:#1b2a47}
+/* Addition (not in Figma): link to the public patient portal, under the sign-in button. */
+.si-pt{left:820px;top:744px;width:422px;font:400 12px/15px Inter,sans-serif;color:#6f8890}
+.si-pt:hover{text-decoration:underline;color:#1c6d9c}
 .si-tip{position:fixed;z-index:2000;left:50%;bottom:28px;transform:translateX(-50%);background:#15405a;color:#fff;font:600 13px/16px Inter,sans-serif;padding:10px 16px;border-radius:10px}
 .si-tip[hidden]{display:none}
 .si-state{left:0;top:0;width:0;height:0}
