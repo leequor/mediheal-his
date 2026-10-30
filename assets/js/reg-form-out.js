@@ -144,7 +144,9 @@
     let age = today.getFullYear() - dob.getFullYear();
     if (today < new Date(today.getFullYear(), dob.getMonth(), dob.getDate())) age--;
     let extra = HIS.store.get('mh_regs_extra', []);
-    const maxId = Math.max.apply(null, HIS.patients.map(p => +p.id.slice(3)).concat(extra.map(p => +p.id.slice(3))));
+    // New charts start at PT-100000: the registry's own ids stop at PT-99213, but the clinical pages also hold
+    // PT-99214/PT-99215/PT-99220 records that are not in HIS.patients, so "regmax + 1" reuses a live MRN.
+    const maxId = Math.max.apply(null, [99999].concat(HIS.patients.map(p => +p.id.slice(3)), extra.map(p => +p.id.slice(3))));
     const rec = {
       name: patientName(), id: 'PT-' + (maxId + 1), age, type: 'Outpatient', dept: val('dept'), doctor: val('doctor'),
       registered: HIS.fmtShort(today) + ' \u00b7 ' + new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),

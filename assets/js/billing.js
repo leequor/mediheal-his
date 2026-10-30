@@ -67,7 +67,9 @@
     var el = document.getElementById('blinv');
     if (!b) { el.innerHTML = ''; return; }
     var items = b.items, sub, vat, total = b.amount, paid;
-    if (items) { sub = b.subtotal; vat = b.vat; paid = b.paid; } else { sub = Math.round(total / 1.12); vat = total - sub; paid = b.status === 'Paid' ? total : 0; }
+    // b.paid is written by the payment modal for both itemised and summary bills; only fall back to the status.
+    paid = b.paid != null ? b.paid : (b.status === 'Paid' ? total : 0);
+    if (items) { sub = b.subtotal; vat = b.vat; } else { sub = Math.round(total / 1.12); vat = total - sub; }
     var h = "<section class='bl-inv'><div class='bl-ih'><span class='t'>Invoice " + b.id + "</span><span class='m'>" + esc(b.full) + ' \u00b7 ' + b.pt + ' \u00b7 ' + esc(b.dept) + "</span><span class='d'>" + b.date + "</span><span class='bp'>" + pill(b.status) + '</span></div>';
     h += "<div class='bl-tb'><div class='bl-tr h'><span class='c1'>Description \u00b7 charge source</span><span class='c2'>Qty</span><span class='c3'>Rate (\u20b1)</span><span class='c4'>Amount</span></div>";
     if (items) items.forEach(function (r) { h += "<div class='bl-tr'><span class='c1'>" + esc(r[0]) + "</span><span class='c2'>" + r[1] + "</span><span class='c3'>" + num(r[2]) + "</span><span class='c4'>" + num(r[3]) + '</span></div>'; });

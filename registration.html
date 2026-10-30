@@ -84,11 +84,11 @@ function render() {
     (state.stat === 'All Statuses' || p.status === state.stat) &&
     (!q || (p.name + ' ' + p.id + ' ' + p.doctor + ' ' + p.dept).toLowerCase().includes(q)));
   $('rows').innerHTML = list.length ? list.map(p =>
-    "<div class='rrow'><div class='pt'><span class='ini'>" + initialsOf(p.name) + '</span><div><b>' + p.name + '</b><small>' + p.id + ' \u00b7 ' + p.age + ' yrs</small></div></div>' +
+    "<div class='rrow'><div class='pt'><span class='ini'>" + initialsOf(p.name) + '</span><div><b>' + HIS.kit.esc(p.name) + '</b><small>' + p.id + ' \u00b7 ' + p.age + ' yrs</small></div></div>' +
     "<div><span class='badge " + HIS.statusClass[p.type] + "'>" + p.type + '</span></div>' +
-    "<div class='tx'>" + p.dept + '</div><div class=\'dc\'>' + p.doctor + '</div><div class=\'tx\'>' + p.registered + '</div>' +
+    "<div class='tx'>" + HIS.kit.esc(p.dept) + '</div><div class=\'dc\'>' + HIS.kit.esc(p.doctor) + '</div><div class=\'tx\'>' + HIS.kit.esc(p.registered) + '</div>' +
     "<div><span class='badge " + HIS.statusClass[p.status] + "'>" + p.status + '</span></div>' +
-    "<div><button class='go-btn' data-id='" + p.id + "' aria-label='Open profile for " + p.name + "' title='Open patient profile'>" + svg('arrow', 16) + '</button></div></div>').join('')
+    "<div><button class='go-btn' data-id='" + p.id + "' aria-label='Open profile for " + HIS.kit.esc(p.name) + "' title='Open patient profile'>" + svg('arrow', 16) + '</button></div></div>').join('')
     : "<div class='empty'>No patients match these filters.</div>";
 }
 $('tabs').onclick = e => { if (e.target.dataset.t) { state.tab = e.target.dataset.t; render(); } };

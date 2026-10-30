@@ -44,7 +44,7 @@
       { c: 3, h: 93.6, f: [{ k: 'bp', l: 'Blood Pressure', ph: 'e.g. 120/80', hint: 'mmHg' }, { k: 'temp', l: 'Temperature', ph: 'e.g. 36.8', hint: '\u00b0C' }, { k: 'wt', l: 'Weight', ph: 'e.g. 64', hint: 'kg' }] },
       { c: 3, h: 93.6, f: [{ k: 'ht', l: 'Height', ph: 'e.g. 168', hint: 'cm' }] }
     ] },
-    { top: 2155, h: 277, icon: 'phone', title: 'Emergency Contact', sub: 'Person to notify in case of an emergency', sw: 241, subColor: '#ffd9b2', rows: [
+    { top: 2155, h: 277, icon: 'phone', title: 'Emergency Contact', sub: 'Person to notify in case of an emergency', sw: 241, rows: [
       { c: 3, h: 67.6, f: [{ k: 'efirst', l: 'First Name', ph: 'Enter first name' }, { k: 'elast', l: 'Last Name', ph: 'Enter last name' }, { k: 'erel', l: 'Relationship', ph: 'e.g. Spouse, Parent' }] },
       { c: 3, h: 67.6, f: [{ k: 'ephone', l: 'Contact Number', ph: '+63 9XX XXX XXXX' }] }
     ] },
@@ -130,7 +130,9 @@
     let age = today.getFullYear() - dob.getFullYear();
     if (today < new Date(today.getFullYear(), dob.getMonth(), dob.getDate())) age--;
     let extra = HIS.store.get('mh_regs_extra', []);
-    const maxId = Math.max.apply(null, HIS.patients.map(p => +p.id.slice(3)).concat(extra.map(p => +p.id.slice(3))));
+    // New charts start at PT-100000: the registry's own ids stop at PT-99213, but the clinical pages also hold
+    // PT-99214/PT-99215/PT-99220 records that are not in HIS.patients, so "regmax + 1" reuses a live MRN.
+    const maxId = Math.max.apply(null, [99999].concat(HIS.patients.map(p => +p.id.slice(3)), extra.map(p => +p.id.slice(3))));
     const crit = val('pcond') === 'Critical';
     const rec = {
       name: patientName(), id: 'PT-' + (maxId + 1), age, type: 'Inpatient', dept: val('dept'), doctor: val('doctor'),

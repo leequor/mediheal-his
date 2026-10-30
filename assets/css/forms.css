@@ -34,6 +34,6 @@ textarea.f-in{padding:12px 10px 0;resize:none;overflow:auto}
 
 /* ---- Appointment confirmed (304:502) ---- */
 .c-card{position:absolute;left:415px;top:375px;width:633px;height:307px;background:#fff;border-radius:30px;box-shadow:0 4px 12px rgba(0,0,0,.25)} /* est: shadow */
-.c-ok{position:absolute;left:673px;top:419px;width:94px;height:95px}
-.c-title{position:absolute;left:430px;top:528px;width:611.5px;margin:0;text-align:center;font:700 37px/46.62px var(--font-title);color:#15405a}
-.c-btn{position:absolute;left:632px;top:754px;width:208px;height:47px;border:0;border-radius:30px;background:linear-gradient(to left,#1b4e6b 0%,#3598d1 97.6%);color:#d6f4fc;font:700 24px/30.24px var(--font-title);box-shadow:0 4px 4px rgba(0,0,0,.25)} /* est: shadow */
+.c-ok{position:absolute;left:684.5px;top:419px;width:94px;height:95px}
+.c-title{position:absolute;left:425.75px;top:528px;width:611.5px;margin:0;text-align:center;font:700 37px/46.62px var(--font-title);color:#15405a}
+.c-btn{position:absolute;left:627.5px;top:754px;width:208px;height:47px;border:0;border-radius:30px;background:linear-gradient(to left,#1b4e6b 0%,#3598d1 97.6%);color:#d6f4fc;font:700 24px/30.24px var(--font-title);box-shadow:0 4px 4px rgba(0,0,0,.25)} /* est: shadow */

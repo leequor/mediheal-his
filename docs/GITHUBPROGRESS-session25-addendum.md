@@ -73,3 +73,57 @@ Deploy note: the first live load in the browser still ran the old `base.css`/`si
 
 - Optional: the owner asked about running the same tidy audit over the other screens; nothing else changed in them.
 - Phase 1 (payroll/HR correctness) is still the next planned phase in `docs/IMPROVEMENT-PLAN.md`.
+
+## Turn 2 — full-site audit (owner: "check every function and design, make sure nothing is broken")
+
+Method: the repo's own harnesses plus five read-only audit agents.
+- `scripts/smoke.mjs` (playwright-core installed in a temp dir, headless Chrome on a private `--user-data-dir`, CDP 9333): 20 pages, 5 widths (1440/1200/1000/800/390), console errors + horizontal overflow. Local and live: all pages clean.
+- `scripts/buttons.mjs`: 247 visible controls clicked from a clean reload, every `a[href]` fetched. 0 click errors, 0 broken links, 0 console errors. Single no-effect control = the appointments pager's current tab (by design).
+- Five agents: four visual (20 full-page screenshots at 1440) + one JavaScript audit. Their findings were re-measured in a real browser before anything was changed.
+
+### Fixed — functional
+
+- `reg-form.js` / `reg-form-out.js`: new charts took `max(registry) + 1` = **PT-99214**, which already belongs to Jose Dela Cruz in `data-nursing.js`, and the next one **PT-99215** = Maria Santos in treatment/consultation/billing. New ids now start at **PT-100000**, a range no seeded dataset uses. Verified: computed next id is PT-100000, no collision.
+- `treatment.js`: the "Nursing care" action navigated to `nursing.html` with no id, so it always opened PT-99213 (Isabel) whatever plan was selected. It now passes `?id=`. Verified: selecting PT-99208 lands on `nursing.html?id=PT-99208`.
+  - STILL OPEN below: a patient with no nursing record still falls back to PT-99213 rather than a "no record" state.
+- `consultation.js`: "Record diagnosis" wrote only the Next step and a memory-only `st.saved`; the diagnosis, ICD code, severity, findings and notes were dropped on reload although the modal said "Added to the record". They are now stored on the record (`rec(p).dx`), reopen the form prefilled and rebuild the saved dialog from storage. Verified through a real save + reload.
+- Six search boxes (`attendance`, `payroll`, `personnel`, `treatment`, `nursing`, `consultation`): the handler stored `value.trim().toLowerCase()`, so a typed space was deleted and every keystroke re-rendered the field with the caret at the end ("Dr Smith" became "drsmith"). Raw text is now kept, normalisation happens only in the comparison, and the caret position is restored. Verified on all six.
+- `billing.js`: the invoice ignored `b.paid` on non-itemised bills, so a recorded partial payment still printed "Paid ₱0.00" and the full balance.
+- `appointments.html` / `registration.html`: patient and doctor names were interpolated into `value='...'` and `aria-label='...'` unescaped, so "Anne O'Brien" was truncated to "Anne O" on edit. Wrapped in `HIS.kit.esc`.
+
+### Fixed — visual (each re-measured after the change)
+
+- `registration-form`: the Emergency Contact subtitle used `#ffd9b2` on white (≈1.3:1, effectively invisible). Removed; it now uses the section body colour.
+- `payroll` / `attendance`: the PAYMENT STATUS and STATUS headers sat 16px left of their pills and crowded the preceding column header. Both moved onto the pill column (1052 → 1068; the real offset was measured, not assumed).
+- `attendance`: "Last synced Aug 30, 2026 · 6:00 PM" was ellipsised; box widened 206 → 218 so the whole timestamp shows.
+- `appointments`: the last two KPI cards were 136px against 125px for the first three; all five now 125.
+- `dashboard`: the two side-by-side card titles were 5px apart (20 vs 25) — now both 20 with subtitles at 62; the schedule timeline ran 10px past the last dot — now ends exactly on it.
+- `personnel` / `treatment`: the full-bleed list header and rows painted over the card's inset 1px stroke, leaving a 642px gap in the outline. Rows and header now draw their own side strokes.
+- `appointment-confirmed`: the check icon sat 12px left of the card centre and the title/button 4px right; icon, title and button are now on the card's centreline (724).
+- `index.html`: the H1 ran 19px past the form column. Set to 36px (was 38) so its ink ends exactly on the column edge (1242).
+
+### Found but NOT fixed (reported for the owner)
+
+Functional:
+- `nursing.js` / `treatment.js` / `consultation.js` fall back to PT-99213 when a supplied `?id=` has no record in that dataset (nursing lacks PT-99208/99211/99218), so a deep link can still show the wrong patient. Needs a "no record" state, which is a new screen state, not a tweak.
+- `profile-modal.js` writes Transfer/Discharge to `mh_profile_edits`, but `registration.html` reads only `mh_regs_extra`, so profile changes never reach the registry; the Discharge date/follow-up/summary are not stored at all.
+- `registration.html` "Find existing patient" promises phone/PhilHealth search but reads only name/id/phone, and seeded patients have no top-level `phone` (the forms store it under `details`).
+- `nursing.js` validates the Progress note field then stores only the plan next shift; "Give medicine" increments the dose count even when no due row matched; `attendance.js` requires a leave reason then discards it; `profile.js` shows the appointment string in the Ward row for outpatients.
+- `payroll.html` does not load `pdf.js`, so the payslip "Download PDF" is a toast only (already Phase 1.4 in the plan).
+- Filter menus in `data-consultation.js` / `data-nursing.js` offer departments/wards with no patients and omit ones that exist (Dermatology vs Pediatrics, ICU/Isolation vs Neuro Ward).
+- `billing.js` "Today" filter can never match a seeded bill (newest is Aug 29, 2026) while the stat card counts 12; `departments.js` search ignores `dname`, so "Orthopedics" finds nothing.
+
+Visual (cosmetic, Figma-derived — left as drawn):
+- `appointment-form`: sub-captions render under their inputs ("First Name" reads as the Last Name label) and the two section headings sit 53px and 25px under their rules; field rows have no shared top/bottom edge.
+- `registration` / `outpatient-form`: select value text and chevron are ~12px out of line in every select; the registration filter bar mixes 38/45px heights and two border colours.
+- `dashboard`: the DOCTOR header is centred in an 85px box while its column is left-aligned (21px off); schedule row rhythm is 107/99/103px.
+- `departments`: search stops 53px short of the grid because the duplicate-bell slot is hidden.
+- `profile`: the header meta wraps, leaving a dangling "·" and an orphan "Inpatient" (already listed as a known leftover in START-HERE); the three Treatment History buttons are 11px and 21px apart.
+- `registration`: the rule above the table header is neutral grey while every other divider is pale blue.
+
+### Verification after the edits
+
+- smoke: 20 pages clean, local and live. buttons: 247 controls, 0 errors, 1 known pager tab.
+- 12 targeted assertions pass (heading/column, KPI heights, both status headers, sync time, dashboard titles + timeline, personnel/treatment strokes, confirmed centreline, emergency colour, search caret).
+- Functional: next MRN PT-100000; nursing deep link keeps the patient; diagnosis survives reload; six search boxes keep spaces and caret.
+- NOT verified: browsers other than Chrome; real devices below 430px (the automation browser refuses `setViewportSize` on this host); the registration form's end-to-end submit was NOT automated this turn (its custom dropdowns need UI clicks) — the id change is the one-line floor and was verified by computing the value from the live data.

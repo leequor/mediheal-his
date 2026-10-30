@@ -66,7 +66,7 @@
   function visible() {
     return A.emps.filter(function (e) {
       return (st.dept === ALL_D || e.dept === st.dept) && (st.status === ALL_S || e.status === st.status) &&
-        (!st.q || (e.name + ' ' + e.id + ' ' + e.role + ' ' + e.dept).toLowerCase().indexOf(st.q) > -1);
+        (!st.q || (e.name + ' ' + e.id + ' ' + e.role + ' ' + e.dept).toLowerCase().indexOf(st.q.trim().toLowerCase()) > -1);
     });
   }
   var pending = function () { return A.leaves.filter(function (l) { return l.status === 'Pending'; }); };
@@ -105,7 +105,7 @@
     h += "<div class='at-a at-ex' style='right:24px;top:98.5px'>" + v.length + ' employee' + (v.length === 1 ? '' : 's') + '</div>';
     h += "<div class='at-a at-th'>" + cb(allSel, 24, 15, 'all') + at('at-h', 52, 16.5, 'EMPLOYEE') + at('at-h', 410, 16.5, 'DEPARTMENT');
     COLS.forEach(function (c) { h += at('at-h', c[1], 16.5, c[0], 'width:' + c[2] + 'px;text-align:right'); });
-    h += at('at-h', 1052, 16.5, 'STATUS') + at('at-h', 1186, 16.5, 'ACTION', 'width:94px;text-align:right') + '</div>';
+    h += at('at-h', 1068, 16.5, 'STATUS') + at('at-h', 1186, 16.5, 'ACTION', 'width:94px;text-align:right') + '</div>';
     v.forEach(function (e, i) {
       var d = dur(e);
       h += "<div class='at-a at-r' style='top:" + (196 + 64 * i) + "px'>" + cb(!!st.sel[e.id], 24, 24, e.id);
@@ -164,7 +164,7 @@
     h += syncedClean
       ? "<button class='at-cbtn' disabled style='left:24px;top:214px;width:150px'>Synced</button>"
       : "<button class='at-cbtn pri' data-act='sync' style='left:24px;top:214px;width:150px'>Sync " + ready + ' records</button>';
-    h += "<div class='at-ex at-el' style='left:190px;top:223px;width:206px'>Last synced " + A.synced + '</div></div>';
+    h += "<div class='at-ex at-el' style='left:190px;top:223px;width:218px'>Last synced " + A.synced + '</div></div>';
     return h.replace(/class='ex'/g, "class='at-ex'").replace(/class='ln'/g, "class='at-ln'").replace(/class='ld'/g, "class='at-ld'");
   }
 
@@ -258,7 +258,7 @@
 
   function render(keepFocus) {
     wrap.innerHTML = top() + register() + cards() + "<div id='atmenu'>" + menu() + '</div><div id="atmodal">' + modal() + '</div>';
-    if (keepFocus) { var q = document.getElementById('atq'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
+    if (keepFocus) { var q = document.getElementById('atq'); q.focus(); var c = st.caret == null ? q.value.length : st.caret; q.setSelectionRange(c, c); }
   }
   loadSaved();
   render();
@@ -342,6 +342,6 @@
       st.modal = ''; render(); tip('Leave request submitted for ' + g(1).value.split(' \u00b7 ')[0]);
     }
   });
-  stage.addEventListener('input', function (ev) { if (ev.target.id === 'atq') { st.q = ev.target.value.trim().toLowerCase(); render(true); } });
+  stage.addEventListener('input', function (ev) { if (ev.target.id === 'atq') { st.q = ev.target.value; st.caret = ev.target.selectionStart; render(true); } });
   document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && (st.menu || st.pick || st.modal)) { st.menu = ''; st.pick = ''; st.modal = ''; render(); } });
 })();

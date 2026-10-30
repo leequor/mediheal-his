@@ -33,7 +33,7 @@
 
   function visible() {
     return P.emps.filter(function (e) {
-      return (st.dept === ALL || e.dept === st.dept) && (!st.q || (e.name + ' ' + e.id + ' ' + e.role + ' ' + e.dept).toLowerCase().indexOf(st.q) > -1);
+      return (st.dept === ALL || e.dept === st.dept) && (!st.q || (e.name + ' ' + e.id + ' ' + e.role + ' ' + e.dept).toLowerCase().indexOf(st.q.trim().toLowerCase()) > -1);
     });
   }
 
@@ -139,7 +139,7 @@
 
   function render(keepFocus) {
     wrap.innerHTML = top() + directory() + profile() + "<div id='pemenu'>" + menu() + "</div><div id='pemodal'>" + modal() + '</div>';
-    if (keepFocus) { var q = document.getElementById('peq'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
+    if (keepFocus) { var q = document.getElementById('peq'); q.focus(); var c = st.caret == null ? q.value.length : st.caret; q.setSelectionRange(c, c); }
   }
   render();
 
@@ -171,6 +171,6 @@
       }
     }
   });
-  stage.addEventListener('input', function (ev) { if (ev.target.id === 'peq') { st.q = ev.target.value.trim().toLowerCase(); render(true); } });
+  stage.addEventListener('input', function (ev) { if (ev.target.id === 'peq') { st.q = ev.target.value; st.caret = ev.target.selectionStart; render(true); } });
   document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && (st.menu || st.modal)) { st.menu = false; st.modal = ''; render(); } });
 })();

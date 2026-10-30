@@ -73,7 +73,7 @@
 
   function visible() {
     return C.pts.filter(function (p) {
-      return (st.dept === ALL || p.dept === st.dept) && (!st.q || (p.name + ' ' + p.id + ' ' + p.rl).toLowerCase().indexOf(st.q) > -1);
+      return (st.dept === ALL || p.dept === st.dept) && (!st.q || (p.name + ' ' + p.id + ' ' + p.rl).toLowerCase().indexOf(st.q.trim().toLowerCase()) > -1);
     });
   }
 
@@ -153,6 +153,8 @@
   // ---- Record diagnosis modal: Figma values for PT-99213, blank/derived for the others ----
   var FD = { admit: ['Unstable angina', 'I20.0'], other: ['Acute coronary syndrome', 'I24.9'] };
   function dxInit(p) {
+    var saved = rec(p).dx;
+    if (saved) return saved.f.slice();
     var G = p.id === 'PT-99213';
     return G ? ['Unstable angina', 'I20.0', 'Moderate', 'Admit for observation', 'ST depression on ECG; chest wall tenderness absent', 'Order troponin and 2D echo. Avoid penicillin.'] : ['', '', '', 'Prescribe medication', '', ''];
   }
@@ -166,7 +168,7 @@
     if (!st.modal) return '';
     var p = byId(st.sel), h;
     if (st.modal === 'saved') {
-      var s = st.saved, L = ['Diagnosis', 'Outcome', 'Recorded by', 'Next step'], V = [s.diag, s.outcome, s.by, s.next];
+      var s = st.saved || (rec(p).dx || {}).saved, L = ['Diagnosis', 'Outcome', 'Recorded by', 'Next step'], V = [s.diag, s.outcome, s.by, s.next];
       h = "<div class='tp-scrim' data-close='1'></div><div class='tp-modal' role='dialog' aria-modal='true' aria-label='Diagnosis saved' style='height:368px'>";
       h += "<button class='tp-m-x' data-close='1' aria-label='Close'>\u00d7</button><div class='tp-m-t'>Diagnosis saved</div><div class='tp-m-s'>Added to the record of " + esc(p.name) + ' \u00b7 ' + p.id + ' \u00b7 Aug 31, 2026</div><div class="tp-m-d"></div>';
       for (var i = 0; i < 4; i++) {
@@ -199,7 +201,7 @@
 
   function render(keepFocus) {
     wrap.innerHTML = top() + directory() + profile() + "<div id='tpmenu'>" + menu() + "</div><div id='tpmodal'>" + modal() + '</div>';
-    if (keepFocus) { var q = document.getElementById('tpq'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
+    if (keepFocus) { var q = document.getElementById('tpq'); q.focus(); var c = st.caret == null ? q.value.length : st.caret; q.setSelectionRange(c, c); }
   }
   render();
 
@@ -223,6 +225,9 @@
     r.upd = 'Updated Aug 31, 2026 \u00b7 ' + DR;
     if (!st.done[p.id]) { st.done[p.id] = true; if (st.prog > 0) st.prog--; st.comp++; }
     st.saved = { diag: f[0].trim() + ' \u00b7 ' + f[1].trim(), outcome: f[3], by: DR, next: nx };
+    // Persist the diagnosis on the record: saveState() stores rec(p), so it survives a reload and reopens
+    // prefilled. Without this the modal claimed a save while every field was dropped.
+    r.dx = { f: f.slice(), saved: st.saved };
     st.modal = 'saved'; st.pn = false; render(); tip('Diagnosis saved for ' + p.name);
   }
 
@@ -248,7 +253,7 @@
   });
   stage.addEventListener('input', function (ev) {
     var t = ev.target;
-    if (t.id === 'tpq') { st.q = t.value.trim().toLowerCase(); render(true); }
+    if (t.id === 'tpq') { st.q = t.value; st.caret = t.selectionStart; render(true); }
     else if (t.dataset && t.dataset.i !== undefined && st.modal === 'dx') st.f[+t.dataset.i] = t.value;
   });
   document.addEventListener('keydown', function (ev) {

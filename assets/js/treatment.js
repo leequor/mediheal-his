@@ -64,7 +64,7 @@
 
   function visible() {
     return T.plans.filter(function (p) {
-      return (st.dept === ALL || p.dept === st.dept) && (!st.q || (p.name + ' ' + p.id + ' ' + p.sub).toLowerCase().indexOf(st.q) > -1);
+      return (st.dept === ALL || p.dept === st.dept) && (!st.q || (p.name + ' ' + p.id + ' ' + p.sub).toLowerCase().indexOf(st.q.trim().toLowerCase()) > -1);
     });
   }
 
@@ -230,7 +230,7 @@
 
   function render(keepFocus) {
     wrap.innerHTML = top() + directory() + profile() + "<div id='tpmenu'>" + menu() + "</div><div id='tpmodal'>" + modal() + '</div>';
-    if (keepFocus) { var q = document.getElementById('tpq'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
+    if (keepFocus) { var q = document.getElementById('tpq'); q.focus(); var c = st.caret == null ? q.value.length : st.caret; q.setSelectionRange(c, c); }
   }
   render();
   if (st.modal) { var f0 = document.querySelector('#tpmodal .tp-m-i:not([readonly])'); if (f0) f0.focus({ preventScroll: true }); }
@@ -275,11 +275,11 @@
     var r = X.closest('[data-plan]');
     if (r) { st.sel = r.dataset.plan; render(); return; }
     var m = X.closest('[data-modal]');
-    if (m) { if (m.dataset.modal === 'nurse') { location.href = 'nursing.html'; return; } st.modal = m.dataset.modal; render(); var f = document.querySelector('#tpmodal .tp-m-i'); if (f) f.focus({ preventScroll: true }); return; }
+    if (m) { if (m.dataset.modal === 'nurse') { location.href = 'nursing.html?id=' + encodeURIComponent(st.sel); return; } st.modal = m.dataset.modal; render(); var f = document.querySelector('#tpmodal .tp-m-i'); if (f) f.focus({ preventScroll: true }); return; }
     if (X.closest('[data-ok]')) confirm();
   });
   stage.addEventListener('input', function (ev) {
-    if (ev.target.id === 'tpq') { st.q = ev.target.value.trim().toLowerCase(); render(true); return; }
+    if (ev.target.id === 'tpq') { st.q = ev.target.value; st.caret = ev.target.selectionStart; render(true); return; }
     if (st.modal === 'pharmacy' && ev.target.getAttribute('data-i') === '2') {
       var sb = stockBox(qtyOf(ev.target.value)), b = document.querySelector('#tpmodal .tp-m-b');
       b.querySelector('b').textContent = sb.bt; b.querySelector('span').textContent = sb.bx; ev.target.classList.remove('bad');

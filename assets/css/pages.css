@@ -22,7 +22,7 @@
 .si b{display:block;font-weight:700}
 .si small{display:block;font:300 11px/13.75px var(--font-lexend)}
 .dot{position:absolute;left:27px;width:10px;height:10px;border-radius:50%;background:#3a8017}
-.tl{position:absolute;left:31px;top:135px;width:2px;height:330px;background:#3a8017;opacity:.7}
+.tl{position:absolute;left:31px;top:135px;width:2px;height:320px;background:#3a8017;opacity:.7}
 .sched-badge{position:absolute}
 
 /* ===== Registration (Figma 23:2285, origin 3200,34000) ===== */

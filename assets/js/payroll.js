@@ -34,7 +34,7 @@
   function visible() {
     return P.emps.filter(function (e) {
       return (st.dept === ALL_D || e.dept === st.dept) && (st.status === ALL_S || e.status === st.status) &&
-        (!st.q || (e.name + ' ' + e.id + ' ' + e.role + ' ' + e.dept).toLowerCase().indexOf(st.q) > -1);
+        (!st.q || (e.name + ' ' + e.id + ' ' + e.role + ' ' + e.dept).toLowerCase().indexOf(st.q.trim().toLowerCase()) > -1);
     });
   }
 
@@ -76,7 +76,7 @@
     h += "<div class='pr-a pr-th'>" + cb(allSel, 24, 15, 'all');
     HCOL.forEach(function (c) { h += at('pr-h', c[1], 16.5, c[0]); });
     RCOL.forEach(function (c) { h += at('pr-h', c[1], 16.5, c[0], 'width:' + c[2] + 'px;text-align:right'); });
-    h += at('pr-h', 1052, 16.5, 'PAYMENT STATUS') + at('pr-h', 1186, 16.5, 'ACTION', 'width:94px;text-align:right') + '</div>';
+    h += at('pr-h', 1068, 16.5, 'PAYMENT STATUS') + at('pr-h', 1186, 16.5, 'ACTION', 'width:94px;text-align:right') + '</div>';
     v.forEach(function (e, i) {
       var cells = [[560, 112, e.basic, ''], [680, 110, e.allow, ''], [798, 112, e.ded, ''], [918, 126, net(e), 'net']];
       h += "<div class='pr-a pr-r' style='top:" + (196 + 64 * i) + "px'>" + cb(!!st.sel[e.id], 24, 24, e.id);
@@ -153,7 +153,7 @@
 
   function render(keepFocus) {
     wrap.innerHTML = top() + register() + "<div id='prmenu'>" + menu() + '</div><div id="prmodal">' + modal() + '</div>';
-    if (keepFocus) { var q = document.getElementById('prq'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
+    if (keepFocus) { var q = document.getElementById('prq'); q.focus(); var c = st.caret == null ? q.value.length : st.caret; q.setSelectionRange(c, c); }
   }
   render();
 
@@ -185,6 +185,6 @@
       st.modal = ''; render();
     }
   });
-  stage.addEventListener('input', function (e) { if (e.target.id === 'prq') { st.q = e.target.value.trim().toLowerCase(); render(true); } });
+  stage.addEventListener('input', function (e) { if (e.target.id === 'prq') { st.q = e.target.value; st.caret = e.target.selectionStart; render(true); } });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && (st.menu || st.modal)) { st.menu = ''; st.modal = ''; render(); } });
 })();

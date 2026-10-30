@@ -73,7 +73,7 @@
 
   function visible() {
     return N.pts.filter(function (p) {
-      return (st.ward === ALL || p.wk === st.ward) && (!st.q || (p.name + ' ' + p.id + ' ' + p.ward + ' ' + p.bed).toLowerCase().indexOf(st.q) > -1);
+      return (st.ward === ALL || p.wk === st.ward) && (!st.q || (p.name + ' ' + p.id + ' ' + p.ward + ' ' + p.bed).toLowerCase().indexOf(st.q.trim().toLowerCase()) > -1);
     });
   }
 
@@ -192,7 +192,7 @@
 
   function render(keepFocus) {
     wrap.innerHTML = top() + directory() + profile() + "<div id='tpmenu'>" + menu() + "</div><div id='tpmodal'>" + modal() + '</div>';
-    if (keepFocus) { var q = document.getElementById('tpq'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
+    if (keepFocus) { var q = document.getElementById('tpq'); q.focus(); var c = st.caret == null ? q.value.length : st.caret; q.setSelectionRange(c, c); }
   }
   render();
 
@@ -233,6 +233,6 @@
     if (m) { st.modal = m.dataset.modal; render(); var f = document.querySelector('#tpmodal .tp-m-i'); if (f) f.focus({ preventScroll: true }); return; }
     if (X.closest('[data-ok]')) confirm();
   });
-  stage.addEventListener('input', function (ev) { if (ev.target.id === 'tpq') { st.q = ev.target.value.trim().toLowerCase(); render(true); } });
+  stage.addEventListener('input', function (ev) { if (ev.target.id === 'tpq') { st.q = ev.target.value; st.caret = ev.target.selectionStart; render(true); } });
   document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && (st.menu || st.modal)) { st.menu = false; st.modal = ''; render(); } });
 })();

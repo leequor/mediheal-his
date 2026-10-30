@@ -55,8 +55,8 @@ const K = [
   ['Total Appointments', T.total, 'calendar-check', '#dbeafe', '#2563eb', 224, 126, 148],
   ['Confirmed', T.confirmed, 'check-circle', '#d1fae5', '#10b981', 197, 126, 392],
   ['Pending Approval', T.pending, 'clock', '#fef3c7', '#f59e0b', 232, 126, 609],
-  ['Cancelled', T.cancelled, 'x-circle', '#fee2e2', '#ef4444', 194, 136, 861],
-  ['Walk-In', T.walkin, 'person-circle', '#1e293b', '#ffffff', 183, 136, 1075]
+  ['Cancelled', T.cancelled, 'x-circle', '#fee2e2', '#ef4444', 194, 126, 861],
+  ['Walk-In', T.walkin, 'person-circle', '#1e293b', '#ffffff', 183, 126, 1075]
 ];
 $('kpis').innerHTML = K.map(k => "<div class='akpi' style='left:" + k[7] + 'px;width:' + k[5] + 'px;height:' + k[6] + "px'><div class='at'><span>" + k[0] + "</span><i style='background:" + k[3] + ';color:' + k[4] + "'>" + svg(k[2], 20) + "</i></div><div class='aval'>" + k[1] + '</div></div>').join('');
 
@@ -90,7 +90,7 @@ function form(a) {
   openModal({
     title: a.patient ? 'Edit Appointment' : 'New Appointment / Walk-In', sub: 'Temporary form. Figma has no edit screen yet.',
     saveLabel: a.patient ? 'Save changes' : 'Create',
-    body: "<label>Patient</label><input name='patient' required value='" + (a.patient || '') + "'>" +
+    body: "<label>Patient</label><input name='patient' required value='" + HIS.kit.esc(a.patient || '') + "'>" +
       "<div class='row'><div><label>Date</label><input name='date' type='date' required value='" + (a.date || '2026-08-31') + "'></div><div><label>Time</label><input name='time' type='time' required value='" + (a.time || '09:00') + "'></div></div>" +
       "<label>Type</label><select name='kind'>" + opts(HIS.apptKinds, a.kind) + '</select>' +
       "<div class='row'><div><label>Doctor</label><select name='doctor'>" + opts(HIS.doctors, a.doctor) + "</select></div><div><label>Status</label><select name='status'>" + opts(HIS.apptStatuses, a.status || 'Pending') + '</select></div></div>',
@@ -142,10 +142,10 @@ function actionModal(kind, i) {
     "<div class='ap-t'>" + (res ? 'Reschedule appointment' : 'Cancel appointment') + "</div>" +
     "<div class='ap-s'>" + (res ? 'Move this appointment to a new date, time or doctor' : 'This frees the slot and notifies the patient') + "</div>" +
     "<div class='ap-d'></div>" +
-    field('Patient', 120, 300, 32, "<input class='ap-i' readonly {ST} value='" + (a.patient || '') + "'>") +
+    field('Patient', 120, 300, 32, "<input class='ap-i' readonly {ST} value='" + HIS.kit.esc(a.patient || '') + "'>") +
     field('Doctor', 120, 300, 348, res
       ? "<select class='ap-i' name='doctor' {ST}>" + HIS.doctors.map(d => "<option" + (d === a.doctor ? ' selected' : '') + '>' + d + '</option>').join('') + '</select>'
-      : "<input class='ap-i' readonly {ST} value='" + (a.doctor || '') + "'>") +
+      : "<input class='ap-i' readonly {ST} value='" + HIS.kit.esc(a.doctor || '') + "'>") +
     (res ? field('New date', 202, 300, 32, "<input class='ap-i' type='date' name='date' {ST} value='" + it.date + "'>") +
            field('New time', 202, 300, 348, "<input class='ap-i' type='time' name='time' {ST} value='" + it.time + "'>") +
            field('Reason for rescheduling', 284, 616, 32, "<input class='ap-i' name='reason' {ST} value='Doctor unavailable at the original time'>") +
