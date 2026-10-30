@@ -26,22 +26,26 @@ button{font-family:inherit;cursor:pointer}
 .profile .nm{font:600 13px/16px var(--font-inter);white-space:nowrap}
 .profile small{display:block;font:500 10px/12px var(--font-inter);letter-spacing:.06em;color:#b9d6e8}
 
-/* sidebar (Figma Sidebar 211:1949, 430x1024). Scrollbars hidden on purpose (owner, session 13): the drawer still scrolls by wheel/touch on short viewports. */
+/* sidebar (Figma Sidebar 211:1949, 430x1024). Scrollbars hidden on purpose (owner, session 13).
+   Owner request 2026-10-30: the watermark logo (.dr-logo) is gone and the panel is height-adaptive instead of a fixed 1024px box.
+   The top 84px keeps the brand + exit, the nav takes the remaining height and shares it across however many links there are,
+   the footer stays pinned at the bottom. Figma values are the ceiling (430 wide, Lexend 30px, 44px icons) and scale down on
+   short viewports, so the items keep a line-height ratio above 1.8 instead of the old 42px rows for 30px text. */
 .scrim{position:fixed;inset:0;background:var(--scrim);opacity:0;pointer-events:none;transition:opacity .3s;z-index:30}
 .drawer{position:fixed;top:0;left:0;bottom:0;width:430px;z-index:40;transform:translateX(-100%);transition:transform .3s ease-out;overflow-x:hidden;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;background:linear-gradient(180deg,#1c506e 57%,#5b8db8 100%)}
 .drawer::-webkit-scrollbar{display:none;width:0;height:0}
-.dr-in{position:relative;width:430px;height:1024px;overflow:hidden}
+.dr-in{position:relative;display:flex;flex-direction:column;min-height:100%;padding:84px 0 22px}
 body.menu-open .scrim{opacity:1;pointer-events:auto}
 body.menu-open .drawer{transform:none}
-.dr-logo{position:absolute;left:-109px;top:19px;width:634px;height:441px;object-fit:contain;pointer-events:none}
 .dr-brand{position:absolute;left:56px;top:39px;font:600 19px/23.75px var(--font-lexend);color:#e4f2f6}
 .dr-exit{position:absolute;left:357px;top:45px;width:25px;height:25px;color:#e4f2f6}
-.drawer nav{position:absolute;left:0;top:400px;width:430px}
-.drawer nav a{display:flex;align-items:center;gap:28px;height:42px;padding-left:58px;font:500 30px/37.5px var(--font-lexend);color:#e4f2f6;white-space:nowrap}
-.drawer nav a svg{width:44px;height:41px;flex:none}
+.drawer nav{display:flex;flex-direction:column;justify-content:center;gap:2px;flex:1 1 auto;min-height:0;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
+.drawer nav::-webkit-scrollbar{display:none;width:0;height:0}
+.drawer nav a{display:flex;align-items:center;gap:28px;flex:1 1 auto;min-height:30px;max-height:54px;padding-left:58px;font:500 clamp(18px,2.6vh,30px)/1.25 var(--font-lexend);color:#e4f2f6;white-space:nowrap}
+.drawer nav a svg{width:clamp(24px,3.2vh,44px);height:clamp(22px,3vh,41px);flex:none}
 .drawer nav a:hover{background:rgba(255,255,255,.1)}
-.dr-out{position:absolute;left:227px;top:915px;width:151px;height:57px;border-radius:10px;background:var(--navy);color:#e4f2f6;display:grid;place-items:center;font:600 18px var(--font-inter)}
-.dr-contact{position:absolute;left:58px;top:982px;color:#fff;font:400 13px/15.7px var(--font-inter)}
+.dr-out{align-self:flex-end;flex:none;width:151px;height:clamp(46px,5.5vh,57px);margin:16px 52px 0 0;border-radius:10px;background:var(--navy);color:#e4f2f6;display:grid;place-items:center;font:600 18px var(--font-inter)}
+.dr-contact{flex:none;margin:12px 0 0 58px;color:#fff;font:400 13px/15.7px var(--font-inter)}
 
 /* login (not yet matched to Figma 211:34) */
 .login{min-height:100vh;display:grid;place-items:center;background:var(--header-grad)}

@@ -1,17 +1,19 @@
 /* Sign in (Figma 211:34, 1440x1024, origin 0,34000). Frame-local coordinates read in session 12.
    Page fill = white + 20% marble (body::before in base.css). Left panel 721 wide: gradient drawn dark at the left to white at the right (export), Figma stops #fafeff 0, #3393c9 .4327, #1b4e6b .99 (handle direction reversed in the export).
-   ESTIMATED: icon glyphs (Figma vector icons), gradient direction/stops mapping, checkbox tick, focus ring, error colour. Placeholder is black at 12% opacity as in Figma. */
+   ESTIMATED: icon glyphs (Figma vector icons), gradient direction/stops mapping, checkbox tick, focus ring, error colour. Placeholder is black at 12% opacity as in Figma.
+   Owner tidy-up 2026-10-30: the 1440 frame is centred, so wider windows showed a bare white gutter beside the blue panel (the right half hides its own gutter because it is near-white). .si-bleed continues the panel colour to the viewport edge; 50% + 1px is exactly (100% - 1440) / 2 + 721. The frame height is set by fit.js to the viewport (floor 780px = the lowest content), so the panel fills the window instead of ending at 1024px. */
+.si-bleed{position:fixed;inset:0;z-index:-1;background:linear-gradient(90deg,#1b4e6b 0,#1b4e6b calc(50% + 1px),transparent calc(50% + 1px))}
 .si{position:relative;width:1440px;height:1024px;margin:0 auto;overflow:hidden}
 .si>*{position:absolute}
-.si-panel{left:0;top:0;width:721px;height:1024px;background:linear-gradient(90deg,#1b4e6b 1%,#3393c9 56.7%,#fafeff 100%)}
+.si-panel{left:0;top:0;width:721px;height:100%;background:linear-gradient(90deg,#1b4e6b 1%,#3393c9 56.7%,#fafeff 100%)}
 .si-logo{left:0;top:31px;width:148.3px;height:103px;object-fit:contain}
 .si-brand{left:125px;top:70px;font:600 19px/23.75px Lexend,sans-serif;color:#fff}
 .si-h{margin:0;left:57px;top:287px;width:506px;font:700 40px/50px Lexend,sans-serif;color:#fff}
 .si-p{margin:0;left:57px;top:405px;width:432px;font:400 18px/22.5px Lexend,sans-serif;color:#fff}
 .si-ft{font:700 17px/21.25px Lexend,sans-serif;color:#fff;white-space:nowrap}
 .si-fd{font:400 15px/18.75px Lexend,sans-serif;color:rgba(255,255,255,.48);white-space:nowrap}
-.si-t{margin:0;left:810px;top:298px;width:442px;font:700 38px/47.88px Outfit,sans-serif;color:#0f172a;white-space:nowrap}
-.si-s{margin:0;left:810px;top:357px;width:441px;font:400 16px/19.36px Inter,sans-serif;color:#6f8890}
+.si-t{margin:0;left:820px;top:298px;width:442px;font:700 38px/47.88px Outfit,sans-serif;color:#0f172a;white-space:nowrap}
+.si-s{margin:0;left:820px;top:357px;width:441px;font:400 16px/19.36px Inter,sans-serif;color:#6f8890}
 #sif{position:absolute;left:0;top:0;width:0;height:0}
 #sif>*{position:absolute}
 .si-l{font:700 16px/19.36px Inter,sans-serif;color:#000;white-space:nowrap}
@@ -19,7 +21,7 @@
 .si-i::placeholder{color:rgba(0,0,0,.12)}
 .si-i:focus{border-color:#1c6d9c;box-shadow:0 0 0 3px rgba(28,109,156,.18)}
 .si-i.bad{border-color:#dd4f4c}
-.si-k{left:828px;top:607px;width:181px;height:31px;display:block;cursor:pointer}
+.si-k{left:820px;top:607px;width:181px;height:31px;display:block;cursor:pointer}
 .si-k input{position:absolute;opacity:0;width:0;height:0}
 .si-k .box{position:absolute;left:0;top:0;width:33px;height:31px;box-sizing:border-box;border:1px solid #000;border-radius:10px;display:grid;place-items:center}
 .si-k .box svg{opacity:0}
