@@ -30,9 +30,9 @@
       v: ['Invoice ' + b.id, 'PDF', 'Itemised charges, VAT', p2(b.amount), 'Patient copy and billing file copy', 'Coverage and discount lines appear once applied.'],
       bt: 'Ready to download', bx: 'A PDF of invoice ' + b.id + ' will be saved to this device.' };
     if (kind === 'dlok') return {
-      title: 'Invoice downloaded', sub: 'Invoice ' + b.id + ' \u00b7 ' + short(b.name) + ' \u00b7 ' + b.pt, ok: 'Close',
-      l: ['File name', 'Format', 'Invoice total', 'Downloaded', 'Previous status', 'Status notes'],
-      v: [b.id + '_invoice.pdf', 'PDF', p2(b.amount), 'Aug 31, 2026', b.status, 'Saved to this device by the billing desk. The invoice status is unchanged.'] };
+      title: 'Invoice downloaded', sub: 'Invoice ' + b.id + ' \u00b7 ' + short(b.name) + ' \u00b7 ' + b.pt + ' \u00b7 status unchanged', ok: 'Close',
+      l: ['File name', 'Format', 'Invoice total', 'Downloaded', 'Previous status'],
+      v: [b.id + '_invoice.pdf', 'PDF', p2(b.amount), 'Aug 31, 2026', b.status] };
     return {
       title: 'Final statement', sub: short(b.name) + ' \u00b7 ' + b.pt + ' \u00b7 ' + b.dept + ' \u00b7 discharge billing', ok: 'Issue statement',
       l: ['Invoice', 'Statement date', 'Total charges (incl. 12% VAT)', 'Less PhilHealth, HMO and discount', 'Less payments received', 'Discharge note'],
@@ -43,7 +43,10 @@
   // label top, input top, left, width
   var POS = [[120, 142, 32, 300], [120, 142, 348, 300], [202, 224, 32, 300], [202, 224, 348, 300], [284, 306, 32, 616], [462, 484, 32, 616]];
   // "Invoice downloaded" is the compact 680x368 state (Figma 2064:5782): no banner, rows end at 388, buttons at 300.
-  var POS2 = [[120, 142, 32, 300], [120, 142, 348, 300], [202, 224, 32, 300], [202, 224, 348, 300], [284, 306, 32, 616], [366, 388, 32, 616]];
+  // It holds FIVE fields: a sixth row at y366/388 fell outside the 368px dialog (overflow is visible, so its textarea
+  // floated on the page below the modal looking like a toast). The note it carried is in the dialog subtitle instead.
+  // The buttons sit at y297-336, so the last field is 340 wide: at the full 616 it ran underneath them.
+  var POS2 = [[120, 142, 32, 300], [120, 142, 348, 300], [202, 224, 32, 300], [202, 224, 348, 300], [284, 306, 32, 340]];
 
   // Invoice PDF (session 23): the Figma "Download invoice" state promises a PDF, so build a real one
   // (text-only PDF 1.4, Helvetica) instead of opening the browser print dialog. HIS.pdf lives in assets/js/pdf.js.

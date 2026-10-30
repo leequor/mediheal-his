@@ -127,3 +127,25 @@ Visual (cosmetic, Figma-derived — left as drawn):
 - 12 targeted assertions pass (heading/column, KPI heights, both status headers, sync time, dashboard titles + timeline, personnel/treatment strokes, confirmed centreline, emergency colour, search caret).
 - Functional: next MRN PT-100000; nursing deep link keeps the patient; diagnosis survives reload; six search boxes keep spaces and caret.
 - NOT verified: browsers other than Chrome; real devices below 430px (the automation browser refuses `setViewportSize` on this host); the registration form's end-to-end submit was NOT automated this turn (its custom dropdowns need UI clicks) — the id change is the one-line floor and was verified by computing the value from the live data.
+
+## Turn 2b — "Invoice downloaded" dialog (owner screenshot)
+
+Owner sent the Download invoice → Invoice downloaded flow and asked whether it was fixed. Two separate things:
+
+1. NOT a bug: the two-step flow is intended, and `Download PDF` really saves a file (`HIS.pdf.save`, assets/js/pdf.js).
+   Verified in a browser: `BL-8801_invoice.pdf`, 1754 bytes, valid `%PDF-` header. The invoice also shows the
+   recorded partial payment (Paid ₱10,000 / Balance ₱7,360), which is the billing fix from turn 2 working.
+2. A REAL bug in the compact "Invoice downloaded" dialog (`billing-modal.js`, POS2), now fixed:
+   - A 6th row ("Status notes") was positioned at y366/388 inside a 368px dialog. The dialog has `overflow:visible`,
+     so its textarea rendered 107px BELOW the modal as a floating white box that looked like a toast, and the
+     "Status notes" label was clipped at the dialog edge. The compact frame now renders five fields and the
+     "status unchanged" fact moved into the dialog subtitle.
+   - The "Previous status" field was 616px wide and ran underneath the Back to billing / Close buttons
+     (buttons at x392-641, field ended at 648). Narrowed to 340px, which clears them by 24px.
+
+Verified after the fix: 5 fields, zero elements outside the dialog bounds, field/button overlap false,
+PDF still downloads (1754 bytes), billing smoke + control sweep clean (18 controls, 0 errors, 0 console errors).
+
+Figma note: the compact state comment claimed "rows end at 388, buttons at 300", which cannot both be true in a
+368px dialog; that contradiction is what produced the escaped row. If the Figma 2064:5782 frame really shows six
+rows, the dialog needs to be ~490px tall — worth measuring in Figma before changing it back.
