@@ -31,6 +31,12 @@ Verified locally (`http://127.0.0.1:8789`, Playwright, cache-busted with `fetch(
 - `dashboard.html`: `.hd .logo` loads 1720x1764 in the unchanged 111x77 box; white disc visible inside the blue ring on the light header; 0 console errors.
 - `assets/img/README.md` now documents the group nodes and why the rectangle export loses the disc.
 
-NOT verified at write time: the live GitHub Pages copy (deploy + HTTP cache), and the other shell pages (all use the same `shell.js` header asset, so the header change is shared).
+Verified live (pushed `af36a49..c8c1618`, GitHub Pages served the new files on 2026-10-31 ~00:00):
+
+- `https://leequor.github.io/mediheal-his/assets/img/logo-large.png` = 1720x1764 (203528 bytes) and `logo-removebg-preview 1.png` = 297x206 (18089 bytes); both fetched with a cache-buster after the deploy.
+- `index.html`: `.si-logo` still 148.3x103 at (40.4, 31), natural 297x206, disc pixel opaque white, corner transparent; white disc visible; 0 console errors.
+- `dashboard.html`: `.hd .logo` still 111x77 at (101.4, 9), natural 1720x1764, disc pixel opaque white, corner transparent; white disc visible in the header; 0 console errors.
+
+NOT verified in this turn: every other shell page (they share `shell.js`/`base.css`, so the header asset change applies globally) and a live favicon render at 16/32px. Browser cache still needs a `fetch(...,{cache:'reload'})` + reload on the owner's machine.
 
 Host note: this session installed `claude-talk-to-figma-mcp` (local clone, built, socket on `ws://localhost:3055`) and joined via the plugin UI channel, so future agents can use the MCP tools instead of a hand-rolled WebSocket client.
